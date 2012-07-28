@@ -1,0 +1,166 @@
+/* Kauri Coast Promotion Society Information Hub Modules */
+modules:{
+    'kc-common':{
+        fullpath:'/js/common.js'
+       ,requires:[
+            'anim'
+           ,'array'
+           ,'base'
+           ,'collection'
+           ,'console'
+           ,'cookie'
+           ,'datatype'
+           ,'datatable'
+           ,'datatable-sort'
+           ,'dd'
+           ,'event'
+           ,'io'
+           ,'json'
+           ,'model'
+           ,'node'
+           ,'node-event-simulate'
+           ,'oop'
+           ,'overlay'
+           ,'recordset'
+           ,'selector-css3'
+           ,'substitute'
+           ,'kc-utl-date'
+           ,'kc-widget'
+           ,'kc-yui3-sugar'
+           ,'yql'
+        ]
+    }
+    /**
+     * css
+     */
+   ,'kc-css-dialogMask':{
+        fullpath:'/css/widget/dialogMask.css'
+       ,type:'css'
+    }
+   ,'kc-css-calendar':{
+        fullpath:'/css/widget/calendar.css'
+       ,type:'css'
+    }
+   ,'kc-css-mod-dashboard':{
+        fullpath:'/css/mod/dashboard.css'
+       ,type:'css'
+    }
+   ,'kc-css-mod-news':{
+        fullpath:'/css/mod/news.css'
+       ,type:'css'
+    //secure hash algorithym
+    /**
+     * javascript
+     */
+   ,'kc-js-sha1':{
+        fullpath:'/js/sha1.js'
+    }
+    /**
+     * modules
+     */
+   ,'kc-mod-user':{
+        fullpath:'/mod/contact.js'
+       ,requires:['kc-common','datatable','kc-css-mod-contact']
+    }
+   ,'kc-mod-userTeamRole':{
+        fullpath:'/mod/userTeamRole.js'
+       ,requires:['kc-common','kc-pod-userLogon']
+    }
+   ,'kc-mod-dashboard':{
+        fullpath:'/mod/dashboard.js'
+       ,requires:['kc-pod','kc-css-mod-dashboard']
+    }
+   ,'kc-mod-news':{
+        fullpath:'/mod/news.js'
+       ,requires:['kc-common','datatable-sort','event-focus','imageloader','model','model-list','panel','view','kc-plugin-ckEditor','kc-css-mod-news']
+    }
+    /**
+     * plugins
+     */
+   ,'kc-plugin-ckEditor':{
+        fullpath:'/js/plugin/ckeditor/ckeditor.js'
+    }
+   ,'kc-plugin-tabViewRemovable':{
+        fullpath:'/mod/tabView/pluginRemovable.js'
+       ,requires:['tabview']
+    }
+   ,'kc-plugin-tabViewRoleMenu':{
+        fullpath:'/mod/tabView/pluginRoleMenu.js'
+       ,requires:['tabview']
+    }
+    /**
+     * pods (independant overlays)
+     */
+   ,'kc-pod':{
+        fullpath:'/js/pod.js'
+       ,requires:['kc-common']
+    }
+   ,'kc-pod-user':{
+        fullpath:'/pod/user/edit.js'
+       ,requires:['kc-pod','autocomplete','autocomplete-filters','kc-css-pod-user']
+    }
+   ,'kc-pod-userLogon':{
+        fullpath:'/pod/userLogon.php'
+       ,requires:['kc-pod','kc-css-pod-userLogon','kc-js-sha1']
+    }
+    /**
+     * tabs
+     */
+   ,'kc-tab-news':{
+        fullpath:'/tab/news.js'
+       ,requires:['kc-pod']
+    }
+    /**
+     * utilities
+     */
+   ,'kc-utl-date':{
+        fullpath:'/js/date.js' //www.datejs.com
+    }
+    /**
+     * widgets
+     */
+   ,'kc-widget':{
+        fullpath:'/widget/base.js'
+       ,requires:[
+            'kc-widget-calendar'
+           ,'kc-widget-dialogMask'
+           ,'kc-widget-fetch'
+           ,'kc-widget-list'
+           ,'kc-widget-message'
+           ,'kc-widget-themeSelector'
+           ,'kc-widget-time'
+        ]
+    }
+   ,'kc-widget-calendar':{
+         fullpath:'/widget/calendar.js'
+        ,requires:['calendar','kc-common','kc-css-calendar']
+    }
+   ,'kc-widget-dialogMask':{
+         fullpath:'/widget/dialogMask.js'
+        ,requires:['base','node','kc-css-dialogMask']
+    }
+   ,'kc-widget-fetch':{
+        fullpath:'/widget/fetch.js'
+       ,requires:['kc-common']
+    }
+   ,'kc-widget-list':{
+        fullpath:'/widget/list.js'
+       ,requires:['kc-common']
+    }
+   ,'kc-widget-message':{
+        fullpath:'/widget/message.js'
+       ,requires:['kc-common']
+    }
+   ,'kc-widget-themeSelector':{
+         fullpath:'/widget/themeSelector.js'
+        ,requires:['kc-common']
+    }
+   ,'kc-widget-time':{
+         fullpath:'/widget/time.js'
+        ,requires:['kc-common','kc-css-widget-time']
+    }
+   ,'kc-yui3-sugar': {
+         fullpath: '/js/yui3-sugar.js',
+         requires:['node','transition']
+    }
+}

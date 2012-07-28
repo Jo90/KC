@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html {height:100%}
+      body {height:100%;margin:0;padding:0;}
+      #map_canvas {height:100%;}
+    </style>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDQPldnwWeQCpumTWlmDc4CVYhMbgdW1ng&sensor=true"></script>
+  </head>
+  <body>
+    <div id="map_canvas" style="width:70%; height:100%"></div>
+    <script type="text/javascript">
+      (function initialize(){
+        var map=new google.maps.Map(document.getElementById("map_canvas"),{
+            center:new google.maps.LatLng(-35.93882,173.87392) /* dargaville */,
+            zoom:12,
+            mapTypeId:google.maps.MapTypeId.ROADMAP
+        });
+      })();
+    </script>
+  </body>
+</html>
