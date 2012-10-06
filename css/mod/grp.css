@@ -1,0 +1,7 @@
+/** 
+ *  /css/mod/grp.css
+ */
+
+.kc-mod-grp,
+.kc-mod-grp .yui3-tab-panel {overflow:auto;width:100% !important; /* ensure containment */ }
+

@@ -4,11 +4,11 @@
  * @description
  * Session information
  * 
- * - If not logged in generate a CHAP random id for Challenge Handshake AP
+ * - If not logged in generate a SALT random id for Challenge Handshake AP
  *   must supply to client to enable verification of password
  * - maintain session status
  *   - member logged in
- *   - CHAP seed
+ *   - SALT seed
  * - singleton
  * 
  * @require
@@ -18,10 +18,10 @@
  * * server side
  *   - $_SESSION used to maintain logged in status
  *   - $_SESSION['member']   if defined is the current logged in member
- *   - $_SESSION['CHAP']   if defined is the current Challenge Handshake AP seed
+ *   - $_SESSION['SALT']   if defined is the current Challenge Handshake AP seed
  * * client side
  *   - DOM <namespace>.session.member if defined indicates who is logged in
- *   - DOM <namespace>.session.CHAP = Challenge Handshake AP seed
+ *   - DOM <namespace>.session.SALT = Challenge Handshake AP seed
  * 
  * @todo
  * - 
@@ -37,16 +37,16 @@ defined('COMPANY')             or define('COMPANY'            , 'Kauri Coast Pro
 
 class Session {
     public $member,            // DAO_Member class
-           $CHAP;              // Challenge Handshake AP random seed
+           $SALT;              // Challenge Handshake AP random seed
     private static $instance;  // session instance
     private function __construct() {
         self::$instance = new \stdClass;
         // Challenge Handshake seed
-        if (isset($_SESSION['CHAP'])) {
-            $this->CHAP = $_SESSION['CHAP'];
+        if (isset($_SESSION['SALT'])) {
+            $this->SALT = $_SESSION['SALT'];
         } else {
-            $this->CHAP = self::getRandomString();
-            $_SESSION['CHAP'] = $this->CHAP;
+            $this->SALT = self::getRandomString();
+            $_SESSION['SALT'] = $this->SALT;
         }
         // member, populated automatically if $_SESSION['member'] exists
         $this->member = new DAO_Member();
@@ -85,7 +85,7 @@ class Session {
         if (!$this->member->populateByLogon($logon)){
             return FALSE;
         }
-        return SHA1($this->member->info[0]['password'] . SHA1($this->CHAP)) == $password;
+        return SHA1($this->member->info[0]['password'] . SHA1($this->SALT)) == $password;
     }
     /**
      * get randon string for challenge seed

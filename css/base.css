@@ -1,42 +1,57 @@
 /**
  *  /kc/css/base.css
  */
-body{padding:0;margin:0;}
+body {padding:0;margin:0;}
 body article,
-body header {width:99%;}
-body header{height:40px;background-color:#fefefe;margin-bottom:1.2em;}
+body header {width:99%;height:40px;background-color:#fefefe;margin-bottom:1.2em;}
 body section{padding:0 1.2em;}
 a {text-decoration:none;}
 
-fieldset {
-  -moz-border-bottom-colors: none;
-  -moz-border-image: none;
-  -moz-border-left-colors: none;
-  -moz-border-right-colors: none;
-  -moz-border-top-colors: none;
-  background:none repeat scroll 0 0 #FAFAFA;
-  border-color:#ddd #eee #fff;
-  border-left:1px solid #eee;
-  border-radius:4px;
-  border-right:1px solid #eee;
-  border-style:solid;
-  border-width:1px;
-  margin:4px;
-  padding:4px;
-  vertical-align:top;
-}
-
-fieldset >legend {
-  background-color:#EDF5FF;
-  border:1px solid #ccc;
-  border-radius:4px;
-  color:#333;
-  font-weight:bold;
-  margin:0 -0.4em;
-  padding:3px 10px;
-}
-
 label {display:inline-block; /* ensure label and contents do not wrap */}
 ul {padding:0;margin:0;}
-li {list-style-type:none;}
-.kc-date, .kc-time {width:6em;}
+
+.kc-btn {
+  cursor:pointer;
+  box-shadow:none !important;
+  -moz-box-shadow:none !important;
+  -webkit-box-shadow:none !important;
+  border:none !important;
+}
+.kc-btn.kc-close {float:right;}
+
+.kc-btn em {
+  background-image:url(/css/img/btn-sprite.png);
+  display:inline-block;
+  cursor:pointer;
+  vertical-align:-0.185em;
+  margin-left:0.185em;
+  height:16px;
+  width:16px;
+}
+
+.kc-add    em {background-position: 0px 0px;}
+.kc-remove em {background-position: 0px -20px;}
+.kc-find   em {background-position: 0px -40px;}
+.kc-close  em {background-position: 0px -60px; border: none;}
+.kc-min    em {background-position: 0px -80px;}
+.kc-max    em {background-position: 0px -100px;}
+.kc-right  em {background-position: 0px -120px;}
+.kc-left   em {background-position: 0px -140px;}
+.kc-next   em {background-position: 0px -120px;}
+.kc-prev   em {background-position: 0px -140px;}
+.kc-up     em {background-position: 0px -160px;}
+.kc-down   em {background-position: 0px -180px;}
+.kc-info   em {background-position: 0px -200px;}
+.kc-lock   em {background-position: 0px -220px;}
+.kc-unlock em {background-position: 0px -240px;}
+.kc-vert   em {background-position: 0px -260px;}
+.kc-hort   em {background-position: 0px -280px;}
+.kc-redo   em,
+.kc-reset  em {background-position: 0px -300px;}
+.kc-help   em {background-position: 0px -320px;}
+.kc-save   em {background-position: -20px 0px;}
+.kc-edit   em {background-position: -20px -20px;}
+.kc-stop   em {background-position: -20px -40px;}
+.kc-halt   em {background-position: -20px -60px;}
+.kc-tick   em {background-position: -20px -80px;}
+.kc-person em {background-position: -20px -100px;}

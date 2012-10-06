@@ -1,0 +1,13 @@
+/** /css/widget/calendar.css
+ *
+ */
+.kc-calendar .kc-date {
+  width:7em;
+}
+.yui3-calendar,.kc-calendar {
+  position:absolute;
+  top:30px;
+  left:30px;
+  z-index:9999;
+}
+

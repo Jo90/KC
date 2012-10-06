@@ -1,0 +1,14 @@
+/** /css/pod/info.css
+ *
+ *  Kauri Coast Promotion Society
+ */
+
+.kc-pod-info .yui3-widget-bd {overflow:auto;} /*expand with list*/
+
+.kc-pod-info .kc-info-list {width:200px;float:left;}
+.kc-pod-info .kc-info-detail {margin-left:205px;}
+.kc-pod-info .kc-info-detail > fieldset {border:1px solid #999;}
+
+.kc-pod-info .kc-info-list > .kc-record-focus > input {background-color:#fcf;font-weight:bold;}
+
+.kc-pod-info .yui3-widget-bd {overflow:auto;} /*constrain block*/

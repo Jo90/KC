@@ -4,17 +4,56 @@
  * requires $mysqli = $registry->db->db2->link;
  */
 namespace kc;
-require_once 'kc-config.php';
 
 function dataSets($arr,$echo=false) {
     global $mysqli; //set in getDataSets()
     $rs = new \stdClass;
     /**
-     *  tmTeam
+     *  dbTable
      */
-    if (in_array('tmTeam',$arr) && $stmt = $mysqli->prepare("select * from `tmTeam` order by name")) {
+    if (in_array('dbTable',$arr) && $stmt = $mysqli->prepare("select * from `dbTable` order by name")) {
         $stmt->execute();
-        $rs->tmTeam = fetch_info($stmt);
+        $rs->dbTable = fetch_info($stmt);
+        $stmt->close();
+    }
+    /**
+     *  grp
+     */
+    if (in_array('grp',$arr) && $stmt = $mysqli->prepare("select * from `grp` order by name")) {
+        $stmt->execute();
+        $rs->grp = fetch_info($stmt);
+        $stmt->close();
+    }
+    /**
+     *  tags
+     */
+    if (in_array('tgTag',$arr) && $stmt = $mysqli->prepare("select * from `tgTag` order by name")) {
+        $stmt->execute();
+        $rs->tgTag = fetch_info($stmt);
+        $stmt->close();
+    }
+    /**
+     *  tag collection
+     */
+    if (in_array('tgCollection',$arr) && $stmt = $mysqli->prepare("select * from `tgCollection` order by name")) {
+        $stmt->execute();
+        $rs->tgCollection = fetch_info($stmt);
+        $stmt->close();
+    }
+    /**
+     *  tag collection tag
+     */
+    if (in_array('tgCollectionTag',$arr) && $stmt = $mysqli->prepare("select * from `tgCollectionTag`")) {
+        $stmt->execute();
+        $rs->tgCollectionTag = fetch_info($stmt);
+        $stmt->close();
+    }
+    /**
+     *  tag collection table
+     */
+    if (in_array('tgCollectionTable',$arr) && $stmt = $mysqli->prepare("select * from `tgCollectionTable`")) {
+        $stmt->execute();
+        $rs->tgCollectionTable = fetch_info($stmt);
         $stmt->close();
     }
 

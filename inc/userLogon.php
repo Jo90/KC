@@ -2,49 +2,31 @@
 /** /inc/userLogon.php
  *
  */
-require_once 'kc-config.php';
-/**
- *  logout
- */
-if (isset($_REQUEST['logout'])) {
-    unset($_SESSION[KC_MEMBER]);
-    exit;
-}
+namespace kc;
 
-$mysqli = $registry->db->db2->link;
-$data = new \stdClass;
+//logout
+if (isset($_REQUEST['logout'])) {unset($_SESSION[KC_MEMBER]); exit;}
 
-/**
- *  logon
- */
-if (!isset($_REQUEST['logon'], $_REQUEST['password'])) {exit;}
+if (!isset($_REQUEST['logon'], $_REQUEST['hash'])) {exit;}
 
-$memberLogonExists = false;
-if ($stmt = $mysqli->prepare(
-    "select *
-       from `member`
-      where logon = ?"
-)) {
-    $stmt->bind_param('s'
-       ,$_REQUEST['logon']
-    );
-    $memberLogonExists = $stmt->execute();
-    $memberData = \kc\fetch_result($stmt);
-    $stmt->close();
-}
-/**
- *  verify password
- */
-if ($memberLogonExists && SHA1($memberData[0]->password . SHA1($_SESSION[KC_CHAP])) == $_REQUEST['password']) {
+//logon
+require_once '../db/table/usr/common.php';
+$criteria = new \stdClass;
+$criteria->logon = $_REQUEST['logon'];
+$r = usr_getUsr($criteria);
 
-    require_once 'userData.php';
+$member = firstElement($r->data);
+if (!isset($member)) {exit;}
 
-    $_SESSION[KC_MEMBER] = $memberData[0]->contact;
-    $data = userData();
+//verify password
+if (SHA1($member->password . SHA1($_SESSION[KC_SALT])) == $_REQUEST['hash']) {
+    $_SESSION[KC_MEMBER] = $member->id;
+    //security
+    unset($member->logon);
+    unset($member->password);
 }
 if (!isset($_COOKIE[KC_USERLOGON_REMEMBER])) {
     unset($_SESSION[KC_MEMBER]);
 }
-
 header('Content-type: application/json');
-exit(json_encode($data));
+echo json_encode($r);

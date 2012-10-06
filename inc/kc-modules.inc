@@ -16,63 +16,76 @@ modules:{
            ,'event'
            ,'io'
            ,'json'
+           ,'kc-pod-editor'
+           ,'kc-utl-date'
+           ,'kc-widget'
+           ,'kc-yui3-sugar'
            ,'model'
            ,'node'
            ,'node-event-simulate'
            ,'oop'
            ,'overlay'
            ,'recordset'
+           ,'resize-plugin'
            ,'selector-css3'
            ,'substitute'
-           ,'kc-utl-date'
-           ,'kc-widget'
-           ,'kc-yui3-sugar'
+           ,'tabview'
            ,'yql'
         ]
     }
     /**
      * css
      */
-   ,'kc-css-dialogMask':{
-        fullpath:'/css/widget/dialogMask.css'
-       ,type:'css'
-    }
    ,'kc-css-calendar':{
         fullpath:'/css/widget/calendar.css'
        ,type:'css'
     }
-   ,'kc-css-mod-dashboard':{
-        fullpath:'/css/mod/dashboard.css'
+   ,'kc-css-dialogMask':{
+        fullpath:'/css/widget/dialogMask.css'
        ,type:'css'
     }
-   ,'kc-css-mod-news':{
-        fullpath:'/css/mod/news.css'
+   ,'kc-css-mod-about':{
+        fullpath:'/css/mod/about.css'
        ,type:'css'
-    //secure hash algorithym
-    /**
-     * javascript
-     */
-   ,'kc-js-sha1':{
-        fullpath:'/js/sha1.js'
+    }
+   ,'kc-css-mod-act':{
+        fullpath:'/css/mod/act.css'
+       ,type:'css'
+    }
+   ,'kc-css-mod-grp':{
+        fullpath:'/css/mod/grp.css'
+       ,type:'css'
+    }
+   ,'kc-css-pod-info':{
+        fullpath:'/css/pod/info.css'
+       ,type:'css'
+    }
+   ,'kc-css-pod-grpEdit':{
+        fullpath:'/css/pod/grpEdit.css'
+       ,type:'css'
+    }
+   ,'kc-css-pod-report':{
+        fullpath:'/css/pod/report.css'
+       ,type:'css'
+    }
+   ,'kc-css-pod-userLogon':{
+        fullpath:'/css/pod/userLogon.css'
+       ,type:'css'
     }
     /**
      * modules
      */
-   ,'kc-mod-user':{
-        fullpath:'/mod/contact.js'
-       ,requires:['kc-common','datatable','kc-css-mod-contact']
+   ,'kc-mod-about':{
+        fullpath:'/mod/about.js'
+       ,requires:['kc-common','kc-css-mod-about']
     }
-   ,'kc-mod-userTeamRole':{
-        fullpath:'/mod/userTeamRole.js'
-       ,requires:['kc-common','kc-pod-userLogon']
+   ,'kc-mod-act':{
+        fullpath:'/mod/act.js'
+       ,requires:['kc-common','kc-css-mod-act']
     }
-   ,'kc-mod-dashboard':{
-        fullpath:'/mod/dashboard.js'
-       ,requires:['kc-pod','kc-css-mod-dashboard']
-    }
-   ,'kc-mod-news':{
-        fullpath:'/mod/news.js'
-       ,requires:['kc-common','datatable-sort','event-focus','imageloader','model','model-list','panel','view','kc-plugin-ckEditor','kc-css-mod-news']
+   ,'kc-mod-grp':{
+        fullpath:'/mod/grp.js'
+       ,requires:['kc-common','kc-css-mod-grp']
     }
     /**
      * plugins
@@ -84,37 +97,38 @@ modules:{
         fullpath:'/mod/tabView/pluginRemovable.js'
        ,requires:['tabview']
     }
-   ,'kc-plugin-tabViewRoleMenu':{
-        fullpath:'/mod/tabView/pluginRoleMenu.js'
-       ,requires:['tabview']
-    }
     /**
      * pods (independant overlays)
      */
-   ,'kc-pod':{
-        fullpath:'/js/pod.js'
-       ,requires:['kc-common']
+   ,'kc-pod-editor':{
+        fullpath:'/pod/editor.js'
+       ,requires:['kc-common','kc-plugin-ckEditor']
     }
-   ,'kc-pod-user':{
-        fullpath:'/pod/user/edit.js'
-       ,requires:['kc-pod','autocomplete','autocomplete-filters','kc-css-pod-user']
+   ,'kc-pod-grpEdit':{
+        fullpath:'/pod/grpEdit.js'
+       ,requires:['kc-common','kc-css-pod-grpEdit']
+    }
+   ,'kc-pod-info':{
+        fullpath:'/pod/info.js'
+       ,requires:['kc-common','kc-css-pod-info','kc-pod-editor','sortable']
+    }
+   ,'kc-pod-report':{
+        fullpath:'/pod/report.js'
+       ,requires:['kc-common','kc-css-pod-report']
     }
    ,'kc-pod-userLogon':{
         fullpath:'/pod/userLogon.php'
-       ,requires:['kc-pod','kc-css-pod-userLogon','kc-js-sha1']
-    }
-    /**
-     * tabs
-     */
-   ,'kc-tab-news':{
-        fullpath:'/tab/news.js'
-       ,requires:['kc-pod']
+       ,requires:['kc-css-pod-userLogon','kc-js-sha1']
     }
     /**
      * utilities
      */
-   ,'kc-utl-date':{
-        fullpath:'/js/date.js' //www.datejs.com
+   ,'kc-js-sha1':{ //secure hash algorithym
+        fullpath:'/js/sha1.js'
+    }
+   ,'kc-yui3-sugar': {
+         fullpath: '/js/yui3-sugar.js',
+         requires:['node','transition']
     }
     /**
      * widgets
@@ -124,11 +138,8 @@ modules:{
        ,requires:[
             'kc-widget-calendar'
            ,'kc-widget-dialogMask'
-           ,'kc-widget-fetch'
            ,'kc-widget-list'
            ,'kc-widget-message'
-           ,'kc-widget-themeSelector'
-           ,'kc-widget-time'
         ]
     }
    ,'kc-widget-calendar':{
@@ -139,10 +150,6 @@ modules:{
          fullpath:'/widget/dialogMask.js'
         ,requires:['base','node','kc-css-dialogMask']
     }
-   ,'kc-widget-fetch':{
-        fullpath:'/widget/fetch.js'
-       ,requires:['kc-common']
-    }
    ,'kc-widget-list':{
         fullpath:'/widget/list.js'
        ,requires:['kc-common']
@@ -150,17 +157,5 @@ modules:{
    ,'kc-widget-message':{
         fullpath:'/widget/message.js'
        ,requires:['kc-common']
-    }
-   ,'kc-widget-themeSelector':{
-         fullpath:'/widget/themeSelector.js'
-        ,requires:['kc-common']
-    }
-   ,'kc-widget-time':{
-         fullpath:'/widget/time.js'
-        ,requires:['kc-common','kc-css-widget-time']
-    }
-   ,'kc-yui3-sugar': {
-         fullpath: '/js/yui3-sugar.js',
-         requires:['node','transition']
     }
 }

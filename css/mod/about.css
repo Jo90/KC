@@ -1,0 +1,12 @@
+/**
+ *  /css/mod/about.css
+ */
+
+.kc-mod-about,
+.kc-mod-about .yui3-tab-panel {overflow:auto;width:100% !important; /* ensure containment */ }
+
+.kc-mod-about .kc-data-publicDetails {width:50em;}
+
+.kc-mod-about .kc-loggedIn > label,
+.kc-mod-about .kc-save {float:right;}
+

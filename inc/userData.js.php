@@ -6,25 +6,24 @@
  * calling script must ensure init.js.php has initialised KC.user
  */
 namespace kc;
-require_once 'kc-config.php';
+
 require_once 'userData.php';
-
 if (isset($_SESSION[KC_MEMBER])) {
+    //remove password
     $data = userData();
-    echo PHP_EOL , 'KC.user=' , json_encode($data) , ';';
+    unset($data->user->password);
+    echo('KC.user=' . json_encode($data) . ';' . PHP_EOL);
 }
-
 //Challenge Handshake AP
-if (isset($_SESSION[KC_CHAP])) {
-    echo PHP_EOL , 'KC.user.CHAP="' , $_SESSION[KC_CHAP] , '";';
-} else {
-    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    $randomString = '';
-    $maxvalue = strlen($chars) - 1;
-    $length = 40;
-    for ($i=0; $i<$length; $i++) {
-        $randomString .= substr($chars,rand(0,$maxvalue),1);
+if (!isset($_SESSION[KC_SALT])) {
+    //>>>>FINISH What about using PHP mcrypt_create_iv Initialization Vector?
+    $seed      = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $randomStr = '';
+    $seedLen   = strlen($seed) - 1;
+    $i         = 40;
+    while (--$i) {
+        $randomStr .= substr($seed,rand(0,$seedLen),1);
     }
-    $_SESSION[KC_CHAP] = $randomString;
-    echo PHP_EOL , 'KC.user.CHAP="' , $_SESSION[KC_CHAP] , '";';
+    $_SESSION[KC_SALT] = $randomStr;
+    echo 'KC.user.SALT="' , $_SESSION[KC_SALT] , '";' , PHP_EOL;
 }
