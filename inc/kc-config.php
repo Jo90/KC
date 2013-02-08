@@ -9,9 +9,6 @@
  * shared functions
  * environment (error logging, DB connections)
  * 
- * >>>>FINISH
- * will need to implement some polling system instead of session.gc_maxlifetime
- *
  */
 namespace kc;
 if (!isset($_SESSION)) {session_start();}
@@ -32,8 +29,8 @@ if (isset($_COOKIE[KC_COOKIE_DEVICE],$_COOKIE[KC_COOKIE_THEME])) {
     define('KC_ENV_DEVICE', $_COOKIE[KC_COOKIE_DEVICE]);
     define('KC_ENV_THEME' , $_COOKIE[KC_COOKIE_THEME]);
 }
-define('YUI_CSS'                ,'<link rel="stylesheet" type="text/css" id="yuibasecss" href="http://yui.yahooapis.com/3.6.0/build/cssfonts/fonts-min.css?3.6.0/build/cssreset/reset-min.css&3.4.1/build/cssbase/base-min.css">');
-define('YUI_JS'                 ,'<script type="text/javascript" src="http://yui.yahooapis.com/combo?3.6.0/build/yui/yui-min.js&3.6.0/build/loader/loader-min.js"></script>');
+define('YUI_CSS'                ,'<link rel="stylesheet" type="text/css" id="yuibasecss" href="http://yui.yahooapis.com/3.8.0/build/cssfonts/fonts-min.css?3.8.0/build/cssreset/reset-min.css&3.8.0/build/cssbase/base-min.css">');
+define('YUI_JS'                 ,'<script type="text/javascript" src="http://yui.yahooapis.com/combo?3.8.0/build/yui/yui-min.js&3.8.0/build/loader/loader-min.js"></script>');
 define('KC_SALT'                ,'SALT'); //userLogon Challenge Handshake AP - salt initializer
 define('KC_MEMBER'              ,'member'); //refer userLogon
 define('KC_USERLOGON_REMEMBER'  , 'userLogon-remember');
@@ -71,6 +68,7 @@ spl_autoload_register(__NAMESPACE__ . '\kc_autoload');
 if ($_SERVER['SERVER_ADMIN'] == 'joe@dargaville.net') {
     error_reporting(E_ALL);
     ini_set('display_errors','On');
+    define('KC_FILESERVER','kc');
     define('KC_SERVER','kc');
     define('KC_PRODUCTION','NO');
     DB_Connection::set(
@@ -87,7 +85,8 @@ if ($_SERVER['SERVER_ADMIN'] == 'joe@dargaville.net') {
         )
     );
 } else { //production
-	ini_set('display_errors','Off');
+    ini_set('display_errors','Off');
+    define('KC_FILESERVER','kc');
     define('KC_SERVER','kc'); //>>>>>>FINISH get ip
     define('KC_PRODUCTION','YES');
     DB_Connection::set(
@@ -188,18 +187,15 @@ function fetch_info(&$__stmt__) {
        ,'data' => $__dataStructure__
     );
 }
-function firstElement($o) {
-    foreach($o as $v) {return $v;}
-}
+function firstElement($o) {foreach($o as $v) {return $v;}}
 /**
- *  get dbTables
- *  overload
+ *  dbTables
  */
 if ($stmt = $mysqli->prepare("select id,name from `dbTable`")) {
     $stmt->execute();
     $stmt->bind_result($id,$name);
     while ($stmt->fetch()) {
-        $dbTable[$id] = $name;
+        $dbTable[$id]   = $name;
         $dbTable[$name] = $id;
     }
     $stmt->close();
@@ -208,7 +204,7 @@ if ($stmt = $mysqli->prepare("select id,name from `dbTable`")) {
  * //>>>>>>>FINISH/FUTURE
  *  use minified and consolidateed version from /min
  */
-function minimal_version($filename,$otherwise) {
+function minimal_version($filename, $otherwise) {
     echo (PHP_OS=='Linux' && KC_PRODUCTION=='YES' && file_exists(ROOT . '/min/' . $filename))
         ?'<script src="/assets/min/' . $filename . '" type="text/javascript"></script>' . PHP_EOL
         :$otherwise;
@@ -222,4 +218,3 @@ function sql_fields($arr, $prefix = '') {
     if ($prefix != '' && substr($prefix, -1) != '.') {$prefix .= '.';}
     return $prefix . implode(",$prefix", $arr);
 }
-

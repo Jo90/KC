@@ -1,12 +1,11 @@
 <?php
 /** /kc/inc/dataSets.php
  *
- * requires $mysqli = $registry->db->db2->link;
  */
 namespace kc;
 
-function dataSets($arr,$echo=false) {
-    global $mysqli; //set in getDataSets()
+function dataSets($arr, $echo=false) {
+    global $mysqli;
     $rs = new \stdClass;
     /**
      *  dbTable

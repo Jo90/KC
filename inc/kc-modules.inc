@@ -4,26 +4,21 @@ modules:{
         fullpath:'/js/common.js'
        ,requires:[
             'anim'
+           ,'app'
            ,'array'
-           ,'base'
            ,'collection'
            ,'console'
            ,'cookie'
+           ,'datasource'
            ,'datatype'
            ,'datatable'
            ,'datatable-sort'
            ,'dd'
-           ,'event'
-           ,'io'
-           ,'json'
            ,'kc-pod-editor'
            ,'kc-utl-date'
            ,'kc-widget'
            ,'kc-yui3-sugar'
-           ,'model'
-           ,'node'
            ,'node-event-simulate'
-           ,'oop'
            ,'overlay'
            ,'recordset'
            ,'resize-plugin'
@@ -60,8 +55,8 @@ modules:{
         fullpath:'/css/pod/info.css'
        ,type:'css'
     }
-   ,'kc-css-pod-grpEdit':{
-        fullpath:'/css/pod/grpEdit.css'
+   ,'kc-css-pod-grp':{
+        fullpath:'/css/pod/grp.css'
        ,type:'css'
     }
    ,'kc-css-pod-report':{
@@ -71,6 +66,13 @@ modules:{
    ,'kc-css-pod-userLogon':{
         fullpath:'/css/pod/userLogon.css'
        ,type:'css'
+    }
+    /**
+     * data fetch
+     */
+   ,'kc-db-grp':{
+        fullpath:'/db/siud/grp.js'
+       ,requires:['kc-common']
     }
     /**
      * modules
@@ -85,7 +87,7 @@ modules:{
     }
    ,'kc-mod-grp':{
         fullpath:'/mod/grp.js'
-       ,requires:['kc-common','kc-css-mod-grp']
+       ,requires:['kc-common','kc-css-mod-grp','kc-db-grp']
     }
     /**
      * plugins
@@ -104,9 +106,9 @@ modules:{
         fullpath:'/pod/editor.js'
        ,requires:['kc-common','kc-plugin-ckEditor']
     }
-   ,'kc-pod-grpEdit':{
-        fullpath:'/pod/grpEdit.js'
-       ,requires:['kc-common','kc-css-pod-grpEdit']
+   ,'kc-pod-grp':{
+        fullpath:'/pod/grp.js'
+       ,requires:['kc-common','kc-css-pod-grp','kc-db-grp']
     }
    ,'kc-pod-info':{
         fullpath:'/pod/info.js'
@@ -118,7 +120,7 @@ modules:{
     }
    ,'kc-pod-userLogon':{
         fullpath:'/pod/userLogon.php'
-       ,requires:['kc-css-pod-userLogon','kc-js-sha1']
+       ,requires:['kc-common','kc-css-pod-userLogon','kc-js-sha1']
     }
     /**
      * utilities

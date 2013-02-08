@@ -7,7 +7,6 @@ namespace kc;
 require_once 'kc-config.php';
 header('Content-type: text/css');
 
-//laydown base
 include 'base.css';
 
 //apply device
@@ -46,4 +45,3 @@ foreach ($_GET as $k => $v) {
         }
     }
 }
-

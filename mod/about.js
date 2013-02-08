@@ -126,8 +126,8 @@ YUI.add('kc-mod-about',function(Y){
                 h.saveMyDetails.on('click',io.update.usr);
                 h.requestMembership.on('click',function(){KC.my.tabView.selectChild(cfg.main.tv.grp.get('index'));});
             //custom
-                Y.on('kc:logout',trigger.logOut);
-                Y.on('kc:logon' ,trigger.logIn);
+                Y.on('kc:logout',trigger.setConnectionState);
+                Y.on('kc:logon' ,trigger.setConnectionState);
                 Y.on('db-grp:available',populate.usr);
                 Y.on('db-usr:available',populate.usr);
         };
@@ -286,14 +286,16 @@ YUI.add('kc-mod-about',function(Y){
             reset:function(){
                 if(h.grid.grpUsrDataTable){h.grid.grpUsrDataTable.set('data',[]);}
             }
-           ,logIn:function(){
-                h.isLoggedOut.hide();
-                h.isLoggedIn.show();
-                io.fetch.usr();
-            }
-           ,logOut:function(){
+           ,setConnectionState:function(){
+                //logged in
                 h.isLoggedIn.hide();
-                h.isLoggedOut.show();
+                h.isLoggedOut.hide();
+                if(typeof KC.user.usr!=='undefined'){
+                    h.isLoggedIn.show();
+                    io.fetch.usr();
+                }else{
+                    h.isLoggedOut.show();
+                }
             }
         };
         /**
@@ -306,10 +308,7 @@ YUI.add('kc-mod-about',function(Y){
             initialise();
             listeners();
 
-            //logged in
-            typeof KC.user.usr!=='undefined'
-                ?trigger.logIn()
-                :trigger.logOut();
+            trigger.setConnectionState();
 
         });
     };

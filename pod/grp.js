@@ -1,11 +1,11 @@
-/** /pod/grpEdit.js
+/** /pod/grp.js
  *
  *  Kauri Coast Promotion Society
  *
  */
-YUI.add('kc-pod-grpEdit',function(Y){
+YUI.add('kc-pod-grp',function(Y){
 
-    Y.namespace('KC.pod').grpEdit=function(cfg){
+    Y.namespace('KC.pod').grp=function(cfg){
 
         if(typeof cfg==='undefined'
         ){cfg={};}
@@ -36,12 +36,8 @@ YUI.add('kc-pod-grpEdit',function(Y){
                     grpInfoCategories:['Vision','Purpose','Strategy','Scope','Location','Mission','Meetings','History','Plan']
                 }
                ,pod:{}
-               ,rs:{}
             }
-           ,h={
-                grid:{}
-               ,rec:{}
-            }
+           ,h={}
             //functions
            ,initialise
            ,io={}
@@ -49,16 +45,16 @@ YUI.add('kc-pod-grpEdit',function(Y){
            ,pod={}
            ,populate={}
            ,render={}
+           ,sync={}
            ,trigger={}
         ;
 
         this.display=function(p){
             d.pod=Y.merge(d.pod,p);
-            if(typeof h.mask==='undefined'){
-                h.mask=Y.KC.widget.dialogMask.mask(h.ol.get('zIndex'));
-                h.ol.show();
-            }
-            io.fetch.grp();
+            Y.KC.widget.dialogMask.mask(h.ol.get('zIndex'));
+            h.ol.show();
+debugger;
+            KC.db.grp.fetch();
         };
 
         this.get=function(what){
@@ -78,33 +74,25 @@ YUI.add('kc-pod-grpEdit',function(Y){
         initialise=function(){
             h.bb.addClass('kc-pod-'+self.info.id);
             new Y.DD.Drag({node:h.bb,handles:[h.hd,h.ft]});
-            //tag collections
-                d.list.socialAll=[];
-                d.list.businessAll=[];
-                Y.each(KC.data.tgCollectionTag,function(tgCollectionTag){
-                    if(tgCollectionTag.collection===d.TG_COLLECTION_TEAM_SOCIAL){
-                        d.list.socialAll.push({
-                            id  :tgCollectionTag.tag
-                           ,name:KC.data.tgTag[tgCollectionTag.tag].name
-                        });
-                    }
-                    if(tgCollectionTag.collection===d.TG_COLLECTION_TEAM_BUSINESS){
-                        d.list.businessAll.push({
-                            id  :tgCollectionTag.tag
-                           ,name:KC.data.tgTag[tgCollectionTag.tag].name
-                        });
-                    }
-                });
+            sync.all();
         };
 
         io={
-            fetch:{
+            insert:{
                 grp:function(){
-                    Y.io('/db/table/grp/s.php',{
-                        method:'POST'
-                       ,on:{complete:function(id,o){Y.fire('db-grp:available',Y.JSON.parse(o.responseText)[0].result);}}
-                       ,data:Y.JSON.stringify([{criteria:{grpIds:[]}}])
-                    });
+                    var newGroupName=prompt('New group name'),
+                        post
+                    ;
+                    if(newGroupName===null||newGroupName===''){return;}
+                    post=[{
+                        action:'admin',
+                        data:{
+                            name         :newGroupName,
+                            contactDetail:h.bd.one('>.kc-record-grp .kc-data-contactDetail').get('value'),
+                            usr          :KC.user.usr.id
+                        }
+                    }];
+                    KC.db.grp('i',post);
                 }
             }
            ,update:{
@@ -154,11 +142,7 @@ YUI.add('kc-pod-grpEdit',function(Y){
                             });
                         post.push({criteria:{grp:[grp]}});
                     });
-                    Y.io('/db/table/grp/u.php',{
-                        method:'POST'
-                       ,on:{complete:io.fetch.grp}
-                       ,data:Y.JSON.stringify(post)
-                    });
+                    KC.db.grp('u',post);
                 }
                ,grpUsr:function(e){
 return; //>>>>FINISH
@@ -166,7 +150,7 @@ return; //>>>>FINISH
                     ;
                     Y.io('/db/table/grpUsr/u.php',{
                         method:'POST'
-                       ,on:{complete:io.fetch.grp}
+                       ,on:{complete:KC.db.grp}
                        ,data:Y.JSON.stringify([{data:{
                             grp         :rec.grp
                            ,usr         :rec.usr
@@ -182,25 +166,17 @@ return; //>>>>FINISH
         };
 
         listeners=function(){
-            h.add.on('click',render.grp);
+            h.addGrp.on('click',io.insert.grp);
             h.close.on('click',trigger.close);
-            //group info
-                h.bd.delegate('change',function(){
-                    this.ancestor('.kc-record-grp').all('>div').setStyle('display',this.get('checked')?'none':'');
-                },'.kc-record-grp > legend .kc-remove');
-                h.bd.delegate('click',function(){this.ancestor('.kc-record').remove();},'a.kc-remove-grp');
-            //group info
-                h.bd.delegate('click',trigger.grpInfoRecordFocus,'.kc-grpInfo-list > li > em,.kc-grpInfo-list > li > input');
-                h.bd.delegate('click',function(e){
-                    var rec=this.ancestor('.kc-record');
-                    rec.getData('relatedNode').remove();
-                    rec.remove();
-                },'.kc-remove-grpInfo');
-                h.bd.delegate('change',trigger.grpInfoSelectOption,'.kc-grpInfo-options > select');
-            h.bd.delegate('click',pod.display.editor,'.kc-editor');
+            h.bd.delegate('change',function(){
+                this.ancestor('.kc-record-grp').all('>div').setStyle('display',this.get('checked')?'none':'');
+            },'.kc-record-grp > legend .kc-remove');
+            h.bd.delegate('click',function(){this.ancestor('.kc-record').remove();},'a.kc-remove-grp');
             h.ft.one('.kc-save').on('click',function(){io.update.grp();io.update.grpUsr();});
             //custom
-                Y.on('db-grp:available',populate.grp);
+                Y.on('kc-db-info:s',populate.grp);
+                Y.on('kc-db-grp:s' ,populate.grp);
+                Y.on('kc-db-grp:i' ,sync.grp.insert);
         };
 
         pod={
@@ -210,18 +186,27 @@ return; //>>>>FINISH
                     if(!self.my.podEditor){pod.load.editor();return false;}
                     self.my.podEditor.display(e);
                 }
+               ,grpNew:function(e){
+                    h.podInvoke=this;
+                    if(!self.my.podGrpNew){pod.load.grpNew();return false;}
+                    self.my.podGrpNew.display(e);
+                }
                ,info:function(e){
                     h.podInvoke=this;
                     if(!self.my.podInfo){pod.load.info();return false;}
-                    self.my.podInfo.display(e);
+                    if(this.hasClass('kc-no-info')){
+                        self.my.podInfo.display({
+                            dbTable:KC.data.dbTable.grp.id
+                           ,pk     :this.ancestor('.kc-record-grp').getData('data')
+                        });
+                    }else{
+                        self.my.podInfo.display(
+                            this.ancestor('.kc-record-grp').getData('handle').grpInfoDataTable.getRecord(e.currentTarget.get('id')).toJSON()
+                        );
+                    }
                 }
                ,report:function(e){
-                    var grp
-                       ,body=''
-                       ,head=''
-                       ,tags=[]
-                       ,users=[]
-                       ,x
+                    var body='test FINISH'
                     ;
                     //sentry
                         if(e.target.get('tagName')==='BUTTON'){return;}
@@ -230,7 +215,6 @@ return; //>>>>FINISH
                         pod.load.report({});
                         return false;
                     }
-                    var body='test';
                     self.my.podReport.display({
                         html   :'<html><head><title>Users name</title></head><body>'+body+'</body></html>'
                        ,subject:'report'
@@ -250,11 +234,25 @@ return; //>>>>FINISH
                         Y.on(self.my.podEditor.customEvent.save,function(rs){h.podInvoke.setContent(rs);});
                     });
                 }
+               ,grpNew:function(){
+                    Y.use('kc-pod-grpNew',function(Y){
+                        self.my.podGrpNew=new Y.KC.pod.info({});
+                        Y.KC.whenAvailable.inDOM(self,'my.podGrpNew',function(){
+                            self.my.podGrpNew.set('zIndex',cfg.zIndex+10);
+                            h.podInvoke.simulate('click');
+                        });
+                        Y.on(self.my.podGrpNew.customEvent.save,function(rs){h.podInvoke.setContent(rs);});
+                    });
+                }
                ,info:function(){
                     Y.use('kc-pod-info',function(Y){
                         self.my.podInfo=new Y.KC.pod.info({});
                         Y.KC.whenAvailable.inDOM(self,'my.podInfo',function(){
                             self.my.podInfo.set('zIndex',cfg.zIndex+10);
+                            self.my.podInfo.set('cfg',{
+                                addUserDefinedCategory:true
+                               ,predefinedCategories  :d.list.grpInfoCategories
+                            });
                             h.podInvoke.simulate('click');
                         });
                         Y.on(self.my.podInfo.customEvent.save,function(rs){h.podInvoke.setContent(rs);});
@@ -274,52 +272,55 @@ return; //>>>>FINISH
                 var btnRemove
                    ,grpInfoCategories=[]
                    ,grpInfoExistingCategories=[]
-                   ,grpUsrRecords=[]
+                   ,recs={
+                        grpInfo:[]
+                       ,grpUsr :[]
+                    }
                    ,handle={}
                    ,list={}
-                   ,nn
+                   ,nn={}
                    ,optGroup
                    ,tv={}
                    ,grpInfoNav,grpInfoList
                 ;
-                d.rs=Y.merge(d.rs,rs);
+                KC.rs=Y.merge(KC.rs,rs[0].result);
                 h.bd.setContent('');
-                Y.each(d.rs.grp.data,function(grp){ //only 1 grp passed at this time
+                Y.each(KC.rs.grp.data,function(grp){ //only 1 grp passed at this time
 
                     if(Y.Array.indexOf(d.pod.grpIds,grp.id)===-1){return;}
 
-                    nn=render.grp();
+                    nn.grp=render.grp();
                     //local shortcuts
-                        tv.base  =nn.getData('tv');
-                        tv.grp   =tv.base.item(0).get('panelNode');
+                        tv.base  =nn.grp.getData('tv');
+                        tv.info  =tv.base.item(0).get('panelNode');
                         tv.grpUsr=tv.base.item(1).get('panelNode');
                         tv.events=tv.base.item(2).get('panelNode');
-                        handle.tvGrp   =tv.grp;
+                        handle.tvGrp   =tv.info;
                         handle.tvGrpUsr=tv.grpUsr;
                         handle.tvEvents=tv.events;
 
-                    Y.KC.removeOption(nn.one('legend'));
-                    nn.one('.kc-association').remove();
+                    Y.KC.removeOption(nn.grp.one('legend'));
+                    nn.grp.one('.kc-association').remove();
 
                     //enable/disable if member/admin
-                        nn.all('.kc-enable').set('disabled',true);
-                        h.add.hide();
-                        Y.each(d.rs.grpUsr.data,function(grpUsr){
+                        nn.grp.all('.kc-enable').set('disabled',true);
+                        h.addGrp.hide();
+                        Y.each(KC.rs.grpUsr.data,function(grpUsr){
                             if(grpUsr.usr!==KC.user.usr.id){return;}
-                            nn.all('.kc-enable-member').set('disabled',false);
+                            nn.grp.all('.kc-enable-member').set('disabled',false);
                             if(grpUsr.admin!==null){
-                                nn.all('.kc-enable-admin').set('disabled',false);
-                                h.add.show();
+                                nn.grp.all('.kc-enable-admin').set('disabled',false);
+                                h.addGrp.show();
                             }
                         });
                     //group
-                        nn.one('.kc-data-name'         ).set('value',grp.name);
-                        nn.one('.kc-data-created'      ).setContent('created:'+Y.DataType.Date.format(new Date(grp.created*1000),{format:'%d %B %G'}));
-                        nn.one('.kc-data-contactDetail').set('value',grp.contactDetail);
+                        nn.grp.one('.kc-data-name'         ).set('value',grp.name);
+                        nn.grp.one('.kc-data-created'      ).setContent('created:'+Y.DataType.Date.format(new Date(grp.created*1000),{format:'%d %B %G'}));
+                        nn.grp.one('.kc-data-contactDetail').set('value',grp.contactDetail);
                     //tags
                         list.social  =[];
                         list.business=[];
-                        Y.each(d.rs.grpTags.data,function(grpTag){
+                        Y.each(KC.rs.grpTags.data,function(grpTag){
                             if(grpTag.pk!==grp.id){return;}
                             if(grpTag.collection===d.TG_COLLECTION_TEAM_SOCIAL  ){list.social.push(grpTag.tag);}
                             if(grpTag.collection===d.TG_COLLECTION_TEAM_BUSINESS){list.business.push(grpTag.tag);}
@@ -328,49 +329,16 @@ return; //>>>>FINISH
                             elements:d.list.socialAll
                            ,selected:list.social
                            ,selectorPrompt:'+social tags'
-                        }).render(nn.one('.kc-tags-social'));
+                        }).render(nn.grp.one('.kc-tags-social'));
                         handle.businessTags=new Y.KC.widget.List({
                             elements:d.list.businessAll
                            ,selected:list.business
                            ,selectorPrompt:'+business tags'
-                        }).render(nn.one('.kc-tags-business'));
+                        }).render(nn.grp.one('.kc-tags-business'));
                     //group info
-                        grpInfoCategories=tv.grp.one('.kc-grpInfo-options > select');
-                        grpInfoList=tv.grp.one('.kc-grpInfo-list');
-                        Y.each(d.rs.grpInfo.data,function(grpInfo,idx){
-                            if(grpInfo.grp!==grp.id){return;}
-                            var nns=render.grpInfo({node:tv.grp})
-                            ;
-                            Y.KC.removeOption(nns.content.one('legend'));
-                            nns.list   .one('.kc-data-category').set('value',grpInfo.category);
-                            nns.content.one('legend > em'      ).setContent(grpInfo.category);
-                            nns.content.one('.kc-data-viewable').set('value',grpInfo.viewable);
-                            nns.content.one('.kc-data-info'    ).setContent(grpInfo.info);
-                            nns.list   .setData('data',grpInfo);
-                            nns.content.setData('data',grpInfo);
-                        });
-                        //sortable
-                            handle.grpInfoCategoriesList=new Y.Sortable({
-                                container:grpInfoList
-                               ,nodes    :'li'
-                               ,opacity  :'.1'
-                            });
-                        //available categories
-                            grpInfoExistingCategories=[];
-                            Y.each(d.rs.grpInfo.data,function(grpInfo){
-                                if(grpInfo.grp===grp.id){grpInfoExistingCategories.push(grpInfo.category);}
-                            });
-                            optGroup=Y.Node.create('<optgroup label="Predefined"></optgroup>');
-                            grpInfoCategories.append(optGroup);
-                            Y.each(d.list.grpInfoCategories,function(category){
-                                if(Y.Array.indexOf(grpInfoExistingCategories,category)===-1){
-                                    optGroup.append('<option>'+category+'</option>');
-                                }
-                            });
-                        //default select
-                            grpInfoList.one('input').simulate('click');
+                        sync.info(nn,tv,grp,handle);
                     //members
-                        Y.each(d.rs.grpUsr.data,function(grpUsr){
+                        Y.each(KC.rs.grpUsr.data,function(grpUsr){
                             grpUsr.grpId=grpUsr.id;
                             grpUsr.adminDate=grpUsr.admin===0
                                 ?''
@@ -380,7 +348,7 @@ return; //>>>>FINISH
                                     +(Y.DataType.Date.format(new Date(grpUsr.joinRequest*1000),{format:'%d %b %G'}))
                                     +': '+grpUsr.joinReason+'">approve</button>'
                                 :Y.DataType.Date.format(new Date(grpUsr.member*1000),{format:'%d %b %G'});
-                            grpUsrRecords.push(Y.merge(grpUsr,d.rs.usr.data[grpUsr.usr]));
+                            recs.grpUsr.push(Y.merge(grpUsr,KC.rs.usr.data[grpUsr.usr]));
                         });
                         //grid
                             handle.grpUsrDataTable=new Y.DataTable({
@@ -392,22 +360,22 @@ return; //>>>>FINISH
                                    ,{key:'memberOption',label:'member'   ,sortable:true ,allowHTML:true}
                                    ,{                   label:'interests'}
                                 ]
-                            ,data:grpUsrRecords
+                            ,data:recs.grpUsr
                             }).render(tv.grpUsr);
-                    //listeners
-                        handle.grpUsrDataTable.get('contentBox').delegate('click',function(e){
-                            //sentry
-                                if(e.target.hasClass('kc-approve-pending')){return;}
-                            var rec=handle.grpUsrDataTable.getRecord(e.currentTarget.get('id')).toJSON()
-                            ;
-                            //>>>>FINISH display user
-                            debugger;
-                        },'tr');
-                        handle.grpUsrDataTable.get('contentBox').delegate('click',io.update.grpUsr,'.kc-approve-pending');
-                        handle.grpUsrDataTable.get('contentBox').delegate('click',pod.display.report,'tr');
+                            //listeners
+                                handle.grpUsrDataTable.get('contentBox').delegate('click',function(e){
+                                    //sentry
+                                        if(e.target.hasClass('kc-approve-pending')){return;}
+                                    var rec=handle.grpUsrDataTable.getRecord(e.currentTarget.get('id')).toJSON()
+                                    ;
+                                    //>>>>FINISH display user
+                                    debugger;
+                                },'tr');
+                                handle.grpUsrDataTable.get('contentBox').delegate('click',io.update.grpUsr,'.kc-approve-pending');
+                                handle.grpUsrDataTable.get('contentBox').delegate('click',pod.display.report,'tr');
                     //store
-                        nn.setData('data'  ,grp);
-                        nn.setData('handle',handle);
+                        nn.grp.setData('data'  ,grp);
+                        nn.grp.setData('handle',handle);
                 });
             }
         };
@@ -417,7 +385,7 @@ return; //>>>>FINISH
                 h.ol=new Y.Overlay({
                     headerContent:
                         '<span title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;KCPS">'+self.info.title+'</span> '
-                       +Y.KC.html('btn',{action:'add',label:'add category',title:'add information category'})
+                       +Y.KC.html('btn',{action:'add',label:'add new group',title:'add information category'})
                        +Y.KC.html('btn',{action:'close',title:'close pod'})
                    ,bodyContent:''
                    ,footerContent:Y.KC.html('btn',{action:'save',title:'save' ,label:'save'})
@@ -425,16 +393,16 @@ return; //>>>>FINISH
                    ,width  :cfg.width
                    ,xy     :cfg.xy
                    ,zIndex :cfg.zIndex
-                }).render();
+                }).plug(Y.Plugin.Resize).render();
                 //shortcuts
                     h.hd     =h.ol.headerNode;
                     h.bd     =h.ol.bodyNode;
                     h.ft     =h.ol.footerNode;
                     h.bb     =h.ol.get('boundingBox');
-                    h.add    =h.hd.one('.kc-add');
+                    h.addGrp =h.hd.one('.kc-add');
                     h.close  =h.hd.one('.kc-close');
             }
-           ,info:function(){
+           ,grp:function(){
                 var nn=Y.Node.create(
                     '<fieldset class="kc-record kc-record-grp">'
                    +  '<legend>'
@@ -454,49 +422,13 @@ return; //>>>>FINISH
                 );
                 h.bd.append(nn);
                 nn.setData('tv',new Y.TabView({
-                        children:[
-                            {label:'about',content:
-                                '<div class="kc-grpInfo-options">'
-                               +  '<select>'
-                               +    '<option>new category...</option>'
-                               +    '<option>define your own...</option>'
-                               +  '</select>'
-                               +  '<em style="font-size:0.6em;color:#999;">drag to reorder, click to select</em>'
-                               +  '<ul class="kc-grpInfo-list"></ul>'
-                               +'</div>'
-                               +'<div class="kc-grpInfo-content"></div>'
-                            }
-                        ,{label:'members',content:''}
-                        ,{label:'events' ,content:'loading...'}
-                        ]
-                    }).render(nn)
-                );
+                    children:[
+                        {label:'about'  ,content:''}
+                       ,{label:'members',content:''}
+                       ,{label:'events' ,content:''}
+                    ]
+                }).render(nn));
                 return nn;
-            }
-           ,grpInfo:function(p){
-                var nnList=Y.Node.create(
-                        '<li class="kc-record kc-btn kc-vert">'
-                       +  '<em></em><input class="kc-data-category" title="category name" />'
-                       +'</li>'
-                    )
-                   ,nnContent=Y.Node.create(
-                        '<fieldset class="kc-record">'
-                       +  '<legend><em title="original category name"></em> '
-                       +    '<select class="kc-data-viewable">'
-                       +      '<option value="0">Public view</option>'
-                       +      '<option value="1">Group member view</option>'
-                       +    '</select>'
-                       +    Y.KC.html('btn',{action:'remove',classes:'kc-remove-grpInfo'})
-                       +  '</legend>'
-                       +  '<span class="kc-data-info kc-editor">description goes here</span>'
-                       +'</fieldset>'
-                    )
-                ;
-                p.node.one('.kc-grpInfo-list'   ).append(nnList);
-                p.node.one('.kc-grpInfo-content').append(nnContent);
-                nnList   .setData('relatedNode',nnContent);
-                nnContent.setData('relatedNode',nnList);
-                return {list:nnList,content:nnContent};
             }
            ,grpUsr:function(p){
                 var nn=Y.Node.create(
@@ -515,10 +447,63 @@ return; //>>>>FINISH
             }
         };
 
+        sync={
+            all:function(){
+                sync.tags();
+            }
+           ,grp:{
+                insert:function(rs){
+                    debugger;
+                }
+            }
+           ,info:function(nn,tv,grp,handle){
+                var data=[]
+                ;
+                if(typeof KC.rs.grpInfo.data==='undefined' || KC.rs.grpInfo.data.length===0){
+                    nn.info=Y.Node.create(Y.KC.html('btn',{action:'add',label:'add information category',classes:'kc-no-info'}));
+                    tv.info.append(nn.info);
+                    nn.info.on('click',pod.display.info);
+                }else{
+                    Y.each(KC.rs.grpInfo.data,function(grpInfo){
+                        if(grpInfo.pk===grp.id){data.push(grpInfo);}
+                    });
+                    //grid
+                        handle.grpInfoDataTable=new Y.DataTable({
+                            columns:[
+                                {key:'category'    ,sortable:true}
+                               ,{key:'displayOrder',sortable:true,label:'seq'}
+                               ,{key:'viewable'    ,sortable:true,label:'view',formatter:function(x){return x.value==='P'?'Public':'Group';}}
+                               ,{key:'detail'      ,sortable:true,allowHTML:true}
+                            ]
+                           ,data:data
+                        }).render(tv.info);
+                        //listeners
+                            handle.grpInfoDataTable.get('contentBox').delegate('click',pod.display.info,'tr');
+                }
+            }
+           ,tags:function(){
+                d.list.socialAll=[];
+                d.list.businessAll=[];
+                Y.each(KC.data.tgCollectionTag,function(tgCollectionTag){
+                    if(tgCollectionTag.collection===d.TG_COLLECTION_TEAM_SOCIAL){
+                        d.list.socialAll.push({
+                            id  :tgCollectionTag.tag
+                           ,name:KC.data.tgTag[tgCollectionTag.tag].name
+                        });
+                    }
+                    if(tgCollectionTag.collection===d.TG_COLLECTION_TEAM_BUSINESS){
+                        d.list.businessAll.push({
+                            id  :tgCollectionTag.tag
+                           ,name:KC.data.tgTag[tgCollectionTag.tag].name
+                        });
+                    }
+                });
+            }
+        };
+
         trigger={
             close:function(){
                 h.ol.hide();
-                delete h.mask;
                 Y.KC.widget.dialogMask.hide();
             }
            ,grpInfoRecordFocus:function(e){

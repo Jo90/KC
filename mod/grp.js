@@ -90,16 +90,7 @@ YUI.add('kc-mod-grp',function(Y){
         };
 
         io={
-            fetch:{
-                grp:function(){
-                    Y.io('/db/table/grp/s.php',{
-                        method:'POST'
-                       ,on:{complete:function(id,o){Y.fire('db-grp:available',Y.JSON.parse(o.responseText)[0].result);}}
-                       ,data:Y.JSON.stringify([{criteria:{grpIds:[]}}]) //all groups
-                    });
-                }
-            }
-           ,set:{
+            set:{
                 grpUsr:function(e){
                     var post={}
                        ,grp
@@ -122,7 +113,7 @@ YUI.add('kc-mod-grp',function(Y){
                     }
                     Y.io('/db/table/grpUsr/u.php',{
                         method:'POST'
-                       ,on:{complete:io.fetch.grp}
+                       ,on:{complete:KC.db.grp}
                        ,data:Y.JSON.stringify([post])
                     });
                 }
@@ -144,20 +135,20 @@ YUI.add('kc-mod-grp',function(Y){
             h.list.social  .on('selectedChange',populate.grp)
             h.list.business.on('selectedChange',populate.grp)
             //custom
-                Y.on('kc:logout'       ,trigger.loggedOut);
-                Y.on('kc:logon'        ,io.fetch.grp);
-                Y.on('db-grp:available',populate.grp);
+                Y.on('kc:logout'  ,trigger.loggedOut);
+                Y.on('kc:logon'   ,KC.db.grp);
+                Y.on('kc-db-grp:s',populate.grp);
         };
 
         pod={
             display:{
-                grpEdit:function(e){
+                grp:function(e){
                     h.podInvoke=e.currentTarget;
-                    if(!self.my.podGrpEdit){
-                        pod.load.grpEdit();
+                    if(!self.my.podGrp){
+                        pod.load.grp();
                         return false;
                     }
-                    self.my.podGrpEdit.display({grpIds:[parseInt(this.get('value'),10)]});
+                    self.my.podGrp.display({grpIds:[parseInt(this.get('value'),10)]});
                 }
                ,report:function(e){
                     var grp
@@ -216,10 +207,10 @@ YUI.add('kc-mod-grp',function(Y){
                 }
             }
            ,load:{
-                grpEdit:function(){
-                    Y.use('kc-pod-grpEdit',function(Y){
-                        self.my.podGrpEdit=new Y.KC.pod.grpEdit();
-                        Y.KC.whenAvailable.inDOM(self,'my.podGrpEdit',function(){h.podInvoke.simulate('click');});
+                grp:function(){
+                    Y.use('kc-pod-grp',function(Y){
+                        self.my.podGrp=new Y.KC.pod.grp();
+                        Y.KC.whenAvailable.inDOM(self,'my.podGrp',function(){h.podInvoke.simulate('click');});
                     });
                 }
                ,report:function(){
@@ -234,7 +225,7 @@ YUI.add('kc-mod-grp',function(Y){
 
         populate={
             grp:function(rs){
-                KC.rs=Y.merge(KC.rs,rs);
+                KC.rs=Y.merge(KC.rs,rs[0].result);
                 var records=[]
                    ,grpName=h.grpName.get('value')
                    ,filterChecked=h.caseSensitive.get('checked')
@@ -354,7 +345,7 @@ YUI.add('kc-mod-grp',function(Y){
                     //listeners
                         h.grpDataTable.get('contentBox').delegate('click',pod.display.report,'tr');
                         h.grpDataTable.get('contentBox').delegate('click',io.set.grpUsr,'button');
-                        h.grpDataTable.get('contentBox').delegate('click',pod.display.grpEdit,'button.kc-user-admin');
+                        h.grpDataTable.get('contentBox').delegate('click',pod.display.grp,'button.kc-user-admin');
                 }
                 h.grpDataTable.sort('name');
             }
@@ -373,6 +364,7 @@ YUI.add('kc-mod-grp',function(Y){
                    +  '<div class="kc-tags-business"></div>'
                    +'</div>'
                    +'<div class="kc-grid"></div>'
+                   +'<div class="kc-test"></div>'
                 );
                 //shortcuts
                     h.grpName      =cfg.node.one('.kc-data-grpName');
@@ -382,6 +374,47 @@ YUI.add('kc-mod-grp',function(Y){
                     h.tagsSocial   =h.filtersbb.one('.kc-tags-social');
                     h.tagsBusiness =h.filtersbb.one('.kc-tags-business');
                     h.grid         =cfg.node.one('.kc-grid');
+
+
+
+
+
+
+                //
+                //  Create the DataTable and feed it the ModelList (initially empty)
+                //
+                    KC.my.grpDT=new Y.DataTable({
+                            data   :KC.my.grpML,
+                            columns:[
+                                {key:'id'           },
+                                {key:'name'         ,label:'Group name'},
+                                {key:'created'      ,label:'created'},
+                                {key:'contactDetail',label:'details'},
+                            ],
+                            scrollable:'y',
+                            height    :'240px',
+                            sortable  :true
+                        }).render(cfg.node.one('.kc-test'));
+
+
+                // Fire off the DataTable's ModelList load method (i.e. "sync:read")
+                    KC.my.grpDT.data.load();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    
             }
         };
 
@@ -389,7 +422,7 @@ YUI.add('kc-mod-grp',function(Y){
             loggedOut:function(){
                 //clear result set
                 if(typeof KC.rs.grpUsr!=='undefined'){delete KC.rs.grpUsr;}
-                io.fetch.grp();
+                KC.db.grp();
             }
         };
         /**
@@ -403,7 +436,7 @@ YUI.add('kc-mod-grp',function(Y){
             initialise();
             listeners();
 
-            io.fetch.grp();
+            KC.db.grp();
 
         });
     };

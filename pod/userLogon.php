@@ -19,28 +19,16 @@ YUI.add('kc-pod-userLogon',function(Y){
 
         cfg=Y.merge({
             title :'user login'
-           ,zIndex:99999
+           ,zIndex:9999999
         },cfg);
 
-        this.info={
-            id         :'pod-userLogon'
-           ,title      :cfg.title
-           ,description:'user logon system'
-           ,version    :'v1.0 August 2012'
-        };
-
-        var self=this
-           ,d={
+        var d={
                 COOKIE:{
                     REMEMBER:'<?php echo KC_USERLOGON_REMEMBER; ?>'
                    ,USERNAME:'userLogon-username'
                 }
-               ,emailReg:/^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/
             }
-           ,h={
-                currentOverlay:''
-            }
-            //functions
+           ,h={}
            ,initialise
            ,io={}
            ,listeners
@@ -53,7 +41,7 @@ YUI.add('kc-pod-userLogon',function(Y){
          */
 
         initialise=function(){
-            cfg.node.addClass('kc-'+self.info.id);
+            cfg.node.addClass('kc-userLogon');
             new Y.DD.Drag({node:h.bb,handles:[h.hd]});
         };
 
@@ -66,6 +54,15 @@ YUI.add('kc-pod-userLogon',function(Y){
 
                 //>>>>FINISH
 
+            }
+           ,heartbeat:function(){
+                Y.io('/inc/heartbeat.php',{
+                    method:'POST'
+                   ,on:{complete:function(){
+                        //some status i.e. connected users
+                    }}
+                   ,data:'whats up'
+                });
             }
            ,logout:function(){
                 Y.io('/inc/userLogon.php',{
@@ -84,41 +81,39 @@ YUI.add('kc-pod-userLogon',function(Y){
             h.usLogon .on('click',trigger.choice.logon);
             h.usLogout.on('click',io.logout);
             h.usForgot.on('click',io.forgot);
-            //overlay body
-                //validations
-                    //forgot
-                        h.forgot.who.on('keyup',function(){
-                            h.submit.set('disabled',h.forgot.who.get('value')==='');
-                        });
-                    //logon
-                        h.bd.delegate('keyup',function(){
-                            h.submit.set('disabled',
-                                (h.logon.username.get('value')==='' || h.logon.password.get('value')==='')
-                            );
-                        },'.kc-logon .kc-data-username,.kc-logon .kc-data-password');
+            //overlay body validations
+                //forgot
+                    h.forgot.who.on('keyup',function(){
+                        h.submit.set('disabled',h.forgot.who.get('value')==='');
+                    });
+                //logon
+                    h.bd.delegate('keyup',function(){
+                        h.submit.set('disabled',
+                            (h.logon.username.get('value')==='' || h.logon.password.get('value')==='')
+                        );
+                    },'.kc-logon .kc-data-username,.kc-logon .kc-data-password');
+                //username
+                    h.bd.delegate('blur',function(){
+                        var nextMonth=new Date();
+                        nextMonth.setMonth(nextMonth.getMonth()+1);
+                        if(h.logon.remember.get('checked')){
+                            Y.Cookie.set(d.COOKIE.USERNAME,h.logon.username.get('value'),{path:'/',expires:nextMonth});
+                        }else{
+                            Y.Cookie.remove(d.COOKIE.USERNAME);
+                        }
+                    },'.kc-logon .kc-data-username');
                 //remember
-                    //username
-                        h.bd.delegate('blur',function(){
-                            var nextMonth=new Date();
-                            nextMonth.setMonth(nextMonth.getMonth()+1);
-                            if(h.logon.remember.get('checked')){
-                                Y.Cookie.set(d.COOKIE.USERNAME,h.logon.username.get('value'),{path:'/',expires:nextMonth});
-                            }else{
-                                Y.Cookie.remove(d.COOKIE.USERNAME);
-                            }
-                        },'.kc-logon .kc-data-username');
-                    //remember
-                        h.bd.delegate('click',function(){
-                            var nextMonth=new Date();
-                            nextMonth.setMonth(nextMonth.getMonth()+1);
-                            if(this.get('checked')){
-                                Y.Cookie.set(d.COOKIE.REMEMBER,'y',{path:'/',expires:nextMonth});
-                                Y.Cookie.set(d.COOKIE.USERNAME,h.logon.username.get('value'),{path:'/',expires:nextMonth});
-                            }else{
-                                Y.Cookie.remove(d.COOKIE.REMEMBER);
-                                Y.Cookie.remove(d.COOKIE.USERNAME);
-                            }
-                        },'.kc-logon .kc-data-remember');
+                    h.bd.delegate('click',function(){
+                        var nextMonth=new Date();
+                        nextMonth.setMonth(nextMonth.getMonth()+1);
+                        if(this.get('checked')){
+                            Y.Cookie.set(d.COOKIE.REMEMBER,'y',{path:'/',expires:nextMonth});
+                            Y.Cookie.set(d.COOKIE.USERNAME,h.logon.username.get('value'),{path:'/',expires:nextMonth});
+                        }else{
+                            Y.Cookie.remove(d.COOKIE.REMEMBER);
+                            Y.Cookie.remove(d.COOKIE.USERNAME);
+                        }
+                    },'.kc-logon .kc-data-remember');
             h.submit.on('click',trigger.submit);
             //custom
                 Y.on('kc:logout',function(){
@@ -130,6 +125,7 @@ YUI.add('kc-pod-userLogon',function(Y){
                     if(cfg.nodeInfo){
                         cfg.nodeInfo.setContent('');
                     }
+                    clearInterval(h.heartbeat);
                 });
                 Y.on('kc:logon',function(){
                     h.ol.hide();
@@ -141,6 +137,7 @@ YUI.add('kc-pod-userLogon',function(Y){
                             ?KC.user.usr.firstName
                             :KC.user.usr.knownAs
                     );
+                    h.heartbeat=setInterval(io.heartbeat,300000); //5mins
                 });
         };
 
@@ -299,6 +296,7 @@ YUI.add('kc-pod-userLogon',function(Y){
         render.base();
         initialise();
         listeners();
+
         //if logged on
             if(typeof KC.user.usr!=='undefined'){Y.fire('kc:logon');}
 

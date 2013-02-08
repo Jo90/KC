@@ -3,7 +3,6 @@
  *
  * return user data as javascript
  *
- * calling script must ensure init.js.php has initialised KC.user
  */
 namespace kc;
 
@@ -25,5 +24,6 @@ if (!isset($_SESSION[KC_SALT])) {
         $randomStr .= substr($seed,rand(0,$seedLen),1);
     }
     $_SESSION[KC_SALT] = $randomStr;
-    echo 'KC.user.SALT="' , $_SESSION[KC_SALT] , '";' , PHP_EOL;
+    echo 'if(!KC.user){KC.user={};}' ,
+         'KC.user.SALT="' , $_SESSION[KC_SALT] , '";' , PHP_EOL;
 }

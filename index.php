@@ -5,18 +5,19 @@
  *
  */
 namespace kc;
+//ini_set("include_path","inc");
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Kauri Coast Promotion Society - Information Hub</title>
-<meta name="description" content="Kauri Coast Promotion Society - Information Hub" />
-<meta name="keywords" content="Kauri Coast Promotion Society - Information Hub" />
-<meta name="author" content="Joseph Douglas" />
+<title>Kauri Coast Promotion Society Inc. - Information Hub</title>
+<meta name="description" content="Kauri Coast Promotion Society Inc. - Information Hub" />
+<meta name="keywords" content="Kauri Coast Promotion Society Inc. - Information Hub" />
+<meta name="author" content="Joe, et al" />
 
 <?php echo YUI_CSS; ?>
-<link rel="stylesheet" type="text/css" href="/css/combine.css.php?kc_css">
+<link rel="stylesheet" type="text/css" href="css/combine.css.php?kc_css">
 <style type="text/css">
 html {height:100%}
 body {height:100%;margin:0;padding:0;}

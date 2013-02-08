@@ -241,47 +241,52 @@ function grp_setGrpUsr(&$criteria) {
         return $r;
     }
     //join request
-    if (isset($criteria->data->grp, $criteria->data->usr, $criteria->data->joinReason) && !isset($criteria->data->member, $criteria->data->admin, $criteria->data->joinRequest)) {
-        if ($stmt = $mysqli->prepare(
-            "insert into `grpUsr`
-                    (grp,usr,joinReason)
-            values (?,?,?)"
-        )) {
-            $stmt->bind_param('iis'
-               ,$criteria->data->grp
-               ,$criteria->data->usr
-               ,$criteria->data->joinReason
-            );
-            $r->successInsertRequest = $stmt->execute();
-            $r->rows = $mysqli->affected_rows;
-            $r->successInsertRequest
-                ?$criteria->data->id = $stmt->insert_id
-                :$r->errorInsertRequest = $mysqli->error;
-            $stmt->close();
-        }
+        if (isset($criteria->data->grp, $criteria->data->usr, $criteria->data->joinReason)
+            && !isset($criteria->data->member, $criteria->data->admin, $criteria->data->joinRequest)) {
+            if ($stmt = $mysqli->prepare(
+                "insert into `grpUsr`
+                        (grp,usr,joinReason)
+                 values (?,?,?)"
+            )) {
+                $stmt->bind_param('iis'
+                    ,$criteria->data->grp
+                    ,$criteria->data->usr
+                    ,$criteria->data->joinReason
+                );
+                $r->successInsertRequest = $stmt->execute();
+                $r->rows = $mysqli->affected_rows;
+                $r->successInsertRequest
+                    ?$criteria->data->id = $stmt->insert_id
+                    :$r->errorInsertRequest = $mysqli->error;
+                $stmt->close();
+            }
 
-    } else {
-        //>>>>FINISH specific member and admin cases
-        if ($stmt = $mysqli->prepare(
-            "insert into `grpUsr`
-                    (grp,usr,member,admin,joinRequest,joinReason)
-            values (?,?,?,?,?,?)"
-        )) {
-            $stmt->bind_param('iiiiis'
-               ,$criteria->data->grp
-               ,$criteria->data->usr
-               ,$criteria->data->member
-               ,$criteria->data->admin
-               ,$criteria->data->joinRequest
-               ,$criteria->data->joinReason
-            );
-            $r->successInsert = $stmt->execute();
-            $r->rows = $mysqli->affected_rows;
-            $r->successInsert
-                ?$criteria->data->id = $stmt->insert_id
-                :$r->errorInsert = $mysqli->error;
-            $stmt->close();
         }
-    }
+    //administrator
+        if (isset($criteria->data->grp, $criteria->data->usr, $criteria->data->member)) {
+            //>>>>FINISH specific member and admin cases
+            if ($stmt = $mysqli->prepare(
+                "insert into `grpUsr`
+                        (grp,usr,member,admin,joinRequest,joinReason,approved,approvedBy)
+                 values (?,?,?,?,?,?,?,?)"
+            )) {
+                $stmt->bind_param('iiiiisis'
+                    ,$criteria->data->grp
+                    ,$criteria->data->usr
+                    ,$criteria->data->member
+                    ,$criteria->data->admin
+                    ,$criteria->data->joinRequest
+                    ,$criteria->data->joinReason
+                    ,$criteria->data->approved
+                    ,$criteria->data->approvedBy
+                );
+                $r->successInsert = $stmt->execute();
+                $r->rows = $mysqli->affected_rows;
+                $r->successInsert
+                    ?$criteria->data->id = $stmt->insert_id
+                    :$r->errorInsert = $mysqli->error;
+                $stmt->close();
+            }
+        }
     return $r;
 }
