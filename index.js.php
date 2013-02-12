@@ -17,8 +17,6 @@ KC={
         fileserver:'<?php echo KC_FILESERVER; ?>',
         server    :'<?php echo KC_SERVER; ?>'
     },
-    model:{},           //models - data
-    modelList:{},       //model lists - dataSets
     my:{},              //instantiated objects
     rs:{},              //result sets
     std:{               //standards
@@ -41,7 +39,7 @@ if (defined('KC_ENV_DEVICE')) {echo 'KC.env.device="' , KC_ENV_DEVICE , '";' , P
 ?>
 <?php
 if (isset($_SESSION[KC_MEMBER])) {
-    require_once 'db/table/usr/common.php';
+    require_once 'db/usr/common.php';
     $criteria = new \stdClass;
     $criteria->usrIds = array($_SESSION[KC_MEMBER]);
     $r = usr_getUsr($criteria);
@@ -61,6 +59,11 @@ echo 'KC.user.SALT="' , $_SESSION[KC_SALT] , '";' , PHP_EOL;
 //debug YUI({filter:'raw',
 YUI({<?php require 'kc-modules.inc'; ?>}).use('kc-pod-userLogon',
     function(Y){
+
+        Y.on('error',function(type,msg){
+            //>>>>DO popup
+            alert(type+': '+msg+'!');
+        });
 
         Y.KC.dataSet.fetch(
             [
@@ -95,24 +98,37 @@ YUI({<?php require 'kc-modules.inc'; ?>}).use('kc-pod-userLogon',
                             {label:'map',content:'<div id="map_canvas" style="width:100%;"></div>'},
                             {label:'roadmap/milestones',content:
                                 '<center>'
-                               +'    <h1>Kauri Coast Communities</h1>'
-                               +'    <h3>Development Roadmap and Milestones</h3>'
+                               +    '<h1>Kauri Coast Communities</h1>'
+                               +    '<h3>Development Roadmap and Milestones</h3>'
                                +'</center>'
                                +'<div class="kc-topics">'
-                               +'    <p>This is a volunteer project, completely in the nature of this sites purpose.</p>'
-                               +'    <ul>'
-                               +'        <li><h1>2012</h1></li>'
-                               +'        <li><h2>September</h2></li>'
-                               +'        <li>Initial prototype for conceptual review by Kauri Coast Promotion Society Executive and interested parties.</li>'
-                               +'        <li>Prototype on to internet</li>'
-                               +'        <li><h2>October</h2></li>'
-                               +'        <li>Testing and Feature requests schedule</li>'
-                               +'        <li>Determine short and longer term objectives</li>'
-                               +'        <li>3 Month Plan</li>'
-                               +'        <li><h2>Ideas for Features</h2></li>'
-                               +'        <li>Map used to display project locations</li>'
-                               +'        <li>Filters for all options</li>'
-                               +'        <li>Special events include: projects, meetings ,fairs, etc</li>'
+                               +    '<p>This is a volunteer project, completely in the nature of this sites purpose.</p>'
+                               +    '<ul>'
+                               +        '<li>'
+                               +            '<h1>Ideas for Features</h1>'
+                               +            '<ul>'
+                               +                '<li>Map used to display project locations</li>'
+                               +                '<li>Filters for all options</li>'
+                               +                '<li>Special events include: projects, meetings ,fairs, etc</li>'
+                               +                '<li><button>add more (future)</button></li>'
+                               +            '</ul>'
+                               +        '</li>'
+                               +        '<li>'
+                               +            '<h1>Plan</h1>'
+                               +            '<h2>2012</h2>'
+                               +            '<ul>'
+                               +                '<li>Initial conceptual idea and thoughts by Kauri Coast Promotion Society Executive and interested parties.</li>'
+                               +                '<li>Obtain domain name and hosting.</li>'
+                               +                '<li>Setup developmental framework.</li>'
+                               +            '</ul>'
+                               +            '<h2>2013</h2>'
+                               +            '<ul>'
+                               +                '<li>Long break due to other commitments.</li>'
+                               +                '<li>February</li>'
+                               +                '<li>Prototype on to internet</li>'
+                               +                '<li>Testing and Feature requests schedule</li>'
+                               +            '</ul>'
+                               +        '</li>'
                                +'        <li><h2>Concept Development</h2></li>'
                                +'        <li>How to group associated events/groups/projects/etc?</li>'
                                +'    </ul>'

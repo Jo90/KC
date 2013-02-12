@@ -92,13 +92,13 @@ if ($_SERVER['SERVER_ADMIN'] == 'joe@dargaville.net') {
     DB_Connection::set(
         array(
             'id'          => 'db2',
-            'host'        => '127.0.0.1:3306',
-            'user'        => 'root',
-            'password'    => 'joe123',
+            'host'        => 'p50mysql461.secureserver.net',
+            'user'        => 'kcih',
+            'password'    => 'vo1unTeer#',
             'db'          => KC_SERVER,
-            'name'        => 'MySQL version ???', //>>>>>FINISH
+            'name'        => 'MySQL version 5.0', //>>>>>FINISH
             'type'        => 'MySQL',
-            'version'     => '5*',
+            'version'     => '5.0',
             'description' => 'Kauri Coast Promotion Society',
         )
     );

@@ -23,38 +23,6 @@ function dataSets($arr, $echo=false) {
         $rs->grp = fetch_info($stmt);
         $stmt->close();
     }
-    /**
-     *  tags
-     */
-    if (in_array('tgTag',$arr) && $stmt = $mysqli->prepare("select * from `tgTag` order by name")) {
-        $stmt->execute();
-        $rs->tgTag = fetch_info($stmt);
-        $stmt->close();
-    }
-    /**
-     *  tag collection
-     */
-    if (in_array('tgCollection',$arr) && $stmt = $mysqli->prepare("select * from `tgCollection` order by name")) {
-        $stmt->execute();
-        $rs->tgCollection = fetch_info($stmt);
-        $stmt->close();
-    }
-    /**
-     *  tag collection tag
-     */
-    if (in_array('tgCollectionTag',$arr) && $stmt = $mysqli->prepare("select * from `tgCollectionTag`")) {
-        $stmt->execute();
-        $rs->tgCollectionTag = fetch_info($stmt);
-        $stmt->close();
-    }
-    /**
-     *  tag collection table
-     */
-    if (in_array('tgCollectionTable',$arr) && $stmt = $mysqli->prepare("select * from `tgCollectionTable`")) {
-        $stmt->execute();
-        $rs->tgCollectionTable = fetch_info($stmt);
-        $stmt->close();
-    }
 
     if ($echo) {
         echo PHP_EOL , '//core info'

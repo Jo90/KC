@@ -95,7 +95,7 @@ YUI.add('kc-pod-info',function(Y){
         io={
             fetch:{
                 info:function(){
-                    Y.io('/db/table/info/s.php',{
+                    Y.io('/db/info/s.php',{
                         method:'POST'
                        ,on:{complete:function(id,o){Y.fire('db-info:available',Y.JSON.parse(o.responseText)[0].result);}}
                        ,data:Y.JSON.stringify([{criteria:d.pod}])
@@ -124,7 +124,7 @@ YUI.add('kc-pod-info',function(Y){
                            ,remove:infoDetail.one('.kc-remove').get('checked')
                         });
                     });
-                    Y.io('/db/table/info/u.php',{
+                    Y.io('/db/info/u.php',{
                         method:'POST'
                        ,on:{complete:io.fetch.info}
                        ,data:Y.JSON.stringify([{criteria:{info:post}}])

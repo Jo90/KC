@@ -36,6 +36,10 @@ YUI.add('kc-pod-grp',function(Y){
                     grpInfoCategories:['Vision','Purpose','Strategy','Scope','Location','Mission','Meetings','History','Plan']
                 }
                ,pod:{}
+               ,tag:{
+                    business:[]
+                   ,social:[]
+                }
             }
            ,h={}
             //functions
@@ -148,7 +152,7 @@ debugger;
 return; //>>>>FINISH
                     var rec=h.grid.grpUsrDataTable.getRecord(e.currentTarget.get('id')).toJSON()
                     ;
-                    Y.io('/db/table/grpUsr/u.php',{
+                    Y.io('/db/grpUsr/u.php',{
                         method:'POST'
                        ,on:{complete:KC.db.grp}
                        ,data:Y.JSON.stringify([{data:{

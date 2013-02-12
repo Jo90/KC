@@ -1,5 +1,5 @@
 <?php
-/** /db/table/info/s.php
+/** /db/info/s.php
  *
  *  Kauri Coast Promotion Society
  *

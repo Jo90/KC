@@ -111,7 +111,7 @@ YUI.add('kc-mod-grp',function(Y){
                     if(this.hasClass('kc-memberRequest-cancel')){
                         post={data:{id:grp.grpUsr},remove:true};
                     }
-                    Y.io('/db/table/grpUsr/u.php',{
+                    Y.io('/db/grpUsr/u.php',{
                         method:'POST'
                        ,on:{complete:KC.db.grp}
                        ,data:Y.JSON.stringify([post])
@@ -436,7 +436,7 @@ YUI.add('kc-mod-grp',function(Y){
             initialise();
             listeners();
 
-            KC.db.grp();
+            KC.entity.grp.db();
 
         });
     };

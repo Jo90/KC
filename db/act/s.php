@@ -1,5 +1,5 @@
 <?php
-/** /db/table/act/s.php
+/** /db/act/s.php
  *
  *  Kauri Coast Promotion Society
  *

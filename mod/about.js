@@ -71,7 +71,7 @@ YUI.add('kc-mod-about',function(Y){
         io={
             fetch:{
                 usr:function(){
-                    Y.io('/db/table/usr/s.php',{
+                    Y.io('/db/usr/s.php',{
                         method:'POST'
                        ,on:{complete:function(id,o){Y.fire('db-usr:available',Y.JSON.parse(o.responseText)[0].result);}}
                        ,data:Y.JSON.stringify([{criteria:{
@@ -105,7 +105,7 @@ YUI.add('kc-mod-about',function(Y){
                         }
                        ,post={criteria:{usr:[usr]}}
                     ;
-                    Y.io('/db/table/usr/u.php',{
+                    Y.io('/db/usr/u.php',{
                         method:'POST'
                        ,on:{complete:function(id,o){Y.fire('db-usr:available',Y.JSON.parse(o.responseText)[0].result);}}
                        ,data:Y.JSON.stringify([post])
@@ -302,6 +302,7 @@ YUI.add('kc-mod-about',function(Y){
          *  load & initialise
          */
         Y.KC.dataSet.fetch([
+            ['grp','id']
         ],function(){
 
             render.base();

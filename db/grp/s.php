@@ -1,5 +1,5 @@
 <?php
-/** /db/table/grp/s.php
+/** /db/grp/s.php
  *
  *  Kauri Coast Promotion Society
  *

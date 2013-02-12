@@ -10,7 +10,7 @@ if (isset($_REQUEST['logout'])) {unset($_SESSION[KC_MEMBER]); exit;}
 if (!isset($_REQUEST['logon'], $_REQUEST['hash'])) {exit;}
 
 //logon
-require_once '../db/table/usr/common.php';
+require_once '../db/usr/common.php';
 $criteria = new \stdClass;
 $criteria->logon = $_REQUEST['logon'];
 $r = usr_getUsr($criteria);
