@@ -65,7 +65,7 @@ YUI.add('j-mod-act',function(Y){
         io={
             fetch:{
                 act:function(){
-                    Y.io('/db/act/s.php',{
+                    Y.io('/db/act_s.php',{
                         method:'POST'
                        ,on:{complete:function(id,o){Y.fire('db-act:available',Y.JSON.parse(o.responseText)[0].result);}}
                        ,data:Y.JSON.stringify([{criteria:{

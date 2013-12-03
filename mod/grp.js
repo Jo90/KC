@@ -109,7 +109,7 @@ YUI.add('j-mod-grp',function(Y){
                     if(this.hasClass('j-memberRequest-cancel')){
                         post={data:{id:grp.grpUsr},remove:true};
                     }
-                    Y.io('/db/grpUsr/u.php',{
+                    Y.io('/db/usrGrpRole_u.php',{
                         method:'POST'
                        ,on:{complete:J.db.grp}
                        ,data:Y.JSON.stringify([post])

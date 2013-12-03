@@ -1,4 +1,4 @@
-<?php //db/common_s.php
+<?php //db/core_s.php
 
 namespace j;
 

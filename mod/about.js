@@ -68,7 +68,7 @@ YUI.add('j-mod-about',function(Y){
         io={
             fetch:{
                 usr:function(){
-                    Y.io('/db/usr/s.php',{
+                    Y.io('/db/usr_s.php',{
                         method:'POST'
                        ,on:{complete:function(id,o){Y.fire('db-usr:available',Y.JSON.parse(o.responseText)[0].result);}}
                        ,data:Y.JSON.stringify([{criteria:{
@@ -102,7 +102,7 @@ YUI.add('j-mod-about',function(Y){
                         }
                        ,post={criteria:{usr:[usr]}}
                     ;
-                    Y.io('/db/usr/u.php',{
+                    Y.io('/db/usr_u.php',{
                         method:'POST'
                        ,on:{complete:function(id,o){Y.fire('db-usr:available',Y.JSON.parse(o.responseText)[0].result);}}
                        ,data:Y.JSON.stringify([post])

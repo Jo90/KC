@@ -32,30 +32,16 @@ define('YUI_JS'                 ,'<script type="text/javascript" src="http://yui
 define('J_SALT'                ,'SALT'); //userLogon Challenge Handshake AP - salt initializer
 define('J_MEMBER'              ,'member'); //refer userLogon
 define('J_USERLOGON_REMEMBER'  , 'userLogon-remember');
-/**
- * SYSTEM NAMED CONSTANTS
- */
+
 define('ROOT', realpath(dirname(__FILE__) . '/..'));
-/**
- *
- * autoload classes
- *
- * method recommended by ZEND
- * define own autoload to avoid conflict with future meshups
- * lowercase directory path (before last _)
- *
- */
+
 function j_autoload($class) {
-    // lowercase path
-    $last_ = strrpos($class, "_");
-    $class = substr_replace($class, substr(strtolower($class), 0, $last_), 0, $last_);
     // substitute directory separators
-    $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+    $class = str_replace('\\', DIRECTORY_SEPARATOR, strtolower($class));
     $class = str_replace('_' , DIRECTORY_SEPARATOR, $class);
-    //redirect
+    //namespace to class directory
     $dirs = explode('/' ,$class);
     $dirs[0] = 'class';
-exit(ROOT . DIRECTORY_SEPARATOR . implode('/', $dirs) . '.php');
     include ROOT . DIRECTORY_SEPARATOR . implode('/', $dirs) . '.php';
 }
 spl_autoload_register(__NAMESPACE__ . '\j_autoload');
@@ -75,10 +61,6 @@ if ($_SERVER['SERVER_ADMIN'] == 'joe@dargaville.net') {
 /**
  *  shared PHP functions
  */
-
-function exitIfNotConnected() {
-    if (!isset($_SESSION[J_MEMBER])) {exit('{connected:false,error:"not connected"}');}
-}
 
 /**
  *
