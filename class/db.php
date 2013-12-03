@@ -1,11 +1,11 @@
-<?php //db/base.php
+<?php //class/db.php
 
 namespace j;
 
 class Db {
 
     /**
-     *  Generic insert,update,delete
+     *  Generic insert,remove,update
      */
     public static function set($tab,&$i) {
         global $mysqli;
@@ -17,6 +17,9 @@ class Db {
         }
     }
 
+    /**
+     *  insert,remove,update
+     */
     public static function insert($table, &$i) {
         global $mysqli;
 
@@ -159,96 +162,5 @@ class Db {
             }'
         );
         return true;
-    }
-}
-
-class Db_Get {
-
-    public static function event($i, $extend = false) {
-        global $mysqli;
-
-        $r = $extend ? initResult($i) : new \stdClass;
-        $c = $i->criteria;
-
-        $cnd = "";
-
-        if (isset($c->eventIds) && is_array($c->eventIds) && count($c->eventIds) > 0) {
-            $eventIds = implode(',', $c->eventIds);
-            $cnd = "where id in ($eventIds)";
-        }else
-        if (isset($c->addressIds) && is_array($c->addressIds) && count($c->addressIds) > 0) {
-            $addressIds = implode(',', $c->addressIds);
-            $cnd = "where address in ($addressIds)";
-        }else
-        if (isset($c->jobIds) && is_array($c->jobIds) && count($c->jobIds) > 0) {
-            $jobIds = implode(',', $c->jobIds);
-            $cnd = "where job in ($jobIds)";
-        }
-        if ($stmt = $mysqli->prepare(
-            "select *
-            from `event` $cnd"
-        )) {
-            $r->success = $stmt->execute();
-            $r->rows = $mysqli->affected_rows;
-            $r->data = \ja\fetch_result($stmt,'id');
-            $stmt->close();
-        }
-        return $r;
-    }
-
-    public static function grp($i, $extend = false) {
-        global $mysqli;
-
-        $r = $extend ? initResult($i) : new \stdClass;
-        $c = $i->criteria;
-
-        $cnd = "";
-
-        if (isset($c->grpIds) && is_array($c->grpIds) && count($c->grpIds) > 0) {
-            $grpIds = implode(',', $c->grpIds);
-            $cnd = "where id in ($grpIds)";
-        }
-        if ($stmt = $mysqli->prepare(
-            "select *
-            from `grp` $cnd"
-        )) {
-            $r->success = $stmt->execute();
-            $r->rows = $mysqli->affected_rows;
-            $r->data = \ja\fetch_result($stmt,'id');
-            $stmt->close();
-        }
-        return $r;
-    }
-
-    public static function info($i, $extend = false) {
-        global $mysqli;
-
-        $r = $extend ? initResult($i) : new \stdClass;
-        $c = $i->criteria;
-
-        $cnd = "";
-
-        if (isset($c->infoIds) && is_array($c->infoIds) && count($c->infoIds) > 0) {
-            $infoIds = implode(',', $c->infoIds);
-            $cnd = "where id in ($infoIds)";
-        }
-        if (isset($c->dbTable, $c->pks) && is_array($c->pks) && count($c->pks) > 0) {
-            $pks = implode(',', $c->pks);
-            $cnd = "where dbTable = $c->dbTable and pk in ($pks)";
-        }
-        if (isset($c->dbTable, $c->pk)) {
-            $cnd = "where dbTable = $c->dbTable and pk = $c->pk";
-        }
-        if ($stmt = $mysqli->prepare(
-            "select *
-            from `info` $cnd
-            order by seq, id desc"
-        )) {
-            $r->success = $stmt->execute();
-            $r->rows = $mysqli->affected_rows;
-            $r->data = \ja\fetch_result($stmt,'id');
-            $stmt->close();
-        }
-        return $r;
     }
 }

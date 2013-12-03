@@ -5,7 +5,7 @@ namespace j;
 if (isset($_REQUEST['logout'])) {unset($_SESSION[J_MEMBER]); exit;}
 if (!isset($_REQUEST['logon'], $_REQUEST['hash'])) {exit;}
 
-$r = Db_Usr_Get::usr((object) array('criteria' => (object) array('logon' => $_REQUEST['logon'])));
+$r = Db_Usr::getUsr((object) array('criteria' => (object) array('logon' => $_REQUEST['logon'])));
 
 if (!isset($r->data)) {exit;}
 $member = firstElement($r->data);

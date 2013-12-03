@@ -1,11 +1,11 @@
-<?php //db/grpUsr/u.php
+<?php //db/usrGrpRole_u.php
 
 namespace j;
 
 $post = json_decode(file_get_contents('php://input'));
 
 foreach ($post as $i) {
-    db_set('grpUsr',$i);
+    Db::set('usrGrpRole',$i);
 }
 $mysqli->close();
 header('Content-type: text/plain');

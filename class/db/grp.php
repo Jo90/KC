@@ -1,10 +1,10 @@
-<?php //db/act/base.php
+<?php //class/db/grp.php
 
 namespace j;
 
-class Db_Act_Get {
+class Db_Grp {
 
-    public static function act($i, $extend = false) {
+    public static function getGrp($i, $extend = false) {
         global $mysqli;
 
         $r = $extend ? initResult($i) : new \stdClass;
@@ -16,8 +16,8 @@ class Db_Act_Get {
         $limit   = '';
         $orderBy = 'order by 1 desc'
 
-        if (isset($c->actIds) && is_array($criteria->actIds) && count($criteria->actIds) > 0) {
-            $cnd  = 'id in (' . implode(',', $c->actIds) . ')';
+        if (isset($c->grpIds) && is_array($criteria->grpIds) && count($criteria->grpIds) > 0) {
+            $cnd  = 'id in (' . implode(',', $c->grpIds) . ')';
         }
 
         if (isset($c->rowLimit)) {
@@ -29,7 +29,7 @@ class Db_Act_Get {
 
         if ($stmt = $mysqli->prepare(
             "select *
-               from `act` $cnd
+               from `grp` $cnd
               where $cnd $limit $orderBy"
         )) {
             $r->success = $stmt->execute();

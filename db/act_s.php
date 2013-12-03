@@ -1,4 +1,4 @@
-<?php //db/act/s.php
+<?php //db/act_s.php
 
 namespace j;
 
@@ -14,7 +14,7 @@ foreach ($post as $i) {
     $r = initResult($i);
     $c = $i->act->criteria;
 
-    $r->act = Db_Act_Get::act($i);
+    $r->act = Db_Act::getAct($i);
 
     //get related
 

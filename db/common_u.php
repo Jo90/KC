@@ -1,4 +1,4 @@
-<?php //db/info/u.php
+<?php //db/common_u.php
 
 namespace j;
 
@@ -9,7 +9,7 @@ foreach ($post as $i) {
     if (!isset($i->criteria, $i->criteria->info)) {continue;}
     foreach ($i->criteria->info as $ix) {
         if (!isset($ix->data)) {continue;}
-        db_set('info',$ix);
+        Db::set('info',$ix);
     }
 }
 $mysqli->close();

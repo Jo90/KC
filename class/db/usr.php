@@ -2,9 +2,9 @@
 
 namespace j;
 
-class Db_Usr_Get {
+class Db_Usr {
 
-    public static function usr($i, $extend = false) {
+    public static function getUsr($i, $extend = false) {
         global $mysqli;
 
         $r = $extend ? initResult($i) : new \stdClass;
@@ -45,7 +45,7 @@ class Db_Usr_Get {
         return $r;
     }
 
-    public static function usrInfo($i, $extend = false) {
+    public static function getUsrInfo($i, $extend = false) {
         global $mysqli;
 
         $r = $extend ? initResult($i) : new \stdClass;

@@ -52,13 +52,11 @@ function j_autoload($class) {
     // substitute directory separators
     $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
     $class = str_replace('_' , DIRECTORY_SEPARATOR, $class);
-    // include
-    if (substr($class, 0, strlen(__NAMESPACE__) + 3) == __NAMESPACE__ . '/db') {
-        $dirs = explode('/' ,$class, -1);
-        array_shift($dirs);
-        include ROOT . DIRECTORY_SEPARATOR . implode('/', $dirs) . DIRECTORY_SEPARATOR . 'base.php';
-    }
-    else include ROOT . DIRECTORY_SEPARATOR . $class . '.php';
+    //redirect
+    $dirs = explode('/' ,$class);
+    $dirs[0] = 'class';
+exit(ROOT . DIRECTORY_SEPARATOR . implode('/', $dirs) . '.php');
+    include ROOT . DIRECTORY_SEPARATOR . implode('/', $dirs) . '.php';
 }
 spl_autoload_register(__NAMESPACE__ . '\j_autoload');
 

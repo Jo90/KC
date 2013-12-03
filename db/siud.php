@@ -10,17 +10,16 @@ foreach ($post as $i) {
         $criteria = isset($dataSet->criteria) && $r = initResult($dataSet);
 
         if ($criteria) switch ($key) {
-            case 'act'       : $r->{$key} = db_act_getAct       ($dataSet); break;
-            case 'address'   : $r->{$key} = db_getAddress       ($dataSet); break;
-            case 'grp'       : $r->{$key} = db_grp_getGrp       ($dataSet); break;
-            case 'event'     : $r->{$key} = db_getEvent         ($dataSet); break;
-            case 'info'      : $r->{$key} = db_getInfo          ($dataSet); break;
-            case 'usr'       : $r->{$key} = db_usr_getUsr       ($dataSet); break;
-            case 'usrAddress': $r->{$key} = db_usr_getUsrAddress($dataSet); break;
-            case 'usrGrpRole': $r->{$key} = db_usr_getUsrGrpRole($dataSet); break;
-            case 'usrInfo'   : $r->{$key} = db_usr_getUsrInfo   ($dataSet); break;
+            case 'act'       : $r->{$key} = Db_Act ::getAct       ($dataSet); break;
+            case 'address'   : $r->{$key} = Db_Core::getAddress   ($dataSet); break;
+            case 'grp'       : $r->{$key} = Db_Grp ::getGrp       ($dataSet); break;
+            case 'info'      : $r->{$key} = Db_Core::getInfo      ($dataSet); break;
+            case 'usr'       : $r->{$key} = Db_Usr ::getUsr       ($dataSet); break;
+            case 'usrAddress': $r->{$key} = Db_Usr ::getUsrAddress($dataSet); break;
+            case 'usrGrpRole': $r->{$key} = Db_Usr ::getUsrGrpRole($dataSet); break;
+            case 'usrInfo'   : $r->{$key} = Db_Usr ::getUsrInfo   ($dataSet); break;
         }
-        else db_set($key, $dataSet);
+        else Db::set($key, $dataSet);
     }
 }
 $mysqli->close();

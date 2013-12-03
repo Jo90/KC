@@ -1,4 +1,4 @@
-<?php //db/info/s.php
+<?php //db/common_s.php
 
 namespace j;
 
@@ -12,7 +12,7 @@ foreach ($post as $i) {
     $i->result = new \stdClass;
     $r         = $i->result;
 
-    $r->info = db_getInfo($i->criteria);
+    $r->info = Db_Core::getInfo($i);
 }
 header('Content-type: text/plain');
 echo json_encode($post);

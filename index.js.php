@@ -32,7 +32,7 @@ J={
 <?php
 if (defined('J_ENV_DEVICE')) {echo 'J.env.device="' , J_ENV_DEVICE , '";' , PHP_EOL;}
 if (isset($_SESSION[J_MEMBER])) {
-    $r = Db_Usr_Get::usr((object) array('criteria' => (object) array('usrIds' => array($_SESSION[J_MEMBER]))));
+    $r = Db_Usr::getUsr((object) array('criteria' => (object) array('usrIds' => array($_SESSION[J_MEMBER]))));
     $member = firstElement($r->data);
     echo('J.user.usr=' . json_encode($member) . ';' . PHP_EOL);
 }

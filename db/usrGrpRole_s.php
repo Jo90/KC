@@ -1,4 +1,4 @@
-<?php //db/grpUsr/s.php
+<?php //db/usrGrpRole_s.php
 
 namespace j;
 
@@ -12,7 +12,7 @@ foreach ($post as $i) {
     $i->result = new \stdClass;
     $r         = $i->result;
 
-    $r->grpUsr = db_grp_getGrpUsr($i->criteria);
+    $r->usrGrpRole = Db_Usr::getUsrGrpRole($i);
     //reinitialize
     $i->criteria->grpIds = array();
     $i->criteria->usrIds = array();
@@ -20,12 +20,9 @@ foreach ($post as $i) {
         $i->criteria->grpIds[] = $v->grp;
         $i->criteria->usrIds[] = $v->usr;
     };
-    $r->grp               = db_grp_getGrp($i->criteria);
-    $r->grpInfo           = db_grp_getGrpInfo($i->criteria);
-    $r->usr               = db_usr_getUsr($i->criteria);
-    $i->criteria->dbTable = 1; //dbtable grp
-    $i->criteria->pks     = $i->criteria->grpIds;
-//    $r->grpTags           = tg_getLink($i->criteria);
+    $r->grp     = Db_Grp::getGrp($i);
+    $r->grpInfo = Db_Grp::getGrpInfo($i);
+    $r->usr     = Db_Usr::getUsr($i);
 }
 $mysqli->close();
 header('Content-type: text/plain');

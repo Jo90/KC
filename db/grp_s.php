@@ -1,4 +1,4 @@
-<?php //db/grp/s.php
+<?php //db/grp_s.php
 
 namespace j;
 
@@ -14,7 +14,7 @@ foreach ($post as $i) {
 
     //if requested get grpUsr
     if (!isset($i->criteria->grpIds) && isset($i->criteria->usrIds)) {
-        $r->grpUsr = db_grp_getGrpUsr($i->criteria);
+        $r->grpUsr = Db_Grp::getGrpUsr($i);
         //reinitialize
         $i->criteria->grpIds = array();
         $i->criteria->usrIds = array();
@@ -25,7 +25,7 @@ foreach ($post as $i) {
     }
     if (!isset($i->criteria->grpIds)) {$r->log[] = 'no grp ids'; continue;}
 
-    $r->grp = db_grp_getGrp($i->criteria);
+    $r->grp = Db_Grp::getGrp($i);
     //if criteria->grpIds empty get returned grps
     if (count($i->criteria->grpIds)==0) {
         foreach ($r->grp->data as $v) {$i->criteria->grpIds[] = $v->id;};

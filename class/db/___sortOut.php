@@ -1,51 +1,3 @@
-<?php //db/grp/common.php
-
-namespace j;
-
-function db_grp_getGrp($criteria) {
-    global $mysqli;
-    if (!isset($criteria->grpIds)) {return null;}
-    $r = new \stdClass;
-    $r->criteria = $criteria;
-    $cnd = '';
-    if (isset($criteria->grpIds) && count($criteria->grpIds) != 0) { //empty array return all
-        $cnd = "where id in (" . implode(',', $criteria->grpIds) . ")";
-    }
-    if ($stmt = $mysqli->prepare(
-        "select *
-           from `grp` $cnd"
-    )) {
-        $r->success = $stmt->execute();
-        $r->rows = $mysqli->affected_rows;
-        $r->data = \j\fetch_result($stmt,'id');
-        $stmt->close();
-    }
-    return $r;
-}
-
-function db_grp_getGrpUsrRole($criteria) {
-    global $mysqli;
-    if (!isset($criteria->grpIds) && !isset($criteria->usrIds)) {return null;}
-    $r = new \stdClass;
-    $r->criteria = $criteria;
-    $cnd = '';
-    if (isset($criteria->grpIds)) {
-        $cnd = "where grp in (" . implode(',', $criteria->grpIds) . ")";
-    }
-    if (isset($criteria->usrIds)) {
-        $cnd = "where usr in (" . implode(',', $criteria->usrIds) . ")";
-    }
-    if ($stmt = $mysqli->prepare(
-        "select *
-           from `grpUsrRole` $cnd"
-    )) {
-        $r->success = $stmt->execute();
-        $r->rows = $mysqli->affected_rows;
-        $r->data = \j\fetch_result($stmt,'id');
-        $stmt->close();
-    }
-    return $r;
-}
 
 function grp_setGrp(&$criteria) {
     global $mysqli;
@@ -211,4 +163,53 @@ function grp_setGrpUsr(&$criteria) {
             }
         }
     return $r;
+}
+
+
+
+
+function tg_setLink(&$criteria) {
+    global $mysqli;
+    $criteria->result = new \stdClass;
+    $r = $criteria->result;
+//>>>>>>>>>>>>>>>>>>>DO
+    if (!isset($criteria, $criteria->data, $criteria->data->tagIds, $criteria->data->pk)) {return null;}
+    //parametric polymorphism - if required get collectionTable
+    $cnd = '';
+    if (count($criteria->data->tagIds)>0) {
+        $tagIds = implode(',', $criteria->data->tagIds);
+        $cnd = "and tag not in ($tagIds)";
+    }
+    if (isset($criteria->data->id)) {
+        if ($stmt = $mysqli->prepare(
+            "delete from link`
+              where id = ?"
+        )) {
+            $stmt->bind_param('i'
+                ,$criteria->data->id
+            );
+            $r->successDelete = $stmt->execute();
+            $r->rows = $mysqli->affected_rows;
+            $r->successDelete OR $r->errorDelete = $mysqli->error;
+            $stmt->close();
+        }
+    }
+    //insert
+    if (count($criteria->data->tagIds)>0) {
+        if ($stmt = $mysqli->prepare(
+            "insert into `link`
+                    (dbTable,pk,tag)
+             values (?,?,?)"
+        )) {
+            $stmt->bind_param('iis'
+                ,$criteria->data->dbTable
+                ,$criteria->data->pk
+                ,$criteria->data->tag
+            );
+            $r->successInsert = $stmt->execute();
+            $r->rows = $mysqli->affected_rows;
+            $r->successInsert OR $r->errorInsert = $mysqli->error;
+            $stmt->close();
+        }
+    }
 }
