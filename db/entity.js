@@ -1,2 +1,0 @@
-//entity.js
-KC.entity={};
