@@ -3,15 +3,15 @@
  *  Kauri Coast Promotion Society
  *
  */
-YUI.add('kc-widget-calendar',function(Y){
+YUI.add('j-widget-calendar',function(Y){
 
     var DEFAULT_DATE_FORMAT='d MMM yyyy';
 
     Y.one('body').addClass('yui3-skin-sam');
-    Y.one('body').append('<div id="kc-calendar-container"><div id="kc-calendar"></div></div>');
+    Y.one('body').append('<div id="j-calendar-container"><div id="j-calendar"></div></div>');
 
     Y.namespace('KC.widget').calendar=new Y.Calendar({
-        contentBox:'#kc-calendar'
+        contentBox:'#j-calendar'
        ,date:new Date()
        ,showNextMonth:true
        ,showPrevMonth:true
@@ -60,18 +60,18 @@ YUI.add('kc-widget-calendar',function(Y){
             }
         cal.selectDates(nodeDate); //causes selectionChange to fire
         cal.KC.settingFocus=false;
-    },'.kc-date');
+    },'.j-date');
 
     //hide
         Y.one('body').delegate('focus',function(e){
             Y.KC.widget.calendar.hide();
-        },':not(.kc-date)');
+        },':not(.j-date)');
         //stop calendar events from bubbling outside container
-        Y.one('#kc-calendar-container').on('click',function(e){
+        Y.one('#j-calendar-container').on('click',function(e){
             e.stopPropagation();
         });
         Y.one('body').on('click',function(e){
-            if(!e.target.hasClass('kc-date')){
+            if(!e.target.hasClass('j-date')){
                 Y.KC.widget.calendar.hide();
             }
         });

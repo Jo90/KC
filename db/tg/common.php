@@ -1,12 +1,8 @@
-<?php
-/** /db/tag/common.php
- *
- *  Kauri Coast Promotion Society
- *
- */
-namespace kc;
+<?php //db/tag/common.php
 
-function tg_getLink($criteria) {
+namespace j;
+
+function db_tg_getLink($criteria) {
     global $mysqli;
     $r = new \stdClass;
     $r->criteria = $criteria;
@@ -14,13 +10,13 @@ function tg_getLink($criteria) {
     $pks     = implode(',', $criteria->pks);
     if ($stmt = $mysqli->prepare(
         "select tl.*
-           from `tgLink`
+           from `link`
            where dbTable = $dbTable
              and pk in ($pks)"
     )) {
         $r->success = $stmt->execute();
         $r->rows = $mysqli->affected_rows;
-        $r->data = \kc\fetch_result($stmt,'id');
+        $r->data = \j\fetch_result($stmt,'id');
         $stmt->close();
     }
     return $r;
@@ -40,7 +36,7 @@ function tg_setLink(&$criteria) {
     }
     if (isset($criteria->data->id)) {
         if ($stmt = $mysqli->prepare(
-            "delete from `tgLink`
+            "delete from link`
               where id = ?"
         )) {
             $stmt->bind_param('i'
@@ -55,7 +51,7 @@ function tg_setLink(&$criteria) {
     //insert
     if (count($criteria->data->tagIds)>0) {
         if ($stmt = $mysqli->prepare(
-            "insert into `tgLink`
+            "insert into `link`
                     (dbTable,pk,tag)
              values (?,?,?)"
         )) {

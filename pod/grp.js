@@ -1,11 +1,9 @@
-/** /pod/grp.js
- *
- *  Kauri Coast Promotion Society
+/** //pod/grp.js
  *
  */
-YUI.add('kc-pod-grp',function(Y){
+YUI.add('j-pod-grp',function(Y){
 
-    Y.namespace('KC.pod').grp=function(cfg){
+    Y.namespace('J.pod').grp=function(cfg){
 
         if(typeof cfg==='undefined'
         ){cfg={};}
@@ -55,10 +53,10 @@ YUI.add('kc-pod-grp',function(Y){
 
         this.display=function(p){
             d.pod=Y.merge(d.pod,p);
-            Y.KC.widget.dialogMask.mask(h.ol.get('zIndex'));
+            Y.J.widget.dialogMask.mask(h.ol.get('zIndex'));
             h.ol.show();
 debugger;
-            KC.db.grp.fetch();
+            J.db.grp.fetch();
         };
 
         this.get=function(what){
@@ -76,7 +74,7 @@ debugger;
          */
 
         initialise=function(){
-            h.bb.addClass('kc-pod-'+self.info.id);
+            h.bb.addClass('j-pod-'+self.info.id);
             new Y.DD.Drag({node:h.bb,handles:[h.hd,h.ft]});
             sync.all();
         };
@@ -92,34 +90,34 @@ debugger;
                         action:'admin',
                         data:{
                             name         :newGroupName,
-                            contactDetail:h.bd.one('>.kc-record-grp .kc-data-contactDetail').get('value'),
-                            usr          :KC.user.usr.id
+                            contactDetail:h.bd.one('>.j-record-grp .j-data-contactDetail').get('value'),
+                            usr          :J.user.usr.id
                         }
                     }];
-                    KC.db.grp('i',post);
+                    J.db.grp('i',post);
                 }
             }
            ,update:{
                 grp:function(){
                     var post=[]
                     ;
-                    h.bd.all('>.kc-record-grp').each(function(grpNode){
+                    h.bd.all('>.j-record-grp').each(function(grpNode){
                         var grpData  =grpNode.getData('data')
                            ,grpHandle=grpNode.getData('handle')
                            ,grp={
                                 data:{
-                                    name         :grpNode.one('.kc-data-name'         ).get('value')
-                                   ,contactDetail:grpNode.one('.kc-data-contactDetail').get('value')
+                                    name         :grpNode.one('.j-data-name'         ).get('value')
+                                   ,contactDetail:grpNode.one('.j-data-contactDetail').get('value')
                                 }
-                               ,remove:grpNode.one('.kc-remove').get('checked')
+                               ,remove:grpNode.one('.j-remove').get('checked')
                                ,children:{
                                     grpInfo:[]
                                    ,tgLink:[{data:{
-                                        dbTable   :KC.data.dbTable.grp.id
+                                        dbTable   :J.data.dbTable.grp.id
                                        ,collection:d.TG_COLLECTION_TEAM_SOCIAL
                                        ,tagIds    :grpHandle.socialTags.get('selected')
                                     }},{data:{
-                                        dbTable   :KC.data.dbTable.grp.id
+                                        dbTable   :J.data.dbTable.grp.id
                                        ,collection:d.TG_COLLECTION_TEAM_BUSINESS
                                        ,tagIds    :grpHandle.businessTags.get('selected')
                                     }}]
@@ -128,17 +126,17 @@ debugger;
                         ;
                         if(typeof grpData!=='undefined'){grp.data.id=grpData.id}
                         //group info
-                            grpHandle.tvGrp.all('.kc-grpInfo-list > .kc-record').each(function(grpInfoListNode,idx){
+                            grpHandle.tvGrp.all('.j-grpInfo-list > .j-record').each(function(grpInfoListNode,idx){
                                 var originalData      =grpInfoListNode.getData('data')
                                    ,grpInfoContentNode=grpInfoListNode.getData('relatedNode')
                                    ,post={
                                        data:{
                                             displayOrder:idx
-                                           ,viewable    :parseInt(grpInfoContentNode.one('.kc-data-viewable').get('value'),10)
-                                           ,category    :grpInfoListNode.one('.kc-data-category').get('value')
-                                           ,info        :grpInfoContentNode.one('.kc-data-info').get('innerHTML')
+                                           ,viewable    :parseInt(grpInfoContentNode.one('.j-data-viewable').get('value'),10)
+                                           ,category    :grpInfoListNode.one('.j-data-category').get('value')
+                                           ,info        :grpInfoContentNode.one('.j-data-info').get('innerHTML')
                                         }
-                                       ,remove:grpInfoContentNode.one('.kc-remove').get('checked')
+                                       ,remove:grpInfoContentNode.one('.j-remove').get('checked')
                                     }
                                 ;
                                 if(typeof originalData!=='undefined'){post.data.id=originalData.id;}
@@ -146,7 +144,7 @@ debugger;
                             });
                         post.push({criteria:{grp:[grp]}});
                     });
-                    KC.db.grp('u',post);
+                    J.db.grp('u',post);
                 }
                ,grpUsr:function(e){
 return; //>>>>FINISH
@@ -154,7 +152,7 @@ return; //>>>>FINISH
                     ;
                     Y.io('/db/grpUsr/u.php',{
                         method:'POST'
-                       ,on:{complete:KC.db.grp}
+                       ,on:{complete:J.db.grp}
                        ,data:Y.JSON.stringify([{data:{
                             grp         :rec.grp
                            ,usr         :rec.usr
@@ -173,14 +171,14 @@ return; //>>>>FINISH
             h.addGrp.on('click',io.insert.grp);
             h.close.on('click',trigger.close);
             h.bd.delegate('change',function(){
-                this.ancestor('.kc-record-grp').all('>div').setStyle('display',this.get('checked')?'none':'');
-            },'.kc-record-grp > legend .kc-remove');
-            h.bd.delegate('click',function(){this.ancestor('.kc-record').remove();},'a.kc-remove-grp');
-            h.ft.one('.kc-save').on('click',function(){io.update.grp();io.update.grpUsr();});
+                this.ancestor('.j-record-grp').all('>div').setStyle('display',this.get('checked')?'none':'');
+            },'.j-record-grp > legend .j-remove');
+            h.bd.delegate('click',function(){this.ancestor('.j-record').remove();},'a.j-remove-grp');
+            h.ft.one('.j-save').on('click',function(){io.update.grp();io.update.grpUsr();});
             //custom
-                Y.on('kc-db-info:s',populate.grp);
-                Y.on('kc-db-grp:s' ,populate.grp);
-                Y.on('kc-db-grp:i' ,sync.grp.insert);
+                Y.on('j-db-info:s',populate.grp);
+                Y.on('j-db-grp:s' ,populate.grp);
+                Y.on('j-db-grp:i' ,sync.grp.insert);
         };
 
         pod={
@@ -198,14 +196,14 @@ return; //>>>>FINISH
                ,info:function(e){
                     h.podInvoke=this;
                     if(!self.my.podInfo){pod.load.info();return false;}
-                    if(this.hasClass('kc-no-info')){
+                    if(this.hasClass('j-no-info')){
                         self.my.podInfo.display({
-                            dbTable:KC.data.dbTable.grp.id
-                           ,pk     :this.ancestor('.kc-record-grp').getData('data')
+                            dbTable:J.data.dbTable.grp.id
+                           ,pk     :this.ancestor('.j-record-grp').getData('data')
                         });
                     }else{
                         self.my.podInfo.display(
-                            this.ancestor('.kc-record-grp').getData('handle').grpInfoDataTable.getRecord(e.currentTarget.get('id')).toJSON()
+                            this.ancestor('.j-record-grp').getData('handle').grpInfoDataTable.getRecord(e.currentTarget.get('id')).toJSON()
                         );
                     }
                 }
@@ -229,9 +227,9 @@ return; //>>>>FINISH
             }
            ,load:{
                 editor:function(){
-                    Y.use('kc-pod-editor',function(Y){
-                        self.my.podEditor=new Y.KC.pod.editor({});
-                        Y.KC.whenAvailable.inDOM(self,'my.podEditor',function(){
+                    Y.use('j-pod-editor',function(Y){
+                        self.my.podEditor=new Y.J.pod.editor({});
+                        Y.J.whenAvailable.inDOM(self,'my.podEditor',function(){
                             self.my.podEditor.set('zIndex',cfg.zIndex+10);
                             h.podInvoke.simulate('click');
                         });
@@ -239,9 +237,9 @@ return; //>>>>FINISH
                     });
                 }
                ,grpNew:function(){
-                    Y.use('kc-pod-grpNew',function(Y){
-                        self.my.podGrpNew=new Y.KC.pod.info({});
-                        Y.KC.whenAvailable.inDOM(self,'my.podGrpNew',function(){
+                    Y.use('j-pod-grpNew',function(Y){
+                        self.my.podGrpNew=new Y.J.pod.info({});
+                        Y.J.whenAvailable.inDOM(self,'my.podGrpNew',function(){
                             self.my.podGrpNew.set('zIndex',cfg.zIndex+10);
                             h.podInvoke.simulate('click');
                         });
@@ -249,9 +247,9 @@ return; //>>>>FINISH
                     });
                 }
                ,info:function(){
-                    Y.use('kc-pod-info',function(Y){
-                        self.my.podInfo=new Y.KC.pod.info({});
-                        Y.KC.whenAvailable.inDOM(self,'my.podInfo',function(){
+                    Y.use('j-pod-info',function(Y){
+                        self.my.podInfo=new Y.J.pod.info({});
+                        Y.J.whenAvailable.inDOM(self,'my.podInfo',function(){
                             self.my.podInfo.set('zIndex',cfg.zIndex+10);
                             self.my.podInfo.set('cfg',{
                                 addUserDefinedCategory:true
@@ -263,9 +261,9 @@ return; //>>>>FINISH
                     });
                 }
                ,report:function(){
-                    Y.use('kc-pod-report',function(Y){
-                        self.my.podReport=new Y.KC.pod.report({'zIndex':99999});
-                        Y.KC.whenAvailable.inDOM(self,'my.podReport',function(){h.podInvoke.simulate('click');});
+                    Y.use('j-pod-report',function(Y){
+                        self.my.podReport=new Y.J.pod.report({'zIndex':99999});
+                        Y.J.whenAvailable.inDOM(self,'my.podReport',function(){h.podInvoke.simulate('click');});
                     });
                 }
             }
@@ -287,9 +285,9 @@ return; //>>>>FINISH
                    ,tv={}
                    ,grpInfoNav,grpInfoList
                 ;
-                KC.rs=Y.merge(KC.rs,rs[0].result);
+                J.rs=Y.merge(J.rs,rs[0].result);
                 h.bd.setContent('');
-                Y.each(KC.rs.grp.data,function(grp){ //only 1 grp passed at this time
+                Y.each(J.rs.grp.data,function(grp){ //only 1 grp passed at this time
 
                     if(Y.Array.indexOf(d.pod.grpIds,grp.id)===-1){return;}
 
@@ -303,56 +301,56 @@ return; //>>>>FINISH
                         handle.tvGrpUsr=tv.grpUsr;
                         handle.tvEvents=tv.events;
 
-                    Y.KC.removeOption(nn.grp.one('legend'));
-                    nn.grp.one('.kc-association').remove();
+                    Y.J.removeOption(nn.grp.one('legend'));
+                    nn.grp.one('.j-association').remove();
 
                     //enable/disable if member/admin
-                        nn.grp.all('.kc-enable').set('disabled',true);
+                        nn.grp.all('.j-enable').set('disabled',true);
                         h.addGrp.hide();
-                        Y.each(KC.rs.grpUsr.data,function(grpUsr){
-                            if(grpUsr.usr!==KC.user.usr.id){return;}
-                            nn.grp.all('.kc-enable-member').set('disabled',false);
+                        Y.each(J.rs.grpUsr.data,function(grpUsr){
+                            if(grpUsr.usr!==J.user.usr.id){return;}
+                            nn.grp.all('.j-enable-member').set('disabled',false);
                             if(grpUsr.admin!==null){
-                                nn.grp.all('.kc-enable-admin').set('disabled',false);
+                                nn.grp.all('.j-enable-admin').set('disabled',false);
                                 h.addGrp.show();
                             }
                         });
                     //group
-                        nn.grp.one('.kc-data-name'         ).set('value',grp.name);
-                        nn.grp.one('.kc-data-created'      ).setContent('created:'+Y.DataType.Date.format(new Date(grp.created*1000),{format:'%d %B %G'}));
-                        nn.grp.one('.kc-data-contactDetail').set('value',grp.contactDetail);
+                        nn.grp.one('.j-data-name'         ).set('value',grp.name);
+                        nn.grp.one('.j-data-created'      ).setContent('created:'+Y.DataType.Date.format(new Date(grp.created*1000),{format:'%d %B %G'}));
+                        nn.grp.one('.j-data-contactDetail').set('value',grp.contactDetail);
                     //tags
                         list.social  =[];
                         list.business=[];
-                        Y.each(KC.rs.grpTags.data,function(grpTag){
+                        Y.each(J.rs.grpTags.data,function(grpTag){
                             if(grpTag.pk!==grp.id){return;}
                             if(grpTag.collection===d.TG_COLLECTION_TEAM_SOCIAL  ){list.social.push(grpTag.tag);}
                             if(grpTag.collection===d.TG_COLLECTION_TEAM_BUSINESS){list.business.push(grpTag.tag);}
                         });
-                        handle.socialTags=new Y.KC.widget.List({
+                        handle.socialTags=new Y.J.widget.List({
                             elements:d.list.socialAll
                            ,selected:list.social
                            ,selectorPrompt:'+social tags'
-                        }).render(nn.grp.one('.kc-tags-social'));
-                        handle.businessTags=new Y.KC.widget.List({
+                        }).render(nn.grp.one('.j-tags-social'));
+                        handle.businessTags=new Y.J.widget.List({
                             elements:d.list.businessAll
                            ,selected:list.business
                            ,selectorPrompt:'+business tags'
-                        }).render(nn.grp.one('.kc-tags-business'));
+                        }).render(nn.grp.one('.j-tags-business'));
                     //group info
                         sync.info(nn,tv,grp,handle);
                     //members
-                        Y.each(KC.rs.grpUsr.data,function(grpUsr){
+                        Y.each(J.rs.grpUsr.data,function(grpUsr){
                             grpUsr.grpId=grpUsr.id;
                             grpUsr.adminDate=grpUsr.admin===0
                                 ?''
                                 :Y.DataType.Date.format(new Date(grpUsr.admin*1000),{format:'%d %b %G'});
                             grpUsr.memberOption=grpUsr.member===null
-                                ?'<button class="kc-approve-pending" title="'
+                                ?'<button class="j-approve-pending" title="'
                                     +(Y.DataType.Date.format(new Date(grpUsr.joinRequest*1000),{format:'%d %b %G'}))
                                     +': '+grpUsr.joinReason+'">approve</button>'
                                 :Y.DataType.Date.format(new Date(grpUsr.member*1000),{format:'%d %b %G'});
-                            recs.grpUsr.push(Y.merge(grpUsr,KC.rs.usr.data[grpUsr.usr]));
+                            recs.grpUsr.push(Y.merge(grpUsr,J.rs.usr.data[grpUsr.usr]));
                         });
                         //grid
                             handle.grpUsrDataTable=new Y.DataTable({
@@ -369,13 +367,13 @@ return; //>>>>FINISH
                             //listeners
                                 handle.grpUsrDataTable.get('contentBox').delegate('click',function(e){
                                     //sentry
-                                        if(e.target.hasClass('kc-approve-pending')){return;}
+                                        if(e.target.hasClass('j-approve-pending')){return;}
                                     var rec=handle.grpUsrDataTable.getRecord(e.currentTarget.get('id')).toJSON()
                                     ;
                                     //>>>>FINISH display user
                                     debugger;
                                 },'tr');
-                                handle.grpUsrDataTable.get('contentBox').delegate('click',io.update.grpUsr,'.kc-approve-pending');
+                                handle.grpUsrDataTable.get('contentBox').delegate('click',io.update.grpUsr,'.j-approve-pending');
                                 handle.grpUsrDataTable.get('contentBox').delegate('click',pod.display.report,'tr');
                     //store
                         nn.grp.setData('data'  ,grp);
@@ -388,11 +386,11 @@ return; //>>>>FINISH
             base:function(){
                 h.ol=new Y.Overlay({
                     headerContent:
-                        '<span title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;KCPS">'+self.info.title+'</span> '
-                       +Y.KC.html('btn',{action:'add',label:'add new group',title:'add information category'})
-                       +Y.KC.html('btn',{action:'close',title:'close pod'})
+                        '<span title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;JPS">'+self.info.title+'</span> '
+                       +Y.J.html('btn',{action:'add',label:'add new group',title:'add information category'})
+                       +Y.J.html('btn',{action:'close',title:'close pod'})
                    ,bodyContent:''
-                   ,footerContent:Y.KC.html('btn',{action:'save',title:'save' ,label:'save'})
+                   ,footerContent:Y.J.html('btn',{action:'save',title:'save' ,label:'save'})
                    ,visible:cfg.visible
                    ,width  :cfg.width
                    ,xy     :cfg.xy
@@ -403,25 +401,25 @@ return; //>>>>FINISH
                     h.bd     =h.ol.bodyNode;
                     h.ft     =h.ol.footerNode;
                     h.bb     =h.ol.get('boundingBox');
-                    h.addGrp =h.hd.one('.kc-add');
-                    h.close  =h.hd.one('.kc-close');
+                    h.addGrp =h.hd.one('.j-add');
+                    h.close  =h.hd.one('.j-close');
             }
            ,grp:function(){
                 var nn=Y.Node.create(
-                    '<fieldset class="kc-record kc-record-grp">'
+                    '<fieldset class="j-record j-record-grp">'
                    +  '<legend>'
-                   +    '<input type="text" class="kc-data kc-data-name kc-enable kc-enable-admin" placeholder="team/group name" title="team/group name" />'
-                   +    '<span class="kc-data kc-data-created"></span> '
-                   +    Y.KC.html('btn',{action:'remove',label:'remove new group',classes:'kc-remove-grp'})
+                   +    '<input type="text" class="j-data j-data-name j-enable j-enable-admin" placeholder="team/group name" title="team/group name" />'
+                   +    '<span class="j-data j-data-created"></span> '
+                   +    Y.J.html('btn',{action:'remove',label:'remove new group',classes:'j-remove-grp'})
                    +  '</legend>'
-                   +  '<fieldset class="kc-association">'
+                   +  '<fieldset class="j-association">'
                    +    '<legend>association with parent group</legend>'
                    +    '<textarea></textarea>'
                    +  '</fieldset>'
                    +  'public contact details<br />'
-                   +  '<textarea class="kc-data kc-data-contactDetail kc-enable kc-enable-admin" placeholder="contact details (public)"></textarea>'
-                   +  '<div class="kc-tags-social"></div>'
-                   +  '<div class="kc-tags-business"></div>'
+                   +  '<textarea class="j-data j-data-contactDetail j-enable j-enable-admin" placeholder="contact details (public)"></textarea>'
+                   +  '<div class="j-tags-social"></div>'
+                   +  '<div class="j-tags-business"></div>'
                    +'</fieldset>'
                 );
                 h.bd.append(nn);
@@ -441,8 +439,8 @@ return; //>>>>FINISH
                        +  '<input type="text" class="data data-nameFirst" placeholder="first name" title="first name" />'
                        +  '<input type="text" class="data data-nameLast"  placeholder="last name"  title="last name" />'
                        +  d.grpUsrInterest
-                       +  Y.KC.html('btn',{action:'find'  ,title:'find contact'})
-                       +  Y.KC.html('btn',{action:'remove',title:'remove record'})
+                       +  Y.J.html('btn',{action:'find'  ,title:'find contact'})
+                       +  Y.J.html('btn',{action:'remove',title:'remove record'})
                        +'</li>'
                     )
                 ;
@@ -463,12 +461,12 @@ return; //>>>>FINISH
            ,info:function(nn,tv,grp,handle){
                 var data=[]
                 ;
-                if(typeof KC.rs.grpInfo.data==='undefined' || KC.rs.grpInfo.data.length===0){
-                    nn.info=Y.Node.create(Y.KC.html('btn',{action:'add',label:'add information category',classes:'kc-no-info'}));
+                if(typeof J.rs.grpInfo.data==='undefined' || J.rs.grpInfo.data.length===0){
+                    nn.info=Y.Node.create(Y.J.html('btn',{action:'add',label:'add information category',classes:'j-no-info'}));
                     tv.info.append(nn.info);
                     nn.info.on('click',pod.display.info);
                 }else{
-                    Y.each(KC.rs.grpInfo.data,function(grpInfo){
+                    Y.each(J.rs.grpInfo.data,function(grpInfo){
                         if(grpInfo.pk===grp.id){data.push(grpInfo);}
                     });
                     //grid
@@ -488,17 +486,17 @@ return; //>>>>FINISH
            ,tags:function(){
                 d.list.socialAll=[];
                 d.list.businessAll=[];
-                Y.each(KC.data.tgCollectionTag,function(tgCollectionTag){
+                Y.each(J.data.tgCollectionTag,function(tgCollectionTag){
                     if(tgCollectionTag.collection===d.TG_COLLECTION_TEAM_SOCIAL){
                         d.list.socialAll.push({
                             id  :tgCollectionTag.tag
-                           ,name:KC.data.tgTag[tgCollectionTag.tag].name
+                           ,name:J.data.tgTag[tgCollectionTag.tag].name
                         });
                     }
                     if(tgCollectionTag.collection===d.TG_COLLECTION_TEAM_BUSINESS){
                         d.list.businessAll.push({
                             id  :tgCollectionTag.tag
-                           ,name:KC.data.tgTag[tgCollectionTag.tag].name
+                           ,name:J.data.tgTag[tgCollectionTag.tag].name
                         });
                     }
                 });
@@ -508,23 +506,23 @@ return; //>>>>FINISH
         trigger={
             close:function(){
                 h.ol.hide();
-                Y.KC.widget.dialogMask.hide();
+                Y.J.widget.dialogMask.hide();
             }
            ,grpInfoRecordFocus:function(e){
-                var recNode=this.ancestor('.kc-record')
+                var recNode=this.ancestor('.j-record')
                    ,contentNode=recNode.getData('relatedNode')
                 ;
-                recNode.get('parentNode').all('.kc-record-focus').removeClass('kc-record-focus');
-                recNode.addClass('kc-record-focus');
+                recNode.get('parentNode').all('.j-record-focus').removeClass('j-record-focus');
+                recNode.addClass('j-record-focus');
                 contentNode.get('parentNode').all('>fieldset').setStyle('display','none');
                 contentNode.setStyle('display','');
             }
            ,grpInfoSelectOption:function(e,idx){
                 var idx=this.get('selectedIndex')
                    ,panel      =this.ancestor('.yui3-tab-panel')
-                   ,list       =panel.one('.kc-grpInfo-list')
-                   ,content    =panel.one('.kc-grpInfo-content')
-                   ,grpNode    =this.ancestor('.kc-record-grp')
+                   ,list       =panel.one('.j-grpInfo-list')
+                   ,content    =panel.one('.j-grpInfo-content')
+                   ,grpNode    =this.ancestor('.j-record-grp')
                    ,grpData    =grpNode.getData('data')
                    ,grpHandle  =grpNode.getData('handle')
                    ,newCategory=''
@@ -543,7 +541,7 @@ return; //>>>>FINISH
                     }
                 this.set('selectedIndex',0);
                 nn=render.grpInfo({node:panel});
-                nn.list.one('.kc-data-category').set('value',newCategory);
+                nn.list.one('.j-data-category').set('value',newCategory);
                 nn.content.one('legend em').setContent(newCategory);
                 nn.list.one('input').simulate('click');
             }
@@ -552,7 +550,7 @@ return; //>>>>FINISH
         /**
          *  load & initialise
          */
-        Y.KC.dataSet.fetch([
+        Y.J.dataSet.fetch([
         ],function(){
 
             render.base();

@@ -4,7 +4,7 @@
  *
  *  Brilliant: Extend for common sugar methods. Joe
  */
-YUI.add('kc-yui3-sugar',function(Y){
+YUI.add('j-yui3-sugar',function(Y){
     Y.mix(Y.Node.prototype,{
 
         toggle:(function(n){

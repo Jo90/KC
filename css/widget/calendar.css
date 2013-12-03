@@ -1,10 +1,10 @@
 /** /css/widget/calendar.css
  *
  */
-.kc-calendar .kc-date {
+.j-calendar .j-date {
   width:7em;
 }
-.yui3-calendar,.kc-calendar {
+.yui3-calendar,.j-calendar {
   position:absolute;
   top:30px;
   left:30px;

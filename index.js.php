@@ -1,21 +1,16 @@
-<?php
-/** /index.js.php
- *
- *  Kauri Coast Promotion Society
- *
- */
-namespace kc;
-require_once 'kc-config.php';
-?>
+<?php //index.js.php
 
+namespace j;
+
+?>
 //configurations
-KC={
+J={
     data:{},            //data stores
     db:{},              //db functions
     env:{               //environment
-        customEventSequence:0, //sequence to help generate unqiue custom events
-        fileserver:'<?php echo KC_FILESERVER; ?>',
-        server    :'<?php echo KC_SERVER; ?>'
+        customEventSequence:0, //sequence to help generate unique custom events
+        fileserver:'<?php echo J_FILESERVER; ?>',
+        server    :'<?php echo J_SERVER; ?>'
     },
     my:{},              //instantiated objects
     rs:{},              //result sets
@@ -35,16 +30,11 @@ KC={
 };
 //conditional constants
 <?php
-if (defined('KC_ENV_DEVICE')) {echo 'KC.env.device="' , KC_ENV_DEVICE , '";' , PHP_EOL;}
-?>
-<?php
-if (isset($_SESSION[KC_MEMBER])) {
-    require_once 'db/usr/common.php';
-    $criteria = new \stdClass;
-    $criteria->usrIds = array($_SESSION[KC_MEMBER]);
-    $r = usr_getUsr($criteria);
+if (defined('J_ENV_DEVICE')) {echo 'J.env.device="' , J_ENV_DEVICE , '";' , PHP_EOL;}
+if (isset($_SESSION[J_MEMBER])) {
+    $r = Db_Usr_Get::usr((object) array('criteria' => (object) array('usrIds' => array($_SESSION[J_MEMBER]))));
     $member = firstElement($r->data);
-    echo('KC.user.usr=' . json_encode($member) . ';' . PHP_EOL);
+    echo('J.user.usr=' . json_encode($member) . ';' . PHP_EOL);
 }
 //Challenge Handshake AP >>>>FINISH What about using PHP mcrypt_create_iv Initialization Vector?
 $seed      = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -52,12 +42,13 @@ $randomStr = '';
 $seedLen   = strlen($seed) - 1;
 $i         = 40;
 while ($i--) {$randomStr .= substr($seed,rand(0,$seedLen),1);}
-$_SESSION[KC_SALT] = $randomStr;
-echo 'KC.user.SALT="' , $_SESSION[KC_SALT] , '";' , PHP_EOL;
+$_SESSION[J_SALT] = $randomStr;
+echo 'J.user.SALT="' , $_SESSION[J_SALT] , '";' , PHP_EOL;
 ?>
 
 //debug YUI({filter:'raw',
-YUI({<?php require 'kc-modules.inc'; ?>}).use('kc-pod-userLogon',
+YUI({<?php require 'modules.inc'; ?>}).use(
+    'j-pod-userLogon',
     function(Y){
 
         Y.on('error',function(type,msg){
@@ -65,21 +56,16 @@ YUI({<?php require 'kc-modules.inc'; ?>}).use('kc-pod-userLogon',
             alert(type+': '+msg+'!');
         });
 
-        Y.KC.dataSet.fetch(
+        Y.J.dataSet.fetch(
             [
-                ['dbTable'          ,'name'],
-                ['tgTag'            ,'id'],
-                ['tgCollection'     ,'id'],
-                ['tgCollectionTable','id'],
-                ['tgCollectionTag'  ,'id']
             ]
            ,function(){
                 var d={},h={},my={}
                 ;
 
-                Y.KC.pod.userLogon({
-                    node:Y.one('.kc-userLogon'),
-                    nodeInfo:Y.one('.kc-userLogon-info')
+                Y.J.pod.userLogon({
+                    node:Y.one('.j-userLogon'),
+                    nodeInfo:Y.one('.j-userLogon-info')
                 });
 
                 //clock
@@ -87,10 +73,10 @@ YUI({<?php require 'kc-modules.inc'; ?>}).use('kc-pod-userLogon',
                         var clock=function(){el.setContent(new Date().toString(fmt))};
                         clock();
                         setInterval(clock,1000);
-                    }(Y.one('.kc-clock'),'dddd d-MMMM-yyyy h:mmtt');
+                    }(Y.one('.j-clock'),'dddd d-MMMM-yyyy h:mmtt');
 
                 //menu
-                    KC.my.tabView=new Y.TabView({
+                    J.my.tabView=new Y.TabView({
                         children:[
                             {label:'about',content:''},
                             {label:'projects/events',content:''},
@@ -98,10 +84,10 @@ YUI({<?php require 'kc-modules.inc'; ?>}).use('kc-pod-userLogon',
                             {label:'map',content:'<div id="map_canvas" style="width:100%;"></div>'},
                             {label:'roadmap/milestones',content:
                                 '<center>'
-                               +    '<h1>Kauri Coast Communities</h1>'
-                               +    '<h3>Development Roadmap and Milestones</h3>'
+                               +    '<h2>Kauri Coast Communities</h2>'
+                               +    '<h4>Development Roadmap and Milestones</h4>'
                                +'</center>'
-                               +'<div class="kc-topics">'
+                               +'<div class="j-topics">'
                                +    '<p>This is a volunteer project, completely in the nature of this sites purpose.</p>'
                                +    '<ul>'
                                +        '<li>'
@@ -115,14 +101,11 @@ YUI({<?php require 'kc-modules.inc'; ?>}).use('kc-pod-userLogon',
                                +        '</li>'
                                +        '<li>'
                                +            '<h1>Plan</h1>'
-                               +            '<h2>2012</h2>'
+                               +            '<h2>2014</h2>'
                                +            '<ul>'
                                +                '<li>Initial conceptual idea and thoughts by Kauri Coast Promotion Society Executive and interested parties.</li>'
                                +                '<li>Obtain domain name and hosting.</li>'
                                +                '<li>Setup developmental framework.</li>'
-                               +            '</ul>'
-                               +            '<h2>2013</h2>'
-                               +            '<ul>'
                                +                '<li>Long break due to other commitments.</li>'
                                +                '<li>February</li>'
                                +                '<li>Prototype on to internet</li>'
@@ -136,15 +119,15 @@ YUI({<?php require 'kc-modules.inc'; ?>}).use('kc-pod-userLogon',
                                +'</center>'
                             }
                         ]
-                    }).render('.kc-tabs');
+                    }).render('.j-tabs');
 
                     //shortcuts
                         h.tv={
-                            abt:KC.my.tabView.item(0),
-                            act:KC.my.tabView.item(1),
-                            grp:KC.my.tabView.item(2),
-                            map:KC.my.tabView.item(3),
-                            pln:KC.my.tabView.item(4)
+                            abt:J.my.tabView.item(0),
+                            act:J.my.tabView.item(1),
+                            grp:J.my.tabView.item(2),
+                            map:J.my.tabView.item(3),
+                            pln:J.my.tabView.item(4)
                         };
                         h.tvp={
                             abt:h.tv.abt.get('panelNode'),
@@ -155,16 +138,16 @@ YUI({<?php require 'kc-modules.inc'; ?>}).use('kc-pod-userLogon',
                         };
 
                     //about
-                        Y.use('kc-mod-about',function(Y){
-                            KC.my.about=new Y.KC.mod.about({node:h.tvp.abt,main:h});
+                        Y.use('j-mod-about',function(Y){
+                            J.my.about=new Y.J.mod.about({node:h.tvp.abt,main:h});
                         });
 
                     //listeners
                         //act
                             h.tv.act.after('selectedChange',function(e){
-                                if(!KC.my.act){
-                                    Y.use('kc-mod-act',function(Y){
-                                        KC.my.act=new Y.KC.mod.act({
+                                if(!J.my.act){
+                                    Y.use('j-mod-act',function(Y){
+                                        J.my.act=new Y.J.mod.act({
                                             node:h.tvp.act
                                         });
                                     });
@@ -172,9 +155,9 @@ YUI({<?php require 'kc-modules.inc'; ?>}).use('kc-pod-userLogon',
                             });
                         //grp
                             h.tv.grp.after('selectedChange',function(e){
-                                if(!KC.my.grp){
-                                    Y.use('kc-mod-grp',function(Y){
-                                        KC.my.grp=new Y.KC.mod.grp({
+                                if(!J.my.grp){
+                                    Y.use('j-mod-grp',function(Y){
+                                        J.my.grp=new Y.J.mod.grp({
                                             node:h.tvp.grp
                                         });
                                     });

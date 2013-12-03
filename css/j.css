@@ -1,0 +1,22 @@
+/** /css/j.css */
+
+body {background-color:#669CE8;}
+
+.j-bg-bl {position:fixed;z-index:-1;bottom:0;left:0}
+.j-bg-br {position:fixed;z-index:-1;bottom:0;right:0}
+
+.j-date, .j-time {width:6em;}
+
+.yui3-tabview-panel {overflow:auto;width:98%;} /* ensure containment */
+
+.j-title {font-size:1.4em;font-weight:bold;text-align:center;color:#800;}
+.j-title-section {display:block;font-size:1.4em;font-weight:bold;text-align:center;color:#800;}
+.j-title-note {display:block;font-size:1.1em;font-weight:bold;text-align:center;color:#600;}
+
+.j-topics {display:block;margin:0 auto;}
+.j-topics > div {float:left;padding:0.5em;margin:0.5em;border:1px solid #ddd;}
+.j-topics > div > img {display:block;margin:0 auto;}
+.j-topics > div > ul > li {font-size:1.2em;color:#880;text-align:center;}
+.j-topics > div > ul > li:hover {font-size:1.2em;color:#660;text-decoration:underline;}
+
+.j-btn-involved {clear:both;display:block;margin:0 auto;font-size:2em;}

@@ -27,7 +27,7 @@
  * - 
  * 
  */
-namespace kc;
+namespace j;
 /**
  * NAMED CONSTANTS not used yet, intend to incorporate later
  */

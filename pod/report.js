@@ -1,11 +1,9 @@
-/** /pod/report.js
- *
- *  Kauri Coast Promotion Society
+/** //pod/report.js
  *
  */
-YUI.add('kc-pod-report',function(Y){
+YUI.add('j-pod-report',function(Y){
 
-    Y.namespace('KC.pod').report=function(cfg){
+    Y.namespace('J.pod').report=function(cfg){
 
         if(typeof cfg==='undefined'
         ){alert('insufficient parameters');return;}
@@ -44,7 +42,7 @@ YUI.add('kc-pod-report',function(Y){
             var frameDoc=h.dframe.contentDocument||h.dframe.contentWindow.document;
             d.pod=Y.merge(d.pod,p);
             if(typeof p.title!=='undefined'){h.title.setContent(p.title);}
-            Y.KC.widget.dialogMask.mask(h.ol.get('zIndex'));
+            Y.J.widget.dialogMask.mask(h.ol.get('zIndex'));
             h.ol.show();
             frameDoc.open();
             frameDoc.write(p.html);
@@ -66,7 +64,7 @@ YUI.add('kc-pod-report',function(Y){
          */
 
         initialise=function(){
-            h.bb.addClass('kc-pod-'+self.info.id);
+            h.bb.addClass('j-pod-'+self.info.id);
             new Y.DD.Drag({node:h.bb,handles:[h.hd,h.ft]});
         };
 
@@ -100,12 +98,12 @@ YUI.add('kc-pod-report',function(Y){
             base:function(){
                 h.ol=new Y.Overlay({
                     headerContent:
-                        '<strong title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;KCPS"><em>'+self.info.title+'</em></strong> '
+                        '<strong title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;JPS"><em>'+self.info.title+'</em></strong> '
                        //>>>>FINISH
                        +'<input type="text" placeholder="email address" title="email address" >'
-                       +'<button class="kc-email">Email</button>'
-                       +'<button class="kc-print">Print</button>'
-                       +Y.KC.html('btn',{action:'close',title:'close pod'})
+                       +'<button class="j-email">Email</button>'
+                       +'<button class="j-print">Print</button>'
+                       +Y.J.html('btn',{action:'close',title:'close pod'})
                    ,bodyContent:''
                    ,align   :{points:[Y.WidgetPositionAlign.TC,Y.WidgetPositionAlign.TC]}
                    ,width   :cfg.width
@@ -122,12 +120,12 @@ YUI.add('kc-pod-report',function(Y){
                     h.bd    =h.ol.bodyNode;
                     h.bb    =h.ol.get('boundingBox');
                     h.title =h.hd.one('em');
-                    h.close =h.hd.one('.kc-close');
-                    h.email =h.hd.one('.kc-email');
-                    h.print =h.hd.one('.kc-print');
+                    h.close =h.hd.one('.j-close');
+                    h.email =h.hd.one('.j-email');
+                    h.print =h.hd.one('.j-print');
 
                     h.dframe       =document.createElement('iframe');
-                    h.dframe.id    ='kc-displayFrame';
+                    h.dframe.id    ='j-displayFrame';
                     h.dframe.width =800;
                     h.dframe.height=600;
                     h.dframe.src   ='about:blank';
@@ -139,14 +137,14 @@ YUI.add('kc-pod-report',function(Y){
         trigger={
             close:function(){
                 h.ol.hide();
-                Y.KC.widget.dialogMask.hide();
+                Y.J.widget.dialogMask.hide();
             }
         };
 
         /**
          *  load & initialise
          */
-        Y.KC.dataSet.fetch([
+        Y.J.dataSet.fetch([
         ],function(){
 
             render.base();

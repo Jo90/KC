@@ -1,11 +1,9 @@
-/** /pod/info.js
- *
- *  Kauri Coast Promotion Society
+/** //pod/info.js
  *
  */
-YUI.add('kc-pod-info',function(Y){
+YUI.add('j-pod-info',function(Y){
 
-    Y.namespace('KC.pod').info=function(cfg){
+    Y.namespace('J.pod').info=function(cfg){
 
         if(typeof cfg==='undefined'
         ){cfg={};}
@@ -50,14 +48,14 @@ YUI.add('kc-pod-info',function(Y){
         ;
 
         this.customEvent={
-            save:self.info.id+(++KC.env.customEventSequence)+':save'
+            save:self.info.id+(++J.env.customEventSequence)+':save'
         };
 
         this.display=function(p){
             d.pod=Y.merge(d.pod,p);
             h.infoList.setContent('');
             h.infoDetail.setContent('');
-            h.mask=Y.KC.widget.dialogMask.mask(h.ol.get('zIndex'));
+            h.mask=Y.J.widget.dialogMask.mask(h.ol.get('zIndex'));
             h.ol.show();
             io.fetch.info();
         };
@@ -87,7 +85,7 @@ YUI.add('kc-pod-info',function(Y){
          */
 
         initialise=function(){
-            h.bb.addClass('kc-pod-'+self.info.id);
+            h.bb.addClass('j-pod-'+self.info.id);
             new Y.DD.Drag({node:h.bb,handles:[h.hd,h.ft]});
             sync.categoryOptions();
         };
@@ -106,22 +104,22 @@ YUI.add('kc-pod-info',function(Y){
                 info:function(){
                     var post=[]
                     ;
-                    h.infoList.all('>.kc-record').each(function(infoList,idx){
+                    h.infoList.all('>.j-record').each(function(infoList,idx){
                         var infoDetail=infoList.getData('relatedNode')
                            ,infoData  =infoDetail.getData('data')
                            ,data={
                                 dbTable     :d.pod.dbTable
                                ,pk          :d.pod.pk
                                ,displayOrder:idx
-                               ,viewable    :parseInt(infoDetail.one('.kc-data-viewable').get('value'),10)
-                               ,category    :infoList.one('.kc-data-category').get('value')
-                               ,detail      :infoDetail.one('.kc-data-detail').get('innerHTML')
+                               ,viewable    :parseInt(infoDetail.one('.j-data-viewable').get('value'),10)
+                               ,category    :infoList.one('.j-data-category').get('value')
+                               ,detail      :infoDetail.one('.j-data-detail').get('innerHTML')
                             }
                         ;
                         if(infoData){data.id=infoData.id;}
                         post.push({
                             data:data
-                           ,remove:infoDetail.one('.kc-remove').get('checked')
+                           ,remove:infoDetail.one('.j-remove').get('checked')
                         });
                     });
                     Y.io('/db/info/u.php',{
@@ -139,17 +137,17 @@ YUI.add('kc-pod-info',function(Y){
             //group info
                 h.infoList.delegate('click',trigger.recordFocus,'>li');
                 h.infoDetail.delegate('click',function(){
-                    var rec=this.ancestor('.kc-record')
+                    var rec=this.ancestor('.j-record')
                     ;
                     cfg.existingCategories.splice(cfg.existingCategories.indexOf(rec.one('legend>em').get('innerHTML')),1);
                     sync.categoryOptions();
                     rec.getData('relatedNode').remove();
                     rec.remove();
-                },'a.kc-remove-info');
+                },'a.j-remove-info');
                 h.infoDetail.delegate('change',function(){
-                    this.ancestor('.kc-record-info').all('>div').setStyle('display',this.get('checked')?'none':'');
-                },'> legend .kc-remove');
-            h.bd.delegate('click',pod.display.editor,'.kc-editor');
+                    this.ancestor('.j-record-info').all('>div').setStyle('display',this.get('checked')?'none':'');
+                },'> legend .j-remove');
+            h.bd.delegate('click',pod.display.editor,'.j-editor');
             h.save.on('click',io.update.info);
             //custom
                 Y.on('db-info:available',populate.info);
@@ -165,9 +163,9 @@ YUI.add('kc-pod-info',function(Y){
             }
            ,load:{
                 editor:function(){
-                    Y.use('kc-pod-editor',function(Y){
-                        self.my.podEditor=new Y.KC.pod.editor({});
-                        Y.KC.whenAvailable.inDOM(self,'my.podEditor',function(){
+                    Y.use('j-pod-editor',function(Y){
+                        self.my.podEditor=new Y.J.pod.editor({});
+                        Y.J.whenAvailable.inDOM(self,'my.podEditor',function(){
                             self.my.podEditor.set('zIndex',cfg.zIndex+10);
                             h.podInvoke.simulate('click');
                         });
@@ -181,22 +179,22 @@ YUI.add('kc-pod-info',function(Y){
             info:function(rs){
                 var defaultCategory
                 ;
-                KC.rs=Y.merge(KC.rs,rs);
+                J.rs=Y.merge(J.rs,rs);
                 cfg.existingCategories=[];
                 h.infoList.setContent('');
                 h.infoDetail.setContent('');
-                Y.each(KC.rs.info.data,function(info){
+                Y.each(J.rs.info.data,function(info){
                     var nn=render.info()
                     ;
                     nn.detail.setData('data',info);
-                    Y.KC.removeOption(nn.detail.one('legend'));
-                    nn.list  .one('.kc-data-category').set('value',info.category);
+                    Y.J.removeOption(nn.detail.one('legend'));
+                    nn.list  .one('.j-data-category').set('value',info.category);
                     nn.detail.one('legend > em'      ).setContent(info.category);
-                    nn.detail.one('.kc-data-viewable').set('value',info.viewable);
-                    nn.detail.one('.kc-data-detail'  ).setContent(info.detail);
+                    nn.detail.one('.j-data-viewable').set('value',info.viewable);
+                    nn.detail.one('.j-data-detail'  ).setContent(info.detail);
                     cfg.existingCategories.push(info.category);
                     nn.detail.setData('data',info);
-                    if(info.category===d.pod.category){defaultCategory=nn.list.one('.kc-data-category');}
+                    if(info.category===d.pod.category){defaultCategory=nn.list.one('.j-data-category');}
                     nn.detail.hide();
                 });
                 if(defaultCategory){defaultCategory.simulate('click');}
@@ -208,14 +206,14 @@ YUI.add('kc-pod-info',function(Y){
             base:function(){
                 h.ol=new Y.Overlay({
                     headerContent:
-                        '<span title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;KCPS">'+self.info.title+'</span> '
+                        '<span title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;JPS">'+self.info.title+'</span> '
                        +'<select></select>'
-                       +Y.KC.html('btn',{action:'close',title:'close pod'})
+                       +Y.J.html('btn',{action:'close',title:'close pod'})
                    ,bodyContent:
-                        '<ul class="kc-info-list"></ul>'
-                       +'<ul class="kc-info-detail"></ul>'
+                        '<ul class="j-info-list"></ul>'
+                       +'<ul class="j-info-detail"></ul>'
                    ,footerContent:
-                        Y.KC.html('btn',{action:'save',title:'save' ,label:'save'})
+                        Y.J.html('btn',{action:'save',title:'save' ,label:'save'})
                    ,visible:cfg.visible
                    ,width  :cfg.width
                    ,xy     :cfg.xy
@@ -227,10 +225,10 @@ YUI.add('kc-pod-info',function(Y){
                     h.ft         =h.ol.footerNode;
                     h.bb         =h.ol.get('boundingBox');
                     h.addCategory=h.hd.one('select');
-                    h.close      =h.hd.one('.kc-close');
-                    h.infoList   =h.bd.one('.kc-info-list');
-                    h.infoDetail =h.bd.one('.kc-info-detail');
-                    h.save       =h.ft.one('.kc-save');
+                    h.close      =h.hd.one('.j-close');
+                    h.infoList   =h.bd.one('.j-info-list');
+                    h.infoDetail =h.bd.one('.j-info-detail');
+                    h.save       =h.ft.one('.j-save');
                 //sortable
                     h.infoListSortable=new Y.Sortable({
                         container:h.infoList
@@ -240,20 +238,20 @@ YUI.add('kc-pod-info',function(Y){
             }
            ,info:function(){
                 var list=Y.Node.create(
-                        '<li class="kc-record kc-btn kc-vert">'
-                       +  '<em></em><input class="kc-data-category" title="category name" />' //em drag icon
+                        '<li class="j-record j-btn j-vert">'
+                       +  '<em></em><input class="j-data-category" title="category name" />' //em drag icon
                        +'</li>'
                     )
                    ,detail=Y.Node.create(
-                        '<fieldset class="kc-record">'
+                        '<fieldset class="j-record">'
                        +  '<legend><em title="original category name"></em> '
-                       +    '<select class="kc-data-viewable">'
+                       +    '<select class="j-data-viewable">'
                        +      '<option value="0">Public view</option>'
                        +      '<option value="1">Group member view</option>'
                        +    '</select>'
-                       +    Y.KC.html('btn',{action:'remove',classes:'kc-remove-info'})
+                       +    Y.J.html('btn',{action:'remove',classes:'j-remove-info'})
                        +  '</legend>'
-                       +  '<span class="kc-data-detail kc-editor">description goes here</span>'
+                       +  '<span class="j-data-detail j-editor">description goes here</span>'
                        +'</fieldset>'
                     )
                 ;
@@ -307,19 +305,19 @@ YUI.add('kc-pod-info',function(Y){
                 cfg.existingCategories.push(newCategory);
                 sync.categoryOptions();
                 nn=render.info();
-                nn.list.one('.kc-data-category').set('value',newCategory);
+                nn.list.one('.j-data-category').set('value',newCategory);
                 nn.detail.one('legend em').setContent(newCategory);
                 nn.list.one('input').simulate('click');
             }
            ,close:function(){
                 h.ol.hide();
-                Y.KC.widget.dialogMask.hide();
+                Y.J.widget.dialogMask.hide();
             }
            ,recordFocus:function(e){
                 var detailNode=this.getData('relatedNode')
                 ;
-                this.get('parentNode').all('.kc-record-focus').removeClass('kc-record-focus');
-                this.addClass('kc-record-focus');
+                this.get('parentNode').all('.j-record-focus').removeClass('j-record-focus');
+                this.addClass('j-record-focus');
                 detailNode.get('parentNode').all('>fieldset').setStyle('display','none');
                 detailNode.setStyle('display','');
             }
@@ -328,7 +326,7 @@ YUI.add('kc-pod-info',function(Y){
         /**
          *  load & initialise
          */
-        Y.KC.dataSet.fetch([
+        Y.J.dataSet.fetch([
         ],function(){
 
             render.base();

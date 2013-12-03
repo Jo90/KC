@@ -1,7 +1,7 @@
 <?php
-/** /kc/inc/heartbeat.php
+/** //inc/heartbeat.php
  *
  */
-namespace kc;
+namespace j;
 
 //extend session

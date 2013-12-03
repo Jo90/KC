@@ -1,5 +1,5 @@
 /**
- *  /kc/css/base.css
+ *  /j/css/base.css
  */
 body {padding:0;margin:0;}
 body article,
@@ -10,16 +10,16 @@ a {text-decoration:none;}
 label {display:inline-block; /* ensure label and contents do not wrap */}
 ul {padding:0;margin:0;}
 
-.kc-btn {
+.j-btn {
   cursor:pointer;
   box-shadow:none !important;
   -moz-box-shadow:none !important;
   -webkit-box-shadow:none !important;
   border:none !important;
 }
-.kc-btn.kc-close {float:right;}
+.j-btn.j-close {float:right;}
 
-.kc-btn em {
+.j-btn em {
   background-image:url(/css/img/btn-sprite.png);
   display:inline-block;
   cursor:pointer;
@@ -29,29 +29,29 @@ ul {padding:0;margin:0;}
   width:16px;
 }
 
-.kc-add    em {background-position: 0px 0px;}
-.kc-remove em {background-position: 0px -20px;}
-.kc-find   em {background-position: 0px -40px;}
-.kc-close  em {background-position: 0px -60px; border: none;}
-.kc-min    em {background-position: 0px -80px;}
-.kc-max    em {background-position: 0px -100px;}
-.kc-right  em {background-position: 0px -120px;}
-.kc-left   em {background-position: 0px -140px;}
-.kc-next   em {background-position: 0px -120px;}
-.kc-prev   em {background-position: 0px -140px;}
-.kc-up     em {background-position: 0px -160px;}
-.kc-down   em {background-position: 0px -180px;}
-.kc-info   em {background-position: 0px -200px;}
-.kc-lock   em {background-position: 0px -220px;}
-.kc-unlock em {background-position: 0px -240px;}
-.kc-vert   em {background-position: 0px -260px;}
-.kc-hort   em {background-position: 0px -280px;}
-.kc-redo   em,
-.kc-reset  em {background-position: 0px -300px;}
-.kc-help   em {background-position: 0px -320px;}
-.kc-save   em {background-position: -20px 0px;}
-.kc-edit   em {background-position: -20px -20px;}
-.kc-stop   em {background-position: -20px -40px;}
-.kc-halt   em {background-position: -20px -60px;}
-.kc-tick   em {background-position: -20px -80px;}
-.kc-person em {background-position: -20px -100px;}
+.j-add    em {background-position: 0px 0px;}
+.j-remove em {background-position: 0px -20px;}
+.j-find   em {background-position: 0px -40px;}
+.j-close  em {background-position: 0px -60px; border: none;}
+.j-min    em {background-position: 0px -80px;}
+.j-max    em {background-position: 0px -100px;}
+.j-right  em {background-position: 0px -120px;}
+.j-left   em {background-position: 0px -140px;}
+.j-next   em {background-position: 0px -120px;}
+.j-prev   em {background-position: 0px -140px;}
+.j-up     em {background-position: 0px -160px;}
+.j-down   em {background-position: 0px -180px;}
+.j-info   em {background-position: 0px -200px;}
+.j-lock   em {background-position: 0px -220px;}
+.j-unlock em {background-position: 0px -240px;}
+.j-vert   em {background-position: 0px -260px;}
+.j-hort   em {background-position: 0px -280px;}
+.j-redo   em,
+.j-reset  em {background-position: 0px -300px;}
+.j-help   em {background-position: 0px -320px;}
+.j-save   em {background-position: -20px 0px;}
+.j-edit   em {background-position: -20px -20px;}
+.j-stop   em {background-position: -20px -40px;}
+.j-halt   em {background-position: -20px -60px;}
+.j-tick   em {background-position: -20px -80px;}
+.j-person em {background-position: -20px -100px;}

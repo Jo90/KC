@@ -3,7 +3,7 @@
  *  Kauri Coast Promotion Society
  *
  */
-YUI().add('kc-widget-message',function(Y){
+YUI().add('j-widget-message',function(Y){
 
     var Message=function(config){
         Message.superclass.constructor.apply(this,arguments);
@@ -33,7 +33,7 @@ YUI().add('kc-widget-message',function(Y){
 
     Y.extend(Message,Y.Widget,{
         initializer:function(config){
-            this.get('ol').get('contentBox').addClass('kc-message');
+            this.get('ol').get('contentBox').addClass('j-message');
         }
     });
 

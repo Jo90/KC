@@ -2,7 +2,8 @@
  *
  *  Kauri Coast Promotion Society
  */
-.kc-userLogon {
+
+.j-userLogon {
   position:absolute;
   top:3px;
   right:3px;
@@ -22,11 +23,12 @@
   filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', endColorstr='#000000',GradientType=0 );
   padding:0.4em 0.535em;
 }
-.kc-userLogon .kc-remove {float:right;}
-.kc-userLogon a {color:#fff;text-decoration:none;}
-.kc-userLogon a.userLogon-name {font-weight:bold;margin:0.435em 0.635em;}
-.kc-userLogon a:hover {color:#990A2C;text-decoration:none;cursor:pointer;}
+.j-userLogon > div {background-color:#eee;padding:3px;}
+.j-userLogon .j-remove {float:right;}
+.j-userLogon a {color:#fff;text-decoration:none;}
+.j-userLogon a.userLogon-name {font-weight:bold;margin:0.435em 0.635em;}
+.j-userLogon a:hover {color:#990A2C;text-decoration:none;cursor:pointer;}
 /* overlay */
-.kc-userLogon .yui3-widget-ft {padding:2px;text-align:right;}
-/* kc-userLogon-info */
-.kc-userLogon-info {color:#111;position:absolute;top:23px;right:3px;}
+.j-userLogon .yui3-widget-ft {padding:2px;text-align:right;}
+/* j-userLogon-info */
+.j-userLogon-info {color:#111;position:absolute;top:23px;right:3px;}

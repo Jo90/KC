@@ -1,20 +1,20 @@
 <?php
-/** /inc/userData.js.php
+/** //inc/userData.js.php
  *
  * return user data as javascript
  *
  */
-namespace kc;
+namespace j;
 
 require_once 'userData.php';
-if (isset($_SESSION[KC_MEMBER])) {
+if (isset($_SESSION[J_MEMBER])) {
     //remove password
     $data = userData();
     unset($data->user->password);
-    echo('KC.user=' . json_encode($data) . ';' . PHP_EOL);
+    echo('J.user=' . json_encode($data) . ';' . PHP_EOL);
 }
 //Challenge Handshake AP
-if (!isset($_SESSION[KC_SALT])) {
+if (!isset($_SESSION[J_SALT])) {
     //>>>>FINISH What about using PHP mcrypt_create_iv Initialization Vector?
     $seed      = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     $randomStr = '';
@@ -23,7 +23,7 @@ if (!isset($_SESSION[KC_SALT])) {
     while (--$i) {
         $randomStr .= substr($seed,rand(0,$seedLen),1);
     }
-    $_SESSION[KC_SALT] = $randomStr;
-    echo 'if(!KC.user){KC.user={};}' ,
-         'KC.user.SALT="' , $_SESSION[KC_SALT] , '";' , PHP_EOL;
+    $_SESSION[J_SALT] = $randomStr;
+    echo 'if(!J.user){J.user={};}' ,
+         'J.user.SALT="' , $_SESSION[J_SALT] , '";' , PHP_EOL;
 }

@@ -1,11 +1,8 @@
-/** /mod/about.js
- *
- *  Kauri Coast Promotion Society
- *
- */
-YUI.add('kc-mod-about',function(Y){
+//mod/about.js
 
-    Y.namespace('KC.mod').about=function(cfg){
+YUI.add('j-mod-about',function(Y){
+
+    Y.namespace('J.mod').about=function(cfg){
 
         if(typeof cfg==='undefined' ||
            typeof cfg.node==='undefined'
@@ -55,14 +52,14 @@ YUI.add('kc-mod-about',function(Y){
          */
 
         initialise=function(){
-            cfg.node.addClass('kc-mod-'+self.info.id);
+            cfg.node.addClass('j-mod-'+self.info.id);
             //tag collections
                 d.list.myTagsAll=[];
-                Y.each(KC.data.tagCollectionTag,function(tagCollectionTag){
+                Y.each(J.data.tagCollectionTag,function(tagCollectionTag){
                     if(tagCollectionTag.collection===d.TAG_COLLECTION_USR){
                         d.list.myTagsAll.push({
                             id  :tagCollectionTag.tag
-                           ,name:KC.data.tag[tagCollectionTag.tag].name
+                           ,name:J.data.tag[tagCollectionTag.tag].name
                         });
                     }
                 });
@@ -75,28 +72,28 @@ YUI.add('kc-mod-about',function(Y){
                         method:'POST'
                        ,on:{complete:function(id,o){Y.fire('db-usr:available',Y.JSON.parse(o.responseText)[0].result);}}
                        ,data:Y.JSON.stringify([{criteria:{
-                           usrIds:[KC.user.usr.id]
+                           usrIds:[J.user.usr.id]
                         }}])
                     });
                 }
             }
            ,update:{
                 usr:function(){
-                    if(typeof KC.user.usr==='undefined'){return;}
-                    var usrId=KC.user.usr.id
+                    if(!J.user.usr){return;}
+                    var usrId=J.user.usr.id
                        ,usr={
                             data:{
                                 id           :usrId
-                               ,firstName    :h.isLoggedIn.one('.kc-data-firstName'    ).get('value')
-                               ,lastName     :h.isLoggedIn.one('.kc-data-lastName'     ).get('value')
-                               ,knownAs      :h.isLoggedIn.one('.kc-data-knownAs'      ).get('value')
-                               ,contactDetail:h.isLoggedIn.one('.kc-data-publicDetails').get('value')
+                               ,firstName    :h.isLoggedIn.one('.j-data-firstName'    ).get('value')
+                               ,lastName     :h.isLoggedIn.one('.j-data-lastName'     ).get('value')
+                               ,knownAs      :h.isLoggedIn.one('.j-data-knownAs'      ).get('value')
+                               ,contactDetail:h.isLoggedIn.one('.j-data-publicDetails').get('value')
                             }
                            ,remove:h.removeMe.get('checked')
                            ,children:{
                                 usrInfo:[]
                                ,tagLink:[{data:{
-                                    dbTable   :KC.data.dbTable.usr.id
+                                    dbTable   :J.data.dbTable.usr.id
                                    ,collection:d.TAG_COLLECTION_USR
                                    ,tagIds    :h.myTagsList.get('selected')
                                    ,pk        :usrId
@@ -116,18 +113,18 @@ YUI.add('kc-mod-about',function(Y){
 
         listeners=function(){
             h.tvp.hub.delegate('click',function(){
-                if(this.hasClass('kc-page-grp')){KC.my.tabView.selectChild(cfg.main.tv.grp.get('index'));}
-                if(this.hasClass('kc-page-prj')){KC.my.tabView.selectChild(cfg.main.tv.prj.get('index'));}
-                if(this.hasClass('kc-page-evt')){KC.my.tabView.selectChild(cfg.main.tv.evt.get('index'));}
-            },'.kc-topic');
+                if(this.hasClass('j-page-grp')){J.my.tabView.selectChild(cfg.main.tv.grp.get('index'));}
+                if(this.hasClass('j-page-prj')){J.my.tabView.selectChild(cfg.main.tv.prj.get('index'));}
+                if(this.hasClass('j-page-evt')){J.my.tabView.selectChild(cfg.main.tv.evt.get('index'));}
+            },'.j-topic');
             h.getInvolved.on('click',function(){alert('How to get involved through group questions, coming...');});
             //me
                 h.removeMe.on('click',function(){if(this.get('checked')){this.set('checked',confirm('Checking this box will remove you when saved'));}});
                 h.saveMyDetails.on('click',io.update.usr);
-                h.requestMembership.on('click',function(){KC.my.tabView.selectChild(cfg.main.tv.grp.get('index'));});
+                h.requestMembership.on('click',function(){J.my.tabView.selectChild(cfg.main.tv.grp.get('index'));});
             //custom
-                Y.on('kc:logout',trigger.setConnectionState);
-                Y.on('kc:logon' ,trigger.setConnectionState);
+                Y.on('j:logout',trigger.setConnectionState);
+                Y.on('j:logon' ,trigger.setConnectionState);
                 Y.on('db-grp:available',populate.usr);
                 Y.on('db-usr:available',populate.usr);
         };
@@ -143,28 +140,28 @@ YUI.add('kc-mod-about',function(Y){
 
         populate={
             usr:function(rs){
-                KC.rs=Y.merge(KC.rs,rs);
+                J.rs=Y.merge(J.rs,rs);
                 var grpUsrRecords=[]
                    ,usr
                    ,list={}
                 ;
                 //sentry
-                    if(typeof KC.rs.usr==='undefined' || typeof KC.user.usr==='undefined'){trigger.reset();return;}
-                usr=Y.KC.firstRecord(KC.rs.usr.data);
-                h.isLoggedIn.one('.kc-data-firstName'    ).set('value',usr.firstName);
-                h.isLoggedIn.one('.kc-data-lastName'     ).set('value',usr.lastName);
-                h.isLoggedIn.one('.kc-data-knownAs'      ).set('value',usr.knownAs);
-                h.isLoggedIn.one('.kc-data-publicDetails').set('value',usr.publicDetails);
+                    if(!J.rs.usr){trigger.reset();return;}
+                usr=Y.J.firstRecord(J.rs.usr.data);
+                h.isLoggedIn.one('.j-data-firstName'    ).set('value',usr.firstName);
+                h.isLoggedIn.one('.j-data-lastName'     ).set('value',usr.lastName);
+                h.isLoggedIn.one('.j-data-knownAs'      ).set('value',usr.knownAs);
+                h.isLoggedIn.one('.j-data-publicDetails').set('value',usr.publicDetails);
                 //tags
                     if(!h.myTagsList){
-                        h.myTagsList=new Y.KC.widget.List({
+                        h.myTagsList=new Y.J.widget.List({
                             elements:d.list.myTagsAll
                            ,selectorPrompt:'+my interests'
                         }).render(h.myTags);
                     }
                     list.myTags=[];
-                    if(typeof KC.rs.usrTags!=='undefined'){
-                        Y.each(KC.rs.usrTags.data,function(usrTag){
+                    if(typeof J.rs.usrTags!=='undefined'){
+                        Y.each(J.rs.usrTags.data,function(usrTag){
                             if(usrTag.collection===d.TAG_COLLECTION_USR){
                                 list.myTags.push(usrTag.tag);
                             }
@@ -172,10 +169,10 @@ YUI.add('kc-mod-about',function(Y){
                     }
                     h.myTagsList.set('selected',list.myTags);
                 //groups
-                    Y.each(KC.rs.grpUsr.data,function(grpUsr){
+                    Y.each(J.rs.grpUsr.data,function(grpUsr){
                         //sentry
-                            if(grpUsr.usr!==KC.user.usr.id){return;}
-                        grpUsr.groupName=KC.data.grp[grpUsr.grp].name;
+                            if(grpUsr.usr!==J.user.usr.id){return;}
+                        grpUsr.groupName=J.data.grp[grpUsr.grp].name;
                         grpUsr.info='';
                         if(grpUsr.admin!==null){
                             grpUsr.membership='Administrator';
@@ -210,52 +207,51 @@ YUI.add('kc-mod-about',function(Y){
                 h.tvAbout=new Y.TabView({
                     children:[
                         {label:'information hub',content:
-                            '<div class="kc-title">Kauri Coast Communities - Information Hub</div>'
-                           +'<div class="kc-topics">'
+                            '<div class="j-topics">'
                            +  '<div>'
                            +    '<img src="/img/communication.jpg" alt="sharing ideas" title="bringing people together and inspiring communities"/>'
-                           +    '<h1>Bringing people together</h1>'
-                           +    '<h3>Sharing ideas</h3>'
+                           +    '<em class="j-title-section">Bringing people together</em>'
+                           +    '<em class="j-title-note">Sharing ideas</em>'
                            +    '<ul>'
-                           +      '<li class="kc-topic kc-page-grp">groups</li>'
+                           +      '<li class="j-topic j-page-grp">groups</li>'
                            +    '</ul>'
                            +  '</div>'
                            +  '<div>'
                            +    '<img src="/img/workingTogether.png" alt="working together" title="working together"/>'
-                           +    '<h1>Working together</h1>'
-                           +    '<h3>Involvement</h3>'
+                           +    '<em class="j-title-section">Working together</em>'
+                           +    '<em class="j-title-note">Involvement</em>'
                            +    '<ul>'
-                           +      '<li class="kc-topic kc-page-prj">projects</li>'
+                           +      '<li class="j-topic j-page-prj">projects</li>'
                            +    '</ul>'
                            +  '</div>'
                            +  '<div>'
                            +    '<img src="/img/happy.jpg" alt="Wellbeing" title="living life and contributing"/>'
-                           +    '<h1>Wellbeing</h1>'
-                           +    '<h3>Contributing/Receiving<br />Me/Family/Community</h3>'
+                           +    '<em class="j-title-section">Wellbeing</em>'
+                           +    '<em class="j-title-note">Contributing/Receiving<br />Me/Family/Community</em>'
                            +    '<ul>'
-                           +      '<li class="kc-topic kc-page-evt">events</li>'
+                           +      '<li class="j-topic j-page-evt">events</li>'
                            +    '</ul>'
                            +  '</div>'
-                           +  '<button class="kc-btn-involved">How to get involved</button>'
+                           +  '<button class="j-btn-involved">How to get involved</button>'
                            +'</div>'
                            +'</center>'
                         }
                        ,{label:'me',content:
-                             '<div class="kc-isLoggedOut">You must log in to see this section</div>'
-                            +'<div class="kc-isLoggedIn">'
+                             '<div class="j-isLoggedOut">You must log in to see this section</div>'
+                            +'<div class="j-isLoggedIn">'
                             +  '<fieldset>'
                             +    '<legend>my details</legend>'
-                            +    'First name <input class="kc-data kc-data-firstName" placeholder="first name" />'
-                            +    ' Last name <input class="kc-data kc-data-lastName"  placeholder="last name" />'
-                            +    ' Known as <input class="kc-data kc-data-knownAs"    placeholder="known as" />'
-                            +    ' &nbsp; <label><input class="kc-remove" type="checkbox" />mark me for removal</label>'
+                            +    'First name <input class="j-data j-data-firstName" placeholder="first name" />'
+                            +    ' Last name <input class="j-data j-data-lastName"  placeholder="last name" />'
+                            +    ' Known as <input class="j-data j-data-knownAs"    placeholder="known as" />'
+                            +    ' &nbsp; <label><input class="j-remove" type="checkbox" />mark me for removal</label>'
                             +    '<br/>Public contact details<br />'
-                            +    '<textarea class="kc-data kc-data-publicDetails" placeholder="public contact details" /></textarea>'
-                            +    '<div class="kc-tags-mine"></div>'
+                            +    '<textarea class="j-data j-data-publicDetails" placeholder="public contact details" /></textarea>'
+                            +    '<div class="j-tags-mine"></div>'
                             +    '<br/>User information and categorisation [to be implemented soon...]'
-                            +    Y.KC.html('btn',{action:'save',label:'save details'})
+                            +    Y.J.html('btn',{action:'save',label:'save details'})
                             +  '</fieldset>'
-                            +  '<fieldset class="kc-grid-myGrps">'
+                            +  '<fieldset class="j-grid-myGrps">'
                             +    '<legend>my groups <button>request group membership</button></legend>'
                             +  '</fieldset>'
                             +'</div>'
@@ -271,13 +267,13 @@ YUI.add('kc-mod-about',function(Y){
                         hub:h.tv.hub.get('panelNode')
                        ,me :h.tv.me .get('panelNode')
                     };
-                    h.getInvolved      =h.tvp.hub.one('.kc-btn-involved');
-                    h.isLoggedIn       =h.tvp.me.one('.kc-isLoggedIn');
-                    h.isLoggedOut      =h.tvp.me.one('.kc-isLoggedOut');
-                    h.myTags           =h.isLoggedIn.one('.kc-tags-mine');
-                    h.removeMe         =h.isLoggedIn.one('.kc-remove');
-                    h.saveMyDetails    =h.isLoggedIn.one('.kc-save');
-                    h.gridMyGrps       =h.isLoggedIn.one('.kc-grid-myGrps');
+                    h.getInvolved      =h.tvp.hub.one('.j-btn-involved');
+                    h.isLoggedIn       =h.tvp.me.one('.j-isLoggedIn');
+                    h.isLoggedOut      =h.tvp.me.one('.j-isLoggedOut');
+                    h.myTags           =h.isLoggedIn.one('.j-tags-mine');
+                    h.removeMe         =h.isLoggedIn.one('.j-remove');
+                    h.saveMyDetails    =h.isLoggedIn.one('.j-save');
+                    h.gridMyGrps       =h.isLoggedIn.one('.j-grid-myGrps');
                     h.requestMembership=h.gridMyGrps.one('>legend>button');
             }
         };
@@ -290,7 +286,7 @@ YUI.add('kc-mod-about',function(Y){
                 //logged in
                 h.isLoggedIn.hide();
                 h.isLoggedOut.hide();
-                if(typeof KC.user.usr!=='undefined'){
+                if(J.user.usr){
                     h.isLoggedIn.show();
                     io.fetch.usr();
                 }else{
@@ -301,7 +297,7 @@ YUI.add('kc-mod-about',function(Y){
         /**
          *  load & initialise
          */
-        Y.KC.dataSet.fetch([
+        Y.J.dataSet.fetch([
             ['grp','id']
         ],function(){
 

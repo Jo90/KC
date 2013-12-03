@@ -1,11 +1,6 @@
-<?php
-/** /db/info/s.php
- *
- *  Kauri Coast Promotion Society
- *
- */
-namespace kc;
-require_once 'common.php';
+<?php //db/info/s.php
+
+namespace j;
 
 $post = json_decode(file_get_contents('php://input'));
 
@@ -17,7 +12,7 @@ foreach ($post as $i) {
     $i->result = new \stdClass;
     $r         = $i->result;
 
-    $r->info = info_getInfo($i->criteria);
+    $r->info = db_getInfo($i->criteria);
 }
 header('Content-type: text/plain');
 echo json_encode($post);

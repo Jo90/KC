@@ -3,13 +3,13 @@
  *  Kauri Coast Promotion Society
  *
  */
-YUI().add('kc-widget-list',function(Y){
+YUI().add('j-widget-list',function(Y){
 
     var List=function(config){
         List.superclass.constructor.apply(this,arguments);
     };
 
-    List.NAME='kc-list';
+    List.NAME='j-list';
 
     List.ATTRS={
         current:{

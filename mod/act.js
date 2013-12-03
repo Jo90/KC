@@ -1,11 +1,9 @@
-/** /mod/act.js
- *
- *  Kauri Coast Promotion Society
+/** //mod/act.js
  *
  */
-YUI.add('kc-mod-act',function(Y){
+YUI.add('j-mod-act',function(Y){
 
-    Y.namespace('KC.mod').act=function(cfg){
+    Y.namespace('J.mod').act=function(cfg){
 
         if(typeof cfg==='undefined' ||
            typeof cfg.node==='undefined'
@@ -36,7 +34,6 @@ YUI.add('kc-mod-act',function(Y){
            ,pod={}
            ,populate={}
            ,render={}
-           ,sync={}
            ,trigger={}
         ;
 
@@ -53,15 +50,16 @@ YUI.add('kc-mod-act',function(Y){
          */
 
         initialise=function(){
-            cfg.node.addClass('kc-mod-'+self.info.id);
+            cfg.node.addClass('j-mod-'+self.info.id);
             h.filtersbb.setStyle('display','none');
-            sync.all();
-            h.list.actTags=new Y.KC.widget.List({
+/*
+            h.list.actTags=new Y.J.widget.List({
                 elements      :d.list.actTags
                ,selected      :[]
                ,selectorPrompt:'+Filter for '+d.tagCollection.tgCollection.name
                ,title         :'Select tags to filter activities - x removes tag'
-            }).render(cfg.node.one('.kc-activityTags'));
+            }).render(cfg.node.one('.j-activityTags'));
+*/
         };
 
         io={
@@ -72,9 +70,9 @@ YUI.add('kc-mod-act',function(Y){
                        ,on:{complete:function(id,o){Y.fire('db-act:available',Y.JSON.parse(o.responseText)[0].result);}}
                        ,data:Y.JSON.stringify([{criteria:{
                            limitOffset  :0 //>>>>FINISH
-                          ,limitRowCount:parseInt(cfg.node.one('.kc-limit-rowCount').get('value'),10)
-                          ,orderBy      :cfg.node.one('.kc-criteria-orderBy').get('value')
-                          ,tags         :h.list.actTags.get('selected')
+                          ,limitRowCount:parseInt(cfg.node.one('.j-limit-rowCount').get('value'),10)
+                          ,orderBy      :cfg.node.one('.j-criteria-orderBy').get('value')
+//                          ,tags         :h.list.actTags.get('selected')
                         }}])
                     });
                 }
@@ -95,8 +93,8 @@ YUI.add('kc-mod-act',function(Y){
             })
             h.fetch.on('click',io.fetch.act);
             //custom
-                Y.on('kc:logout'       ,trigger.loggedOut);
-                Y.on('kc:logon'        ,io.fetch.act);
+                Y.on('j:logout'       ,trigger.loggedOut);
+                Y.on('j:logon'        ,io.fetch.act);
                 Y.on('db-act:available',populate.act);
         };
 
@@ -133,15 +131,15 @@ YUI.add('kc-mod-act',function(Y){
                         body+='<p>Created: '+new Date(act.created*1000).toString()+'</p>';
                         body+='<p>Contact Details: '+(act.contactDetail===null?'not specified yet':act.contactDetail)+'</p>';
                         //tags
-                            Y.each(KC.rs.actTags.data,function(actTag){
+                            Y.each(J.rs.actTags.data,function(actTag){
                                 if(actTag.pk!==act.id){return;}
-                                tags.push(KC.data.tgTag[actTag.tag].name);
+                                tags.push(J.data.tgTag[actTag.tag].name);
                             });
                             if(tags.length>0){body+='<p>Tags: '+tags.join()+'</p>';}
                         //members
-                            Y.each(KC.rs.actUsr.data,function(actUsr){
+                            Y.each(J.rs.actUsr.data,function(actUsr){
                                 if(actUsr.act===act.id){
-                                    x=KC.rs.usr.data[actUsr.usr];
+                                    x=J.rs.usr.data[actUsr.usr];
                                     users.push(
                                         (x.knownAs!==null?x.knownAs:x.firstName)
                                     +(actUsr.admin!==null?'<em>[admin]</em>':'')
@@ -153,9 +151,9 @@ YUI.add('kc-mod-act',function(Y){
                                 body+='<p>Members: '+users.join()+'</p>';
                             }
                         //info
-                            Y.each(KC.rs.actInfo.data,function(actInfo){
+                            Y.each(J.rs.actInfo.data,function(actInfo){
                                 if(actInfo.act===act.id){
-                                    body+='<em class="kc-style-light">'+actInfo.category+'</em><p class="kc-style-light">'+actInfo.info+'</p>';
+                                    body+='<em class="j-style-light">'+actInfo.category+'</em><p class="j-style-light">'+actInfo.info+'</p>';
                                 }
                             });
                     self.my.podReport.display({
@@ -168,16 +166,16 @@ YUI.add('kc-mod-act',function(Y){
             }
            ,load:{
                 actEdit:function(){
-                    Y.use('kc-pod-actEdit',function(Y){
-                        self.my.podGrpEdit=new Y.KC.pod.actEdit();
-                        Y.KC.whenAvailable.inDOM(self,'my.podGrpEdit',function(){h.podInvoke.simulate('click');});
+                    Y.use('j-pod-actEdit',function(Y){
+                        self.my.podGrpEdit=new Y.J.pod.actEdit();
+                        Y.J.whenAvailable.inDOM(self,'my.podGrpEdit',function(){h.podInvoke.simulate('click');});
                     });
                 }
                ,report:function(){
-                    Y.use('kc-pod-report',function(Y){
-                        self.my.podReport=new Y.KC.pod.report({'zIndex':9999});
+                    Y.use('j-pod-report',function(Y){
+                        self.my.podReport=new Y.J.pod.report({'zIndex':9999});
                         //listeners
-                        Y.KC.whenAvailable.inDOM(self,'my.podReport',function(){h.podInvoke.simulate('click');});
+                        Y.J.whenAvailable.inDOM(self,'my.podReport',function(){h.podInvoke.simulate('click');});
                     });
                 }
             }
@@ -185,7 +183,7 @@ YUI.add('kc-mod-act',function(Y){
 
         populate={
             act:function(rs){
-                KC.rs=Y.merge(KC.rs,rs);
+                J.rs=Y.merge(J.rs,rs);
                 var records=[]
                    ,actName=h.actName.get('value')
                    ,filterChecked=h.caseSensitive.get('checked')
@@ -201,7 +199,7 @@ YUI.add('kc-mod-act',function(Y){
                         :actName.toLowerCase();
                 }
                 //format data
-                    Y.each(KC.rs.act.data,function(act){
+                    Y.each(J.rs.act.data,function(act){
 
 
 
@@ -211,8 +209,7 @@ YUI.add('kc-mod-act',function(Y){
                 if(h.actDataTable){h.actDataTable.set('data',records);}
                 else{
                     h.actDataTable=new Y.DataTable({
-                        caption:'Kauri Coast Groups/Teams'
-                       ,columns:[
+                        columns:[
                             {key:'name'                         ,sortable:true}
                            ,{                label:'projects'}
                            ,{                label:'meetings'}
@@ -230,21 +227,21 @@ YUI.add('kc-mod-act',function(Y){
         render={
             base:function(){
                 cfg.node.setContent(
-                    '<span class="kc-activityTags"></span>'
-                   +' &nbsp; | sort by '
-                   +'<select class="kc-criteria kc-criteria-orderBy">'
+                    'Kauri Coast Groups/Teams <span class="j-activityTags"></span>'
+                   +'&nbsp; sort by '
+                   +'<select class="j-criteria j-criteria-orderBy">'
                    +  '<option value="order by 1 desc">latest</option>'
                    +  '<option value="order by 1">earliest</option>'
                    +'</select>'
                    +'&nbsp; | '
-                   +Y.KC.html('btn',{action:'find',label:'fetch'})
+                   +Y.J.html('btn',{action:'find',label:'fetch'})
                    +'<button style="float:right;">show advanced search</button>'
-                   +'<div class="kc-display-filters">'
+                   +'<div class="j-display-filters">'
                    +  'name filter ('
-                   +  '<label><input type="checkbox" class="kc-criteria kc-criteria-caseSensitive" />case sensitive</label>'
-                   +  ') <input class="kc-data kc-data-actName" type="text" placeholder="activity/project/event" title="activity/project/event name filter" />'
+                   +  '<label><input type="checkbox" class="j-criteria j-criteria-caseSensitive" />case sensitive</label>'
+                   +  ') <input class="j-data j-data-actName" type="text" placeholder="activity/project/event" title="activity/project/event name filter" />'
                    +  '<label><input type="checkbox" />include completed</label>'
-                   +  ' &nbsp; | row limit <select class="kc-limit-rowCount">'
+                   +  ' &nbsp; | row limit <select class="j-limit-rowCount">'
                    +    '<option>10</option>'
                    +    '<option selected="selected">20</option>'
                    +    '<option>30</option>'
@@ -252,49 +249,30 @@ YUI.add('kc-mod-act',function(Y){
                    +    '<option>100</option>'
                    +'  </select>'
                    +'</div>'
-                   +'<div class="kc-grid"></div>'
+                   +'<div class="j-grid"></div>'
                 );
                 //shortcuts
-                    h.actName      =cfg.node.one('.kc-data-actName');
-                    h.caseSensitive=cfg.node.one('.kc-criteria-caseSensitive');
+                    h.actName      =cfg.node.one('.j-data-actName');
+                    h.caseSensitive=cfg.node.one('.j-criteria-caseSensitive');
                     h.filtersBtn   =cfg.node.one('> button');
-                    h.filtersbb    =cfg.node.one('> .kc-display-filters');
-                    h.tagsProject  =h.filtersbb.one('.kc-tags-project');
-                    h.fetch        =cfg.node.one('.kc-find');
-                    h.grid         =cfg.node.one('.kc-grid');
-            }
-        };
-
-        sync={
-            all:function(){
-                sync.tags();
-            }
-           ,tags:function(){
-                var tableId=KC.data.dbTable['act'].id
-                   ,actCollection=Y.KC.collection(tableId)
-                ;
-                d.tagCollection=actCollection[d.TG_COLLECTION_ACT]
-                d.list.actTags=[];
-                Y.each(d.tagCollection.tgCollectionTag,function(tgCollectionTag){
-                    d.list.actTags.push({
-                        name:tgCollectionTag.tgName
-                       ,id  :tgCollectionTag.tag
-                    });
-                });
+                    h.filtersbb    =cfg.node.one('> .j-display-filters');
+                    h.tagsProject  =h.filtersbb.one('.j-tags-project');
+                    h.fetch        =cfg.node.one('.j-find');
+                    h.grid         =cfg.node.one('.j-grid');
             }
         };
 
         trigger={
             loggedOut:function(){
                 //clear result set
-                if(typeof KC.rs.actUsr!=='undefined'){delete KC.rs.actUsr;}
+                if(typeof J.rs.actUsr!=='undefined'){delete J.rs.actUsr;}
                 io.fetch.act();
             }
         };
         /**
          *  load & initialise
          */
-        Y.KC.dataSet.fetch([
+        Y.J.dataSet.fetch([
             ['act','id']
         ],function(){
 

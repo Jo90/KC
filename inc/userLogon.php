@@ -1,32 +1,26 @@
-<?php
-/** /inc/userLogon.php
- *
- */
-namespace kc;
+<?php //inc/userLogon.php
 
-//logout
-if (isset($_REQUEST['logout'])) {unset($_SESSION[KC_MEMBER]); exit;}
+namespace j;
 
+if (isset($_REQUEST['logout'])) {unset($_SESSION[J_MEMBER]); exit;}
 if (!isset($_REQUEST['logon'], $_REQUEST['hash'])) {exit;}
 
-//logon
-require_once '../db/usr/common.php';
-$criteria = new \stdClass;
-$criteria->logon = $_REQUEST['logon'];
-$r = usr_getUsr($criteria);
+$r = Db_Usr_Get::usr((object) array('criteria' => (object) array('logon' => $_REQUEST['logon'])));
 
+if (!isset($r->data)) {exit;}
 $member = firstElement($r->data);
+
 if (!isset($member)) {exit;}
 
 //verify password
-if (SHA1($member->password . SHA1($_SESSION[KC_SALT])) == $_REQUEST['hash']) {
-    $_SESSION[KC_MEMBER] = $member->id;
+if (SHA1($member->password . SHA1($_SESSION[J_SALT])) == $_REQUEST['hash']) {
+    $_SESSION[J_MEMBER] = $member->id;
     //security
     unset($member->logon);
     unset($member->password);
-}
-if (!isset($_COOKIE[KC_USERLOGON_REMEMBER])) {
-    unset($_SESSION[KC_MEMBER]);
+} else exit;
+if (!isset($_COOKIE[J_USERLOGON_REMEMBER])) {
+    unset($_SESSION[J_MEMBER]);
 }
 header('Content-type: application/json');
 echo json_encode($r);

@@ -1,49 +1,23 @@
 /** /js/common.js
  *
- *  Kauri Coast Promotion Society
- *
  */
-YUI.add('kc-common',function(Y){
+YUI.add('j-common',function(Y){
 
-    Y.namespace('KC');
+    Y.namespace('J');
 
-    Y.KC.checkEmail=function(email){
+    Y.J.checkEmail=function(email){
         var filter=/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
         return filter.test(email);
     };
 
-    //tag collections for a dbTable
-    Y.KC.collection=function(dbTable){
-        var collection={dbTable:dbTable}
-        ;
-        Y.each(KC.data.tgCollectionTable,function(collectionTable){
-            var col=collectionTable.collection
-            ;
-            if(collectionTable.dbTable===dbTable){
-                if(typeof collection[col]==='undefined'){collection[col]={};}
-                collection[col].tgCollectionTable=collectionTable;
-                collection[col].tgCollection=KC.data.tgCollection[col];
-                //
-                collection[col].tgCollectionTag=[];
-                Y.each(KC.data.tgCollectionTag,function(collectionTag){
-                    if(collectionTag.collection===col){
-                        collectionTag.tgName=KC.data.tgTag[collectionTag.tag].name;
-                        collection[col].tgCollectionTag.push(collectionTag);
-                    }
-                });
-            }
-        });
-        return collection;
-    };
-
-    Y.KC.dataSet={ //table, pk field, field
+    Y.J.dataSet={ //table, pk field, field
         fetch:function(dataSets,callback){
             var i=dataSets.length
                ,missing=[]
                ,missingDatasets=[]
             ;
             while(i--){
-                if(!KC.data[dataSets[i][0]]){
+                if(!J.data[dataSets[i][0]]){
                     missing.push(dataSets[i][0]);
                     missingDatasets.push(dataSets[i]);
                 }
@@ -53,7 +27,7 @@ YUI.add('kc-common',function(Y){
                     method:'POST'
                    ,on:{
                         complete:function(id,o){
-                            Y.KC.dataSet.reformat(Y.JSON.parse(o.responseText),missingDatasets);
+                            Y.J.dataSet.reformat(Y.JSON.parse(o.responseText),missingDatasets);
                             callback();
                         }
                     }
@@ -64,7 +38,7 @@ YUI.add('kc-common',function(Y){
             }
         }
         /**
-         *  convert resultSets.dataSet.data,meta to KC.data.dataSet and KC.meta.dataSet
+         *  convert resultSets.dataSet.data,meta to J.data.dataSet and J.meta.dataSet
          *  arg[0] = result.dataSet.data and result.dataSet.meta
          *  args[1] = primary key field name i.e. 'id'
          *  args[2] = return type i.e. 'object'(default), 'array', 'raw'
@@ -77,8 +51,8 @@ YUI.add('kc-common',function(Y){
                ,newRec
                ,rsDS //result data set
             ;
-            if(!KC.data){KC.data={};};
-            if(!KC.meta){KC.meta={};};
+            if(!J.data){J.data={};};
+            if(!J.meta){J.meta={};};
             //critera
             while(i--){
                 dsName=dataSets[i][3] || dataSets[i][0];
@@ -86,14 +60,14 @@ YUI.add('kc-common',function(Y){
                 dsRecordType=dataSets[i][2] || 'object';
                 rsDS=rs[dataSets[i][0]];
                 if(rsDS){
-                    if(rsDS.meta){KC.meta[dsName]=rsDS.meta;}
+                    if(rsDS.meta){J.meta[dsName]=rsDS.meta;}
                     //if pk then object else array
-                    KC.data[dsName]=dsPK===''?[]:{};
+                    J.data[dsName]=dsPK===''?[]:{};
                     //data
                     if(typeof rsDS.meta==='undefined'
                         || dsPK===''
                         || dsRecordType==='raw'){
-                        KC.data[dsName]=rsDS.data;
+                        J.data[dsName]=rsDS.data;
                     }else{
                         newRec=dsRecordType==='object'?{}:[];
                         Y.each(rsDS.data,function(n){
@@ -106,8 +80,8 @@ YUI.add('kc-common',function(Y){
                                 c++;
                             });
                             dsPK===''
-                                ?KC.data[dsName].push(Y.clone(newRec,true))
-                                :KC.data[dsName][dsPKvalue]=Y.clone(newRec,true);
+                                ?J.data[dsName].push(Y.clone(newRec,true))
+                                :J.data[dsName][dsPKvalue]=Y.clone(newRec,true);
                         });
                     }
                 }
@@ -115,11 +89,11 @@ YUI.add('kc-common',function(Y){
         }
     };
 
-    Y.KC.firstRecord=function(o){
+    Y.J.firstRecord=function(o){
         for(r in o){if(o.hasOwnProperty(r)){return o[r];}}
     };
 
-    Y.KC.html=function(template,tags,inc){
+    Y.J.html=function(template,tags,inc){
         var self=this
            ,tpl=this.html['TEMPLATE'][template]
            ,html=''
@@ -153,32 +127,32 @@ YUI.add('kc-common',function(Y){
             html=Y.substitute(html,this.html['TAG']);
         return html;
     };
-    Y.KC.html['TEMPLATE']={
-        'button'            :'{prefix}<a class="button kc-{action} {classes} {showOnFocus}" name="{name}" title="{title}"><span>{label}</span></a>{suffix}'
-       ,'kc-icon'           :'{prefix}<span class="kc-icon kc-{action} {classes} {showOnFocus}" title="{title}"><em></em><span>{label}</span></span>{suffix}'
-       ,'btn'               :'{prefix}<a class="kc-btn kc-{action} {classes} {showOnFocus}" title="{title}"><em></em><span>{label}</span><span class="kc-flag">{flag}</span></a>{suffix}'
-       ,'btn-tag'           :'{prefix}<a class="button {classes} {showOnFocus}" title="{title}"><em></em><span>{label}</span><span class="kc-flag">{flag}</span></a>{suffix}'
-       ,'btn-gen'           :'{prefix}<a class="kc-btn-gen kc-{action} {classes} {showOnFocus}" title="{title}"><em></em><span>{label}</span></a>{suffix}'
-       ,'btn-toggleShowHide':'<a class="kc-btn-gen kc-toggleShowHide {show}" title="show/hide"><em></em></a>'
+    Y.J.html['TEMPLATE']={
+        'button'            :'{prefix}<a class="button j-{action} {classes} {showOnFocus}" name="{name}" title="{title}"><span>{label}</span></a>{suffix}'
+       ,'j-icon'           :'{prefix}<span class="j-icon j-{action} {classes} {showOnFocus}" title="{title}"><em></em><span>{label}</span></span>{suffix}'
+       ,'btn'               :'{prefix}<a class="j-btn j-{action} {classes} {showOnFocus}" title="{title}"><em></em><span>{label}</span><span class="j-flag">{flag}</span></a>{suffix}'
+       ,'btn-tag'           :'{prefix}<a class="button {classes} {showOnFocus}" title="{title}"><em></em><span>{label}</span><span class="j-flag">{flag}</span></a>{suffix}'
+       ,'btn-gen'           :'{prefix}<a class="j-btn-gen j-{action} {classes} {showOnFocus}" title="{title}"><em></em><span>{label}</span></a>{suffix}'
+       ,'btn-toggleShowHide':'<a class="j-btn-gen j-toggleShowHide {show}" title="show/hide"><em></em></a>'
        ,'switch'            :'<label class="{classes}" title="{title}">{prefix}<input type="checkbox" checked="{checked}" value="{value}">{label}{suffix}</label>'
-       ,'toggleCheckbox'    :'<label><input type="checkbox" class="kc-toggleChecked" checked="{value}" title="check/uncheck" />{label}</label>'
+       ,'toggleCheckbox'    :'<label><input type="checkbox" class="j-toggleChecked" checked="{value}" title="check/uncheck" />{label}</label>'
        ,'selectCheckbox'    :'<label><input type="checkbox" class="{classes}"  title="check/uncheck" />{label}</label>'
        ,'radio'             :'<label><input type="radio" name="{name}" class="{classes}"  title="select" />{label}</label>'
-       ,'removeCheckbox'    :'<label><input type="checkbox" class="kc-remove" />remove</label>'
-       ,'textIcon'          :'<label class="kc-text kc-{icon}"><em></em><span>{text}</span></label>'
+       ,'removeCheckbox'    :'<label><input type="checkbox" class="j-remove" />remove</label>'
+       ,'textIcon'          :'<label class="j-text j-{icon}"><em></em><span>{text}</span></label>'
     };
     //device dependant
         //phone overrides
-        if(KC.env.device==='phone'){
+        if(J.env.device==='phone'){
             //>>>>>>>>>>>>>>>FINISH what html to use for phone alternative to checkbox?
-            Y.KC.html['TEMPLATE']['switch']='<label><input type="text" value="{value}">{label}</label>';
-            Y.KC.html['TEMPLATE']['toggleCheckbox']='<!--sort this out-->';
+            Y.J.html['TEMPLATE']['switch']='<label><input type="text" value="{value}">{label}</label>';
+            Y.J.html['TEMPLATE']['toggleCheckbox']='<!--sort this out-->';
         }
-    Y.KC.html['SNIPPET']={
+    Y.J.html['SNIPPET']={
         'showOnFocus' :'hide on-record-hover-show on-record-focus-show'
     };
     //i.e. for action==='add' set missing label and title
-    Y.KC.html['DEFAULT']=[
+    Y.J.html['DEFAULT']=[
         {
             _id   :'action'
            ,add   :{label:'',title:'add record'}
@@ -189,17 +163,17 @@ YUI.add('kc-common',function(Y){
            ,save  :{label:'save',title:'save data'}
         }
     ];
-    Y.KC.html['TAG']={action:'',checked:'',classes:'',flag:'',label:'',prefix:'',show:'',showOnFocus:'',suffix:'',title:'',value:''};
+    Y.J.html['TAG']={action:'',checked:'',classes:'',flag:'',label:'',prefix:'',show:'',showOnFocus:'',suffix:'',title:'',value:''};
 
-    Y.KC.removeOption=function(node){
-        node.one('.kc-remove').remove();
-        node.append(Y.KC.html('removeCheckbox'));
+    Y.J.removeOption=function(node){
+        node.one('.j-remove').remove();
+        node.append(Y.J.html('removeCheckbox'));
     };
 
-    Y.KC.whenAvailable={
+    Y.J.whenAvailable={
         timer:null
        ,listener:function(){
-            var q=Y.KC.whenAvailable.queue
+            var q=Y.J.whenAvailable.queue
                ,i=q.length-1
                ,defined
                ,objStem
@@ -234,17 +208,17 @@ YUI.add('kc-common',function(Y){
             }
             //if empty stop
                 if(q.length===0){
-                    clearInterval(Y.KC.whenAvailable.timer);
-                    Y.KC.whenAvailable.timer=null;
+                    clearInterval(Y.J.whenAvailable.timer);
+                    Y.J.whenAvailable.timer=null;
                 }
         }
        ,queue:[] //{objBranch:'WB.pod.something',callback:function,objBase:objBase}
        ,status:function(){
-            alert(Y.KC.whenAvailable.queue.toString());
+            alert(Y.J.whenAvailable.queue.toString());
         }
        ,inDOM:function(objBase,objBranch,callback,args){ //str,fn,obj,obj
             //push to queue
-            Y.KC.whenAvailable.queue.push({
+            Y.J.whenAvailable.queue.push({
                 objBranch:objBranch
                ,callback:callback
                ,objBase:objBase
@@ -252,8 +226,8 @@ YUI.add('kc-common',function(Y){
                ,args:args
             });
             //kickoff listener
-            if(Y.KC.whenAvailable.timer===null){
-                Y.KC.whenAvailable.timer=setInterval(Y.KC.whenAvailable.listener,200); //every 0.2 sec
+            if(Y.J.whenAvailable.timer===null){
+                Y.J.whenAvailable.timer=setInterval(Y.J.whenAvailable.listener,200); //every 0.2 sec
             }
         }
     };

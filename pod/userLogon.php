@@ -1,17 +1,15 @@
-<?php
-/** /pod/userLogon.php
- *
- *  Kauri Coast Promotion Society
- *
+<?php //pod/userLogon.php
+
+/*
  * //>>>>FINISH
  *  attempt counter. 3 fails wait 15mins
  */
-namespace kc;
+namespace j;
 ?>
 
-YUI.add('kc-pod-userLogon',function(Y){
+YUI.add('j-pod-userLogon',function(Y){
 
-    Y.namespace('KC.pod').userLogon=function(cfg){
+    Y.namespace('J.pod').userLogon=function(cfg){
 
         if(typeof cfg==='undefined' ||
            typeof cfg.node==='undefined'
@@ -24,7 +22,7 @@ YUI.add('kc-pod-userLogon',function(Y){
 
         var d={
                 COOKIE:{
-                    REMEMBER:'<?php echo KC_USERLOGON_REMEMBER; ?>'
+                    REMEMBER:'<?php echo J_USERLOGON_REMEMBER; ?>'
                    ,USERNAME:'userLogon-username'
                 }
             }
@@ -41,7 +39,7 @@ YUI.add('kc-pod-userLogon',function(Y){
          */
 
         initialise=function(){
-            cfg.node.addClass('kc-userLogon');
+            cfg.node.addClass('j-userLogon');
             new Y.DD.Drag({node:h.bb,handles:[h.hd]});
         };
 
@@ -68,8 +66,8 @@ YUI.add('kc-pod-userLogon',function(Y){
                 Y.io('/inc/userLogon.php',{
                     method:'POST'
                    ,on:{success:function(){
-                        delete KC.user.usr;
-                        Y.fire('kc:logout');
+                        delete J.user.usr;
+                        Y.fire('j:logout');
                     }}
                    ,data:'logout=yes'
                 });
@@ -87,11 +85,12 @@ YUI.add('kc-pod-userLogon',function(Y){
                         h.submit.set('disabled',h.forgot.who.get('value')==='');
                     });
                 //logon
-                    h.bd.delegate('keyup',function(){
-                        h.submit.set('disabled',
-                            (h.logon.username.get('value')==='' || h.logon.password.get('value')==='')
-                        );
-                    },'.kc-logon .kc-data-username,.kc-logon .kc-data-password');
+                    h.bd.delegate('keyup',function(e){
+                        var ok=h.logon.username.get('value')!=='' && h.logon.password.get('value')!==''
+                        ;
+                        h.submit.set('disabled',!ok);
+                        if(ok && e.keyCode===13){h.submit.simulate('click');}
+                    },'.j-logon .j-data-username,.j-logon .j-data-password');
                 //username
                     h.bd.delegate('blur',function(){
                         var nextMonth=new Date();
@@ -101,7 +100,7 @@ YUI.add('kc-pod-userLogon',function(Y){
                         }else{
                             Y.Cookie.remove(d.COOKIE.USERNAME);
                         }
-                    },'.kc-logon .kc-data-username');
+                    },'.j-logon .j-data-username');
                 //remember
                     h.bd.delegate('click',function(){
                         var nextMonth=new Date();
@@ -113,10 +112,10 @@ YUI.add('kc-pod-userLogon',function(Y){
                             Y.Cookie.remove(d.COOKIE.REMEMBER);
                             Y.Cookie.remove(d.COOKIE.USERNAME);
                         }
-                    },'.kc-logon .kc-data-remember');
+                    },'.j-logon .j-data-remember');
             h.submit.on('click',trigger.submit);
             //custom
-                Y.on('kc:logout',function(){
+                Y.on('j:logout',function(){
                     h.ol.hide();
                     h.usLogon .setStyle('display','');
                     h.usLogout.setStyle('display','none');
@@ -127,15 +126,16 @@ YUI.add('kc-pod-userLogon',function(Y){
                     }
                     clearInterval(h.heartbeat);
                 });
-                Y.on('kc:logon',function(){
+                Y.on('j:logon',function(){
                     h.ol.hide();
                     h.usLogon .setStyle('display','none');
                     h.usLogout.setStyle('display','');
                     h.usForgot.setStyle('display','none');
+debugger;
                     h.usName.setContent(
-                        KC.user.usr.knownAs===null||KC.user.usr.knownAs===''
-                            ?KC.user.usr.firstName
-                            :KC.user.usr.knownAs
+                        (J.user.usr===undefined||J.user.usr.knownAs===undefined||J.user.usr.knownAs===null||J.user.usr.knownAs==='')
+                            ?J.user.usr.firstName
+                            :J.user.usr.knownAs
                     );
                     h.heartbeat=setInterval(io.heartbeat,300000); //5mins
                 });
@@ -146,9 +146,9 @@ YUI.add('kc-pod-userLogon',function(Y){
                 //options
                     cfg.node.setContent(
                         '<a class="userLogon-name">Visitor</a>'
-                       +'<a class="kc-loggedOut userLogon-logon">[logon]</a>'
-                       +'<a class="kc-loggedIn  userLogon-logout">[logout]</a>'
-                       +'<a class="kc-forgot    userLogon-forgot">[forgot]</a>'
+                       +'<a class="j-loggedOut userLogon-logon">[logon]</a>'
+                       +'<a class="j-loggedIn  userLogon-logout">[logout]</a>'
+                       +'<a class="j-forgot    userLogon-forgot">[forgot]</a>'
                     );
                 //shortcuts
                     h.usOption=cfg.node.all('a');
@@ -162,18 +162,18 @@ YUI.add('kc-pod-userLogon',function(Y){
                     h.ol=new Y.Overlay({
                         headerContent:
                             '<em>logon</em>'
-                           +Y.KC.html('btn',{action:'remove'})
+                           +Y.J.html('btn',{action:'remove'})
                        ,bodyContent:
-                            '<div class="kc-logon">'
+                            '<div class="j-logon">'
                            +  'user<br />'
-                           +  '<input type="text" class="kc-data kc-data-username" placeholder="user name" />'
-                           +  '<input type="checkbox" class="kc-data kc-data-remember" title="remember user name" /><br />'
+                           +  '<input type="text" class="j-data j-data-username" placeholder="user name" />'
+                           +  '<input type="checkbox" class="j-data j-data-remember" title="remember user name" /><br />'
                            +  'password<br />'
-                           +  '<input type="password" class="kc-data kc-data-password" placeholder="password" /><br />'
+                           +  '<input type="password" class="j-data j-data-password" placeholder="password" /><br />'
                            +'</div>'
-                           +'<div class="kc-forgot">'
+                           +'<div class="j-forgot">'
                            +  'forgot? enter user id or email<br />'
-                           +  '<input type="text" class="kc-data kc-data-forgot-who" placeholder="user id or email" /><br />'
+                           +  '<input type="text" class="j-data j-data-forgot-who" placeholder="user id or email" /><br />'
                            +'</div>'
                        ,footerContent:'<input type="button" value="submit" />'
                        ,visible:false
@@ -185,15 +185,15 @@ YUI.add('kc-pod-userLogon',function(Y){
                     h.ft             =h.ol.footerNode;
                     h.bb             =h.ol.get('boundingBox');
                     h.forgotBtn      =h.hd.one('button');
-                    h.close          =h.hd.one('.kc-remove');
+                    h.close          =h.hd.one('.j-remove');
                     h.logon          ={};
-                    h.logon.bb       =h.bd.one('.kc-logon');
-                    h.logon.username =h.logon.bb.one('.kc-data-username');
-                    h.logon.password =h.logon.bb.one('.kc-data-password');
-                    h.logon.remember =h.logon.bb.one('.kc-data-remember');
+                    h.logon.bb       =h.bd.one('.j-logon');
+                    h.logon.username =h.logon.bb.one('.j-data-username');
+                    h.logon.password =h.logon.bb.one('.j-data-password');
+                    h.logon.remember =h.logon.bb.one('.j-data-remember');
                     h.forgot         ={};
-                    h.forgot.bb      =h.bd.one('.kc-forgot');
-                    h.forgot.who     =h.forgot.bb.one('.kc-data-forgot-who');
+                    h.forgot.bb      =h.bd.one('.j-forgot');
+                    h.forgot.who     =h.forgot.bb.one('.j-data-forgot-who');
                     h.submit         =h.ft.one('input');
             }
         };
@@ -220,7 +220,7 @@ YUI.add('kc-pod-userLogon',function(Y){
                         method:'POST'
                        ,on:{complete:function(id,o){
                             var rs=Y.JSON.parse(o.responseText)
-                               ,SALT=KC.user.SALT //remember SALT
+                               ,SALT=J.user.SALT //remember SALT
                             ;
                             //sentry
                                 if(typeof rs.data==='undefined'){
@@ -228,13 +228,13 @@ YUI.add('kc-pod-userLogon',function(Y){
                                     return false;
                                 }
                             //data
-                                KC.user.usr=Y.KC.firstRecord(rs.data);
-                                KC.user.SALT=SALT; //restore SALT
+                                J.user.usr=Y.J.firstRecord(rs.data);
+                                J.user.SALT=SALT; //restore SALT
                             //
-                            Y.fire('kc:logon');
+                            Y.fire('j:logon');
                         }}
                        ,data:'logon='+logonValue
-                            +'&hash='+Y.KC.js.SHA1(passwordValue+Y.KC.js.SHA1(KC.user.SALT))
+                            +'&hash='+Y.J.js.SHA1(passwordValue+Y.J.js.SHA1(J.user.SALT))
                     });
                 }
                 if(h.forgot.bb.getStyle('display')!=='none'){
@@ -245,7 +245,7 @@ YUI.add('kc-pod-userLogon',function(Y){
                         alert('please enter for email address');
                         return false;
                     }
-                    if(!Y.KC.fn.checkEmail(emailValue)){
+                    if(!Y.J.fn.checkEmail(emailValue)){
                         email.focus();
                         alert('invalid email format');
                         return false;
@@ -297,8 +297,7 @@ YUI.add('kc-pod-userLogon',function(Y){
         initialise();
         listeners();
 
-        //if logged on
-            if(typeof KC.user.usr!=='undefined'){Y.fire('kc:logon');}
+        if(J.user.usr!==undefined&&J.user.usr!==null){Y.fire('j:logon');}
 
     };
 

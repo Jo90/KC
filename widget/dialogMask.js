@@ -3,7 +3,7 @@
  *  Kauri Coast Promotion Society
  *
  *  adds to body
- *      <iframe id="kc-dialogMask">
+ *      <iframe id="j-dialogMask">
  *
  *  concept
  *      When the mask is invoked, the invoking object needs to set it's z-index high enough to ensure it is to the front.
@@ -13,7 +13,7 @@
  *      Or if the stack is empty the mask is hidden.
  *
  */
-YUI.add('kc-widget-dialogMask',function(Y){
+YUI.add('j-widget-dialogMask',function(Y){
 
     Y.namespace('KC.widget').dialogMask={
         //data
@@ -26,9 +26,9 @@ YUI.add('kc-widget-dialogMask',function(Y){
             this.iframeMask.setStyle('zIndex',zIndex);
         }
        ,init:function(zIndex){
-            if(!Y.one('#kc-dialogMask')){
+            if(!Y.one('#j-dialogMask')){
                 //create iframeMask
-                    this.iframeMask=Y.Node.create('<iframe id="kc-dialogMask"></div>');
+                    this.iframeMask=Y.Node.create('<iframe id="j-dialogMask"></div>');
                     Y.one('body').append(this.iframeMask);
                 //style
                     this.iframeMask.setStyles({zIndex:zIndex});

@@ -5,9 +5,9 @@
  *  http://www.webtoolkit.info/
  *
  **/
-YUI.add('kc-js-sha1',function(Y){
+YUI.add('j-js-sha1',function(Y){
 
-    Y.namespace('KC.js').SHA1=function(msg){
+    Y.namespace('J.js').SHA1=function(msg){
 
     function rotate_left(n,s) {
         var t4 = ( n<<s ) | (n>>>(32-s));

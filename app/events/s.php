@@ -4,7 +4,7 @@
  *  Kauri Coast Promotion Society
  *
  */
-namespace kc;
+namespace j;
 require_once '../../table/tag/common.php';
 require_once '../../table/usr/common.php';
 $post = json_decode(file_get_contents('php://input'));

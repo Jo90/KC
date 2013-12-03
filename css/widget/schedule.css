@@ -1,14 +1,14 @@
 /** /css/widget/schedule.css
  *
  */
-.kc-schedule {
+.j-schedule {
   overflow:auto;
   height:20em;
   width:180px;
 }
 
-/* .kc-schedule div {color:#bbb;overflow:auto;height:60px} */
-.kc-schedule .yui3-kc-schedule-content>div>span {color:#bbb;}
-.kc-schedule .yui3-kc-schedule-content>div>em {border:1px dotted #f00;}
+/* .j-schedule div {color:#bbb;overflow:auto;height:60px} */
+.j-schedule .yui3-j-schedule-content>div>span {color:#bbb;}
+.j-schedule .yui3-j-schedule-content>div>em {border:1px dotted #f00;}
 
-.kc-schedule .kc-event-time {font-size:0.6em; padding-right:1em;}
+.j-schedule .j-event-time {font-size:0.6em; padding-right:1em;}

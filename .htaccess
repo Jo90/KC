@@ -12,7 +12,7 @@ ErrorDocument 404 /error404.php
 
 #php local
 php_value include_path "/home/joe/kc/inc"
-php_value auto_prepend_file "/home/joe/kc/inc/kc-config.php"
+php_value auto_prepend_file "/home/joe/kc/inc/config.php"
 #php server
 #php_value include_path "???/inc"
-#php_value auto_prepend_file "???/inc/kc-config.php"
+#php_value auto_prepend_file "???/inc/config.php"

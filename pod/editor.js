@@ -1,11 +1,9 @@
-/** /pod/editor.js
- *
- *  Kauri Coast Promotion Society
+/** //pod/editor.js
  *
  */
-YUI.add('kc-pod-editor',function(Y){
+YUI.add('j-pod-editor',function(Y){
 
-    Y.namespace('KC.pod').editor=function(cfg){
+    Y.namespace('J.pod').editor=function(cfg){
 
         if(typeof cfg==='undefined' ||
            typeof cfg.node==='undefined'){cfg={};}
@@ -38,7 +36,7 @@ YUI.add('kc-pod-editor',function(Y){
         ;
  
         this.customEvent={
-            save:self.info.id+(++KC.env.customEventSequence)+':save'
+            save:self.info.id+(++J.env.customEventSequence)+':save'
         };
 
         this.get=function(what){
@@ -51,7 +49,7 @@ YUI.add('kc-pod-editor',function(Y){
         };
 
         this.display=function(e){
-            Y.KC.widget.dialogMask.mask(h.ol.get('zIndex'));
+            Y.J.widget.dialogMask.mask(h.ol.get('zIndex'));
             h.ol.show();
             h.editor.setData(e.currentTarget.get('innerHTML'));
         };
@@ -61,10 +59,10 @@ YUI.add('kc-pod-editor',function(Y){
          */
 
         initialise=function(){
-            h.bb.addClass('kc-'+self.info.id);
+            h.bb.addClass('j-'+self.info.id);
             new Y.DD.Drag({node:h.bb,handles:[h.hd]});
-            h.bd.set('id','kc-pod-ckeditor');
-            h.editor=CKEDITOR.appendTo('kc-pod-ckeditor',{},'');
+            h.bd.set('id','j-pod-ckeditor');
+            h.editor=CKEDITOR.appendTo('j-pod-ckeditor',{},'');
         };
 
         listeners=function(){
@@ -79,10 +77,10 @@ YUI.add('kc-pod-editor',function(Y){
             base:function(){
                 h.ol=new Y.Overlay({
                     headerContent:
-                        '<strong title="pod: &copy;KCPS">'+self.info.title+'</strong> '
-                       +Y.KC.html('btn',{action:'close',title:'close pod'})
+                        '<strong title="pod: &copy;JPS">'+self.info.title+'</strong> '
+                       +Y.J.html('btn',{action:'close',title:'close pod'})
                    ,bodyContent  :''
-                   ,footerContent:Y.KC.html('btn',{action:'save'})
+                   ,footerContent:Y.J.html('btn',{action:'save'})
                    ,centered:cfg.centered
                    ,visible :cfg.visible
                    ,width   :cfg.width
@@ -93,22 +91,22 @@ YUI.add('kc-pod-editor',function(Y){
                 h.bd      =h.ol.bodyNode;
                 h.ft      =h.ol.footerNode;
                 h.bb      =h.ol.get('boundingBox');
-                h.close   =h.hd.one('.kc-close');
-                h.save    =h.ft.one('.kc-save');
+                h.close   =h.hd.one('.j-close');
+                h.save    =h.ft.one('.j-save');
             }
         };
 
         trigger={
             close:function(){
                 h.ol.hide();
-                Y.KC.widget.dialogMask.hide();
+                Y.J.widget.dialogMask.hide();
             }
         };
 
         /**
          *  load & initialise
          */
-        Y.KC.dataSet.fetch([
+        Y.J.dataSet.fetch([
         ],function(){
 
             render.base();

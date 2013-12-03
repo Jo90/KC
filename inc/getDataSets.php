@@ -1,8 +1,8 @@
 <?php
-/** /inc/getDataSets.php?d[]=dataSet1&[]=dataSet2&...
+/** //inc/getDataSets.php?d[]=dataSet1&[]=dataSet2&...
  *
  */
-namespace kc;
+namespace j;
 
 require 'dataSets.php';
 header('Content-type: application/json');
