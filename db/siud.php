@@ -7,7 +7,7 @@ $post = json_decode(file_get_contents('php://input'));
 foreach ($post as $i) {
     foreach ($i as $key => $dataSet) {
 
-        $criteria = isset($dataSet->criteria) && $r = initResult($dataSet);
+        $criteria = isset($dataSet->criteria) && $r = Core::initResult($dataSet);
 
         if ($criteria) switch ($key) {
             case 'act'       : $r->{$key} = Db_Act ::getAct       ($dataSet); break;

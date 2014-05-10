@@ -2,7 +2,7 @@
 
 namespace j;
 
-class Db_Act {
+class Db_Act extends Db {
 
     public static function getAct($i, $extend = false) {
         global $mysqli;
@@ -34,7 +34,7 @@ class Db_Act {
         )) {
             $r->success = $stmt->execute();
             $r->rows = $mysqli->affected_rows;
-            $r->data = \j\fetch_result($stmt,'id');
+            $r->data = Core::fetch_result($stmt,'id');
             $stmt->close();
         }
         return $r;

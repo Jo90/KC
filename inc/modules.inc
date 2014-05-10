@@ -1,10 +1,14 @@
+/* J Modules */
 modules:{
-    'j-common':{
-        fullpath:'/js/common.js',
+    'j-lib':{
+        fullpath:'/lib/base.js',
         requires:[
             'anim',
             'app',
             'array',
+            'autocomplete',
+            'autocomplete-filters',
+            'autocomplete-highlighters',
             'collection',
             'console',
             'cookie',
@@ -13,10 +17,14 @@ modules:{
             'datatable',
             'datatable-sort',
             'dd',
+            'dd-plugin',
+            'event-outside',
+            'j-db',
             'j-pod-editor',
             'j-utl-date',
             'j-widget',
             'j-yui3-sugar',
+            'moment',
             'node-event-simulate',
             'overlay',
             'recordset',
@@ -26,6 +34,12 @@ modules:{
             'tabview',
             'yql'
         ]
+    },
+    /**
+     * external libraries
+     */
+    'moment':{
+        fullpath:'/js/moment.js'
     },
     /**
      * css
@@ -62,35 +76,35 @@ modules:{
         fullpath:'/css/pod/report.css',
         type:'css'
     },
-    'j-css-pod-userLogon':{
-        fullpath:'/css/pod/userLogon.css',
+    'j-css-mod-logon':{
+        fullpath:'/css/mod/logon.css',
         type:'css'
     },
     /**
      * data
      */
     'j-db':{
-        fullpath:'/db/base.js',
-        requires:['j-db-grp']
-    },
-    'j-db-grp':{
-        fullpath:'/db/grp/grp.js',
-        requires:['j-common']
+        fullpath:'/lib/db.js',
+        requires:['j-lib']
     },
     /**
      * modules
      */
     'j-mod-about':{
         fullpath:'/mod/about.js',
-        requires:['j-common','j-css-mod-about']
+        requires:['j-lib','j-css-mod-about']
     },
     'j-mod-act':{
         fullpath:'/mod/act.js',
-        requires:['j-common','j-css-mod-act']
+        requires:['j-lib','j-css-mod-act']
     },
     'j-mod-grp':{
         fullpath:'/mod/grp.js',
-        requires:['j-common','j-css-mod-grp','j-db']
+        requires:['j-lib','j-css-mod-grp','j-db']
+    },
+    'j-mod-logon':{
+        fullpath:'/mod/logon.php',
+        requires:['j-lib','j-css-mod-logon','j-js-sha1']
     },
     /**
      * plugins
@@ -107,32 +121,28 @@ modules:{
      */
     'j-pod-editor':{
         fullpath:'/pod/editor.js',
-        requires:['j-common','j-plugin-ckEditor']
+        requires:['j-lib','j-plugin-ckEditor']
     },
     'j-pod-grp':{
         fullpath:'/pod/grp.js',
-        requires:['j-common','j-css-pod-grp','j-db-grp']
+        requires:['j-lib','j-css-pod-grp','j-db-grp']
     },
     'j-pod-info':{
         fullpath:'/pod/info.js',
-        requires:['j-common','j-css-pod-info','j-pod-editor','sortable']
+        requires:['j-lib','j-css-pod-info','j-pod-editor','sortable']
     },
     'j-pod-report':{
         fullpath:'/pod/report.js',
-        requires:['j-common','j-css-pod-report']
-    },
-    'j-pod-userLogon':{
-        fullpath:'/pod/userLogon.php',
-        requires:['j-common','j-css-pod-userLogon','j-js-sha1']
+        requires:['j-lib','j-css-pod-report']
     },
     /**
      * utilities
      */
     'j-js-sha1':{ //secure hash algorithym
-        fullpath:'/js/sha1.js'
+        fullpath:'/lib/sha1.js'
     },
     'j-yui3-sugar': {
-         fullpath: '/js/yui3-sugar.js',
+         fullpath: '/lib/yui3-sugar.js',
          requires:['node','transition']
     },
     /**
@@ -141,7 +151,7 @@ modules:{
     'j-widget':{
         fullpath:'/widget/base.js',
         requires:[
-            'j-common',
+            'j-lib',
             'j-widget-calendar',
             'j-widget-dialogMask',
             'j-widget-list',
@@ -150,7 +160,7 @@ modules:{
     },
     'j-widget-calendar':{
          fullpath:'/widget/calendar.js',
-         requires:['calendar','j-common','j-css-calendar']
+         requires:['calendar','j-lib','j-css-calendar']
     },
     'j-widget-dialogMask':{
          fullpath:'/widget/dialogMask.js',
@@ -158,10 +168,10 @@ modules:{
     },
     'j-widget-list':{
         fullpath:'/widget/list.js',
-        requires:['j-common']
+        requires:['j-lib']
     },
     'j-widget-message':{
         fullpath:'/widget/message.js',
-        requires:['j-common']
+        requires:['j-lib']
     }
 }

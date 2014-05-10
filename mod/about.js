@@ -152,6 +152,7 @@ YUI.add('j-mod-about',function(Y){
                 h.isLoggedIn.one('.j-data-lastName'     ).set('value',usr.lastName);
                 h.isLoggedIn.one('.j-data-knownAs'      ).set('value',usr.knownAs);
                 h.isLoggedIn.one('.j-data-publicDetails').set('value',usr.publicDetails);
+/*
                 //tags
                     if(!h.myTagsList){
                         h.myTagsList=new Y.J.widget.List({
@@ -187,6 +188,7 @@ YUI.add('j-mod-about',function(Y){
                         }
                         grpUsrRecords.push(grpUsr);
                     });
+*/
                 if(h.grid.grpUsrDataTable){h.grid.grpUsrDataTable.set('data',grpUsrRecords);}
                 else{
                     h.grid.grpUsrDataTable=new Y.DataTable({
@@ -196,7 +198,7 @@ YUI.add('j-mod-about',function(Y){
                            ,{key:'since'       ,label:'since'     ,sortable:true}
                            ,{key:'info'        ,label:''          }
                         ]
-                    ,data:grpUsrRecords
+                        ,data:grpUsrRecords
                     }).render(h.gridMyGrps);
                 }
             }
@@ -234,6 +236,7 @@ YUI.add('j-mod-about',function(Y){
                            +  '</div>'
                            +  '<button class="j-btn-involved">How to get involved</button>'
                            +'</div>'
+                           +'<small><small><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Community & Volunteer Information Hub</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">KCPS</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small></small>'
                            +'</center>'
                         }
                        ,{label:'me',content:

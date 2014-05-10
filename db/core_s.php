@@ -9,8 +9,8 @@ foreach ($post as $i) {
     $i->log    = array();
 //>>>>FINISH criteria
     if (!isset($i->criteria) && !isset($i->criteria->infoIds)) {$r->log[] = 'invalid parameters'; continue;}
-    $i->result = new \stdClass;
-    $r         = $i->result;
+
+    $r = Core::initResult($i);
 
     $r->info = Db_Core::getInfo($i);
 }

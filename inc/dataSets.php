@@ -41,6 +41,22 @@ function dataSets($arr, $echo=false) {
         $rs->grp = fetch_info($stmt);
         $stmt->close();
     }
+    /**
+     *  tag
+     */
+    if (in_array('tag',$arr) && $stmt = $mysqli->prepare("select * from `tag`")) {
+        $stmt->execute();
+        $rs->tag = fetch_info($stmt);
+        $stmt->close();
+    }
+    /**
+     *  tagLink
+     */
+    if (in_array('tagLink',$arr) && $stmt = $mysqli->prepare("select * from `tagLink`")) {
+        $stmt->execute();
+        $rs->tagLink = fetch_info($stmt);
+        $stmt->close();
+    }
 
     if ($echo) {
         echo PHP_EOL , '//core info'

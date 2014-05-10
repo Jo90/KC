@@ -11,7 +11,7 @@ foreach ($post as $i) {
         !isset($i->act->criteria->actIds)
     ) {continue;}
 
-    $r = initResult($i);
+    $r = Core::initResult($i);
     $c = $i->act->criteria;
 
     $r->act = Db_Act::getAct($i);

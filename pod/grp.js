@@ -55,7 +55,6 @@ YUI.add('j-pod-grp',function(Y){
             d.pod=Y.merge(d.pod,p);
             Y.J.widget.dialogMask.mask(h.ol.get('zIndex'));
             h.ol.show();
-debugger;
             J.db.grp.fetch();
         };
 
@@ -371,7 +370,12 @@ return; //>>>>FINISH
                                     var rec=handle.grpUsrDataTable.getRecord(e.currentTarget.get('id')).toJSON()
                                     ;
                                     //>>>>FINISH display user
-                                    debugger;
+
+
+
+
+
+
                                 },'tr');
                                 handle.grpUsrDataTable.get('contentBox').delegate('click',io.update.grpUsr,'.j-approve-pending');
                                 handle.grpUsrDataTable.get('contentBox').delegate('click',pod.display.report,'tr');
@@ -455,7 +459,12 @@ return; //>>>>FINISH
             }
            ,grp:{
                 insert:function(rs){
-                    debugger;
+
+
+
+
+
+
                 }
             }
            ,info:function(nn,tv,grp,handle){

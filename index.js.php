@@ -3,18 +3,16 @@
 namespace j;
 
 ?>
-//configurations
 J={
-    data:{},            //data stores
-    db:{},              //db functions
-    env:{               //environment
+    data:{},
+    env:{
         customEventSequence:0, //sequence to help generate unique custom events
         fileserver:'<?php echo J_FILESERVER; ?>',
         server    :'<?php echo J_SERVER; ?>'
     },
-    my:{},              //instantiated objects
-    rs:{},              //result sets
-    std:{               //standards
+    my:{},    //instantiated objects
+    rs:{},    //result sets
+    std:{     //standards
         format:{
             date    :'d MMM yyyy',
             dateDM  :'d MMM',
@@ -25,15 +23,15 @@ J={
         }
     },
     tmp:{},
-    user:{},            //user info
-    view:{}             //views
+    user:{},
+    view:{}
 };
 //conditional constants
 <?php
 if (defined('J_ENV_DEVICE')) {echo 'J.env.device="' , J_ENV_DEVICE , '";' , PHP_EOL;}
-if (isset($_SESSION[J_MEMBER])) {
-    $r = Db_Usr::getUsr((object) array('criteria' => (object) array('usrIds' => array($_SESSION[J_MEMBER]))));
-    $member = firstElement($r->data);
+if (isset($_SESSION[J_LOGON])) {
+    $r = Db_Usr::getUsr((object) array('criteria' => (object) array('usrIds' => array($_SESSION[J_LOGON]))));
+    $member = Core::firstElement($r->data);
     echo('J.user.usr=' . json_encode($member) . ';' . PHP_EOL);
 }
 //Challenge Handshake AP >>>>FINISH What about using PHP mcrypt_create_iv Initialization Vector?
@@ -46,10 +44,14 @@ $_SESSION[J_SALT] = $randomStr;
 echo 'J.user.SALT="' , $_SESSION[J_SALT] , '";' , PHP_EOL;
 ?>
 
-//debug YUI({filter:'raw',
 YUI({<?php require 'modules.inc'; ?>}).use(
-    'j-pod-userLogon',
+    'j-mod-logon',
     function(Y){
+
+        //3.16 bug work around see https://github.com/yui/yui3/issues/1784
+        Y.DD.Drag.prototype._handleMouseDownEvent = function(ev) {
+            this.fire('drag:mouseDown',{ev:ev});
+        };
 
         Y.on('error',function(type,msg){
             //>>>>DO popup
@@ -58,15 +60,14 @@ YUI({<?php require 'modules.inc'; ?>}).use(
 
         Y.J.dataSet.fetch(
             [
+                ['tag','id'],
+                ['tagLink','id']
             ]
            ,function(){
                 var d={},h={},my={}
                 ;
 
-                Y.J.pod.userLogon({
-                    node:Y.one('.j-userLogon'),
-                    nodeInfo:Y.one('.j-userLogon-info')
-                });
+                Y.J.mod.logon({node:Y.one('.j-logon')});
 
                 //clock
                     !function(el,fmt){

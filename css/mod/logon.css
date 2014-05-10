@@ -1,14 +1,14 @@
-/** /css/pod/userLogon.css
- *
- *  Kauri Coast Promotion Society
- */
+/** /css/mod/logon.css */
 
-.j-userLogon {
+.j-logon {
+  color:white;
   position:absolute;
+  overflow:auto;
   top:3px;
+  z-index:9999999;
   right:3px;
-  height:28px;
-  width:140px;
+  height:auto;
+  width:auto;
   margin:0.1em;
   border-radius:0.435em;
   -moz-border-radius:0.435em;
@@ -23,12 +23,4 @@
   filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#45484d', endColorstr='#000000',GradientType=0 );
   padding:0.4em 0.535em;
 }
-.j-userLogon > div {background-color:#eee;padding:3px;}
-.j-userLogon .j-remove {float:right;}
-.j-userLogon a {color:#fff;text-decoration:none;}
-.j-userLogon a.userLogon-name {font-weight:bold;margin:0.435em 0.635em;}
-.j-userLogon a:hover {color:#990A2C;text-decoration:none;cursor:pointer;}
-/* overlay */
-.j-userLogon .yui3-widget-ft {padding:2px;text-align:right;}
-/* j-userLogon-info */
-.j-userLogon-info {color:#111;position:absolute;top:23px;right:3px;}
+.j-logon a {cursor:pointer;}

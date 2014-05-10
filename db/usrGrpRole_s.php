@@ -9,8 +9,7 @@ foreach ($post as $i) {
 
     if (!isset($i->criteria)) {continue;} //can pass grpIds OR usrIds to grp_getGrpUsr
 
-    $i->result = new \stdClass;
-    $r         = $i->result;
+    $r = Core::initResult($i);
 
     $r->usrGrpRole = Db_Usr::getUsrGrpRole($i);
     //reinitialize

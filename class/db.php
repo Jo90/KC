@@ -2,7 +2,7 @@
 
 namespace j;
 
-class Db {
+class Db extends Core {
 
     /**
      *  Generic insert,remove,update

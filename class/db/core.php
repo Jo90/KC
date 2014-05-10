@@ -2,7 +2,7 @@
 
 namespace j;
 
-class Db_Core {
+class Db_Core extends Db {
 
     public static function getEvent($i, $extend = false) {
         global $mysqli;
@@ -30,7 +30,7 @@ class Db_Core {
         )) {
             $r->success = $stmt->execute();
             $r->rows = $mysqli->affected_rows;
-            $r->data = \ja\fetch_result($stmt,'id');
+            $r->data = Core::fetch_result($stmt,'id');
             $stmt->close();
         }
         return $r;
@@ -54,7 +54,7 @@ class Db_Core {
         )) {
             $r->success = $stmt->execute();
             $r->rows = $mysqli->affected_rows;
-            $r->data = \ja\fetch_result($stmt,'id');
+            $r->data = Core::fetch_result($stmt,'id');
             $stmt->close();
         }
         return $r;
@@ -90,7 +90,7 @@ class Db_Core {
         )) {
             $r->success = $stmt->execute();
             $r->rows = $mysqli->affected_rows;
-            $r->data = \j\fetch_result($stmt,'id');
+            $r->data = Core::fetch_result($stmt,'id');
             $stmt->close();
         }
         return $r;

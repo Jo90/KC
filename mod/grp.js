@@ -1,8 +1,7 @@
-/** //mod/grp.js
- *
- */
-YUI.add('j-mod-grp',function(Y){
+//mod/grp.js
 
+YUI.add('j-mod-grp',function(Y){
+    "use strict";
     Y.namespace('J.mod').grp=function(cfg){
 
         if(typeof cfg==='undefined' ||
@@ -18,7 +17,7 @@ YUI.add('j-mod-grp',function(Y){
            ,title      :cfg.title
            ,description:'group/team system'
            ,file       :'/mod/grp.js'
-           ,version    :'v1.0 August 2012'
+           ,version    :'v1.0 January 2014'
         };
 
         var self=this
@@ -75,6 +74,7 @@ YUI.add('j-mod-grp',function(Y){
                         });
                     }
                 });
+/*
                 h.list.social=new Y.J.widget.List({
                     elements:d.list.social
                    ,selected:[]
@@ -85,6 +85,7 @@ YUI.add('j-mod-grp',function(Y){
                    ,selected:[]
                    ,selectorPrompt:'+business tag'
                 }).render(h.tagsBusiness);
+*/
         };
 
         io={
@@ -111,7 +112,13 @@ YUI.add('j-mod-grp',function(Y){
                     }
                     Y.io('/db/usrGrpRole_u.php',{
                         method:'POST'
-                       ,on:{complete:J.db.grp}
+                       ,on:{complete:function(id,o){
+
+
+                            //FINISH
+
+                           
+                        }}
                        ,data:Y.JSON.stringify([post])
                     });
                 }
@@ -130,11 +137,11 @@ YUI.add('j-mod-grp',function(Y){
                     this.setContent('show advanced search');
                 }
             })
-            h.list.social  .on('selectedChange',populate.grp)
-            h.list.business.on('selectedChange',populate.grp)
+//            h.list.social  .on('selectedChange',populate.grp)
+//            h.list.business.on('selectedChange',populate.grp)
             //custom
                 Y.on('j:logout'  ,trigger.loggedOut);
-                Y.on('j:logon'   ,J.db.grp);
+                Y.on('j:logon'   ,Y.J.db.grp.data);
                 Y.on('j-db-grp:s',populate.grp);
         };
 
@@ -223,16 +230,18 @@ YUI.add('j-mod-grp',function(Y){
 
         populate={
             grp:function(rs){
-                J.rs=Y.merge(J.rs,rs[0].result);
+                J.rs=Y.merge(J.rs,rs);
                 var records=[]
                    ,grpName=h.grpName.get('value')
                    ,filterChecked=h.caseSensitive.get('checked')
                    ,grpNameFilter
                    ,groupName
+/*
                    ,tagFilter={
                        social  :h.list.social  .get('selected')
                       ,business:h.list.business.get('selected')
                     }
+*/
                 ;
                 if(grpName!==''){
                     grpNameFilter=filterChecked
@@ -263,6 +272,7 @@ YUI.add('j-mod-grp',function(Y){
                                 if(groupName.indexOf(grpNameFilter)===-1){return;}
                             }
                         //tags
+/*
                             Y.each(J.rs.grpTags.data,function(tagLink){
                                 if(tagLink.pk!==grp.id){return;}
                                 if(tagLink.collectionTable===d.TG_COLLECTION_TABLE_GRP_SOCIAL){
@@ -292,8 +302,9 @@ YUI.add('j-mod-grp',function(Y){
                                 if((tagFilter.social.length>0 && !tags.socialOk) ||
                                    (tagFilter.business.length>0 && !tags.businessOk)
                                 ){return;}
+*/
                         //member
-                            if(typeof J.user.usr!=='undefined'){
+                            if(J.user.usr!==undefined){
                                 //default
                                     grp.memberCol='<button class="j-memberRequest-membership" value="'+grp.id+'">request</button>';
                                     grp.usr=J.user.usr;
@@ -378,7 +389,7 @@ YUI.add('j-mod-grp',function(Y){
             loggedOut:function(){
                 //clear result set
                 if(typeof J.rs.grpUsr!=='undefined'){delete J.rs.grpUsr;}
-                J.db.grp();
+                Y.J.db.grp.clear();
             }
         };
         /**
@@ -391,7 +402,7 @@ YUI.add('j-mod-grp',function(Y){
             initialise();
             listeners();
 
-            J.db.grp.io();
+            Y.J.db.grp.fetch();
 
         });
     };
