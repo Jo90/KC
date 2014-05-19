@@ -41,16 +41,16 @@ YUI.add('j-pod-editor',function(Y){
 
         this.get=function(what){
             if(what==='editor'){return h.editor;}
-            if(what==='node'  ){return h.ol;}
-            if(what==='zIndex'){return h.ol.get('zIndex');}
+            if(what==='node'  ){return h.pl;}
+            if(what==='zIndex'){return h.pl.get('zIndex');}
         };
         this.set=function(what,value){
-            if(what==='zIndex' ){h.ol.set('zIndex',value);}
+            if(what==='zIndex' ){h.pl.set('zIndex',value);}
         };
 
         this.display=function(e){
-            Y.J.widget.dialogMask.mask(h.ol.get('zIndex'));
-            h.ol.show();
+            Y.J.widget.dialogMask.mask(h.pl.get('zIndex'));
+            h.pl.show();
             h.editor.setData(e.currentTarget.get('innerHTML'));
         };
 
@@ -66,40 +66,29 @@ YUI.add('j-pod-editor',function(Y){
         };
 
         listeners=function(){
-            h.close.on('click',trigger.close);
             h.save.on('click',function(){
                 Y.fire(self.customEvent.save,h.editor.getData());
-                trigger.close();
             });
         };
 
         render={
             base:function(){
-                h.ol=new Y.Overlay({
+                h.pl=new Y.Panel({
                     headerContent:
-                        '<strong title="pod: &copy;JPS">'+self.info.title+'</strong> '
-                       +Y.J.html('btn',{action:'close',title:'close pod'})
-                   ,bodyContent  :''
-                   ,footerContent:Y.J.html('btn',{action:'save'})
-                   ,centered:cfg.centered
-                   ,visible :cfg.visible
-                   ,width   :cfg.width
-                   ,zIndex  :cfg.zIndex
+                        '<strong title="pod: &copy;JPS">'+self.info.title+'</strong> ',
+                    bodyContent  :'',
+                    footerContent:Y.J.html('btn',{action:'save'}),
+                    centered:cfg.centered,
+                    visible :cfg.visible,
+                    width   :cfg.width,
+                    zIndex  :cfg.zIndex
                 }).render(cfg.node);
                 //shortcuts
-                h.hd      =h.ol.headerNode;
-                h.bd      =h.ol.bodyNode;
-                h.ft      =h.ol.footerNode;
-                h.bb      =h.ol.get('boundingBox');
-                h.close   =h.hd.one('.j-close');
+                h.hd      =h.pl.headerNode;
+                h.bd      =h.pl.bodyNode;
+                h.ft      =h.pl.footerNode;
+                h.bb      =h.pl.get('boundingBox');
                 h.save    =h.ft.one('.j-save');
-            }
-        };
-
-        trigger={
-            close:function(){
-                h.ol.hide();
-                Y.J.widget.dialogMask.hide();
             }
         };
 

@@ -1,4 +1,4 @@
-/** /widget/dialogMask.js
+/** //widget/dialogMask.js
  *
  *  Kauri Coast Promotion Society
  *
@@ -15,7 +15,7 @@
  */
 YUI.add('j-widget-dialogMask',function(Y){
 
-    Y.namespace('KC.widget').dialogMask={
+    Y.namespace('J.widget').dialogMask={
         //data
         iframeMask:''
        ,stack:[] //used z-indexes
@@ -45,7 +45,7 @@ YUI.add('j-widget-dialogMask',function(Y){
                ,bdh=(dsh>dch)?dsh:dch
                ,bdw=(dsw>dcw)?dsw:dcw
             ;
-            Y.KC.widget.dialogMask.iframeMask.setStyles({
+            Y.J.widget.dialogMask.iframeMask.setStyles({
                 height:bdh+'px'
                ,width:bdw+'px'
             });

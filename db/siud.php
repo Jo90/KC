@@ -15,9 +15,6 @@ foreach ($post as $i) {
             case 'grp'       : $r->{$key} = Db_Grp ::getGrp       ($dataSet); break;
             case 'info'      : $r->{$key} = Db_Core::getInfo      ($dataSet); break;
             case 'usr'       : $r->{$key} = Db_Usr ::getUsr       ($dataSet); break;
-            case 'usrAddress': $r->{$key} = Db_Usr ::getUsrAddress($dataSet); break;
-            case 'usrGrpRole': $r->{$key} = Db_Usr ::getUsrGrpRole($dataSet); break;
-            case 'usrInfo'   : $r->{$key} = Db_Usr ::getUsrInfo   ($dataSet); break;
         }
         else Db::set($key, $dataSet);
     }

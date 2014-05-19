@@ -55,16 +55,15 @@ YUI.add('j-pod-info',function(Y){
             d.pod=Y.merge(d.pod,p);
             h.infoList.setContent('');
             h.infoDetail.setContent('');
-            h.mask=Y.J.widget.dialogMask.mask(h.ol.get('zIndex'));
-            h.ol.show();
+            h.pl.show();
             io.fetch.info();
         };
 
         this.get=function(what){
-            if(what==='zIndex'){return h.ol.get('zIndex');}
+            if(what==='zIndex'){return h.pl.get('zIndex');}
         };
         this.set=function(what,value){
-            if(what==='zIndex'){h.ol.set('zIndex',value);}
+            if(what==='zIndex'){h.pl.set('zIndex',value);}
             if(what==='cfg'){
                 if(typeof value.addUserDefinedCategory!=='undefined'){
                     cfg.addUserDefinedCategory=value;
@@ -133,7 +132,6 @@ YUI.add('j-pod-info',function(Y){
 
         listeners=function(){
             h.addCategory.on('change',trigger.addCategoryOption);
-            h.close.on('click',trigger.close);
             //group info
                 h.infoList.delegate('click',trigger.recordFocus,'>li');
                 h.infoDetail.delegate('click',function(){
@@ -204,28 +202,27 @@ YUI.add('j-pod-info',function(Y){
 
         render={
             base:function(){
-                h.ol=new Y.Overlay({
+                h.pl=new Y.Panel({
                     headerContent:
                         '<span title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;JPS">'+self.info.title+'</span> '
-                       +'<select></select>'
-                       +Y.J.html('btn',{action:'close',title:'close pod'})
-                   ,bodyContent:
+                       +'<select></select>',
+                    bodyContent:
                         '<ul class="j-info-list"></ul>'
-                       +'<ul class="j-info-detail"></ul>'
-                   ,footerContent:
-                        Y.J.html('btn',{action:'save',title:'save' ,label:'save'})
-                   ,visible:cfg.visible
-                   ,width  :cfg.width
-                   ,xy     :cfg.xy
-                   ,zIndex :cfg.zIndex
+                       +'<ul class="j-info-detail"></ul>',
+                    footerContent:
+                        Y.J.html('btn',{action:'save',title:'save' ,label:'save'}),
+                    modal  :true,
+                    visible:cfg.visible,
+                    width  :cfg.width,
+                    xy     :cfg.xy,
+                    zIndex :cfg.zIndex
                 }).plug(Y.Plugin.Resize).render();
                 //shortcuts
-                    h.hd         =h.ol.headerNode;
-                    h.bd         =h.ol.bodyNode;
-                    h.ft         =h.ol.footerNode;
-                    h.bb         =h.ol.get('boundingBox');
+                    h.hd         =h.pl.headerNode;
+                    h.bd         =h.pl.bodyNode;
+                    h.ft         =h.pl.footerNode;
+                    h.bb         =h.pl.get('boundingBox');
                     h.addCategory=h.hd.one('select');
-                    h.close      =h.hd.one('.j-close');
                     h.infoList   =h.bd.one('.j-info-list');
                     h.infoDetail =h.bd.one('.j-info-detail');
                     h.save       =h.ft.one('.j-save');
@@ -308,10 +305,6 @@ YUI.add('j-pod-info',function(Y){
                 nn.list.one('.j-data-category').set('value',newCategory);
                 nn.detail.one('legend em').setContent(newCategory);
                 nn.list.one('input').simulate('click');
-            }
-           ,close:function(){
-                h.ol.hide();
-                Y.J.widget.dialogMask.hide();
             }
            ,recordFocus:function(e){
                 var detailNode=this.getData('relatedNode')

@@ -16,33 +16,31 @@ YUI.add('j-pod-report',function(Y){
         },cfg);
 
         this.info={
-            id         :'report'
-           ,title      :cfg.title
-           ,description:'report print/email'
-           ,version    :'v1.0 September 2012'
+            id         :'report',
+            title      :cfg.title,
+            description:'report print/email',
+            version    :'v1.0 September 2012'
         };
 
-        var self=this
-           ,d={
-                list:{}
-               ,pod :{}
-               ,rs  :{}
-            }
-           ,h={}
+        var self=this,
+            d={
+                list:{},
+                pod :{},
+                rs  :{}
+            },
+            h={},
             //functions
-           ,initialise
-           ,io={}
-           ,listeners
-           ,populate={}
-           ,render={}
-           ,trigger={}
+            initialise,
+            io={},
+            listeners,
+            populate={},
+            render={}
         ;
 
         this.display=function(p){
             var frameDoc=h.dframe.contentDocument||h.dframe.contentWindow.document;
             d.pod=Y.merge(d.pod,p);
             if(typeof p.title!=='undefined'){h.title.setContent(p.title);}
-            Y.J.widget.dialogMask.mask(h.ol.get('zIndex'));
             h.ol.show();
             frameDoc.open();
             frameDoc.write(p.html);
@@ -72,14 +70,14 @@ YUI.add('j-pod-report',function(Y){
             send:{
                email:function(){
                     Y.io('/db/app/email.php',{
-                        method:'POST'
-                       ,headers:{'Content-Type':'application/json'}
-                       ,on:{complete:trigger.close}
-                       ,data:Y.JSON.stringify([{
+                        method:'POST',
+                        headers:{'Content-Type':'application/json'},
+                        on:{complete:function(){alert('to do: trigger close panel');}},
+                        data:Y.JSON.stringify([{
                            criteria:{
-                               email  :'jfdouglas2004@yahoo.com.au'
-                              ,message:h.dframeDoc.body.innerHTML
-                              ,subject:'Wiseberry Listing Pack'
+                               email  :'jfdouglas2004@yahoo.com.au',
+                               message:h.dframeDoc.body.innerHTML,
+                               subject:'Wiseberry Listing Pack'
                             }
                         }])
                     });
@@ -88,7 +86,6 @@ YUI.add('j-pod-report',function(Y){
         };
 
         listeners=function(){
-            h.close.on('click',trigger.close);
             h.email.on('click',io.send.email);
             //>>>>FINISH print xbrowser?
             h.print.on('click',function(){h.dframe.contentWindow.print();return false;});
@@ -102,12 +99,11 @@ YUI.add('j-pod-report',function(Y){
                        //>>>>FINISH
                        +'<input type="text" placeholder="email address" title="email address" >'
                        +'<button class="j-email">Email</button>'
-                       +'<button class="j-print">Print</button>'
-                       +Y.J.html('btn',{action:'close',title:'close pod'})
-                   ,bodyContent:''
-                   ,align   :{points:[Y.WidgetPositionAlign.TC,Y.WidgetPositionAlign.TC]}
-                   ,width   :cfg.width
-                   ,zIndex  :cfg.zIndex
+                       +'<button class="j-print">Print</button>',
+                    bodyContent:'',
+                    align   :{points:[Y.WidgetPositionAlign.TC,Y.WidgetPositionAlign.TC]},
+                    width   :cfg.width,
+                    zIndex  :cfg.zIndex
                 }).render();
                 //resize
                     h.ol.plug(Y.Plugin.Resize);
@@ -120,7 +116,6 @@ YUI.add('j-pod-report',function(Y){
                     h.bd    =h.ol.bodyNode;
                     h.bb    =h.ol.get('boundingBox');
                     h.title =h.hd.one('em');
-                    h.close =h.hd.one('.j-close');
                     h.email =h.hd.one('.j-email');
                     h.print =h.hd.one('.j-print');
 
@@ -131,13 +126,6 @@ YUI.add('j-pod-report',function(Y){
                     h.dframe.src   ='about:blank';
                     h.bd.appendChild(h.dframe);
                     h.dframeDoc    =h.dframe.contentDocument||h.dframe.contentWindow.document;
-            }
-        };
-
-        trigger={
-            close:function(){
-                h.ol.hide();
-                Y.J.widget.dialogMask.hide();
             }
         };
 

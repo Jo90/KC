@@ -1,7 +1,5 @@
-<?php
-/** //inc/heartbeat.php
- *
- */
+<?php //inc/heartbeat.php
+
 namespace j;
 
 //extend session

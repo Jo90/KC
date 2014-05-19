@@ -1,7 +1,5 @@
-<?php
-/** //inc/dataSets.php
- *
- */
+<?php //inc/dataSets.php
+
 namespace j;
 
 /**

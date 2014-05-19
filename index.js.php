@@ -10,9 +10,9 @@ J={
         fileserver:'<?php echo J_FILESERVER; ?>',
         server    :'<?php echo J_SERVER; ?>'
     },
-    my:{},    //instantiated objects
-    rs:{},    //result sets
-    std:{     //standards
+    my:{},
+    rs:{},
+    std:{
         format:{
             date    :'d MMM yyyy',
             dateDM  :'d MMM',
@@ -46,6 +46,8 @@ echo 'J.user.SALT="' , $_SESSION[J_SALT] , '";' , PHP_EOL;
 
 YUI({<?php require 'modules.inc'; ?>}).use(
     'j-mod-logon',
+    'j-pod-usr',
+    'moment',
     function(Y){
 
         //3.16 bug work around see https://github.com/yui/yui3/issues/1784
@@ -60,28 +62,37 @@ YUI({<?php require 'modules.inc'; ?>}).use(
 
         Y.J.dataSet.fetch(
             [
+                ['grp','id'],
                 ['tag','id'],
                 ['tagLink','id']
-            ]
-           ,function(){
-                var d={},h={},my={}
+            ],
+            function(){
+                var d={},h={},my={},
+                    display,
+                    pod
                 ;
 
                 Y.J.mod.logon({node:Y.one('.j-logon')});
 
                 //clock
                     !function(el,fmt){
-                        var clock=function(){el.setContent(new Date().toString(fmt))};
+                        var clock=function(){el.setContent(moment().format(fmt));};
                         clock();
-                        setInterval(clock,1000);
-                    }(Y.one('.j-clock'),'dddd d-MMMM-yyyy h:mmtt');
+                        setInterval(clock,60000);
+                    }(Y.one('.j-clock'),'dddd MMMM Do, h:mma');
 
                 //menu
                     J.my.tabView=new Y.TabView({
                         children:[
-                            {label:'about',content:''},
-                            {label:'projects/events',content:''},
+                            {label:'home',content:
+                                '<select class="j-purpose j-i" title="select either yourself or your organisation"><option title="myself">I</option><option title="a team or organisation I belong to">My group</option></select>'
+                               +'<select class="j-purpose j-offer" title="whether you or your organisation can help or needs help with something"><option title="would benefit from">would like</option><option title="require help/support for">need help</option></select> to '
+                               +'<select class="j-purpose j-interest" title="possible opportunities/benefits from becoming involved"></select>'
+                               +'<div class="j-abt-content"></div>'
+                               +'<small><small><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Community & Volunteer Information Hub</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">KCPS</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small></small>'
+                            },
                             {label:'groups/teams',content:''},
+                            {label:'projects/events',content:''},
                             {label:'map',content:'<div id="map_canvas" style="width:100%;"></div>'},
                             {label:'roadmap/milestones',content:
                                 '<center>'
@@ -90,6 +101,7 @@ YUI({<?php require 'modules.inc'; ?>}).use(
                                +'</center>'
                                +'<div class="j-topics">'
                                +    '<p>This is a volunteer project, completely in the nature of this sites purpose.</p>'
+                               +    '<p>If you have IT skills or would just like to learn - we really need your help for ideas, design, testing and development. Make a difference and get involved. Email Joe at joe@dargaville.net or call on 439-4889, I would be very happy to talk.</p>'
                                +    '<ul>'
                                +        '<li>'
                                +            '<h1>Ideas for Features</h1>'
@@ -125,23 +137,18 @@ YUI({<?php require 'modules.inc'; ?>}).use(
                     //shortcuts
                         h.tv={
                             abt:J.my.tabView.item(0),
-                            act:J.my.tabView.item(1),
-                            grp:J.my.tabView.item(2),
+                            grp:J.my.tabView.item(1),
+                            act:J.my.tabView.item(2),
                             map:J.my.tabView.item(3),
                             pln:J.my.tabView.item(4)
                         };
                         h.tvp={
                             abt:h.tv.abt.get('panelNode'),
-                            act:h.tv.act.get('panelNode'),
                             grp:h.tv.grp.get('panelNode'),
+                            act:h.tv.act.get('panelNode'),
                             map:h.tv.map.get('panelNode'),
                             pln:h.tv.pln.get('panelNode')
                         };
-
-                    //about
-                        Y.use('j-mod-about',function(Y){
-                            J.my.about=new Y.J.mod.about({node:h.tvp.abt,main:h});
-                        });
 
                     //listeners
                         //act
@@ -174,6 +181,119 @@ YUI({<?php require 'modules.inc'; ?>}).use(
                                     });
                                 }
                             });
+
+                //home page
+                    h.tvp.abt.delegate('change',function(){
+                        var html='',
+                            idx=this.get('selectedIndex'),
+                            qI       =h.tvp.abt.one('.j-i'),
+                            qOffer   =h.tvp.abt.one('.j-offer'),
+                            qInterest=h.tvp.abt.one('.j-interest')
+                        ;
+                        if(this.hasClass('j-i')){
+                            qOffer.get('options').item(1).set('text','need'+(idx===1?'s':'')+' help');
+                            qOffer.simulate('change');
+                        }else if(this.hasClass('j-offer')){
+
+                            if(qI.get('selectedIndex')===0){ //I
+                                if(qOffer.get('selectedIndex')===0){ //would like
+                                    qInterest.set('innerHTML',
+                                        '<optgroup label="understand">'
+                                        +  '<option class="j-interest j-interest1">understand what this site is about</option>'
+                                        +  '<option class="j-interest j-interest2">understand how volunteering can help me</option>'
+                                        +'</optgroup>'
+                                        +'<optgroup label="help and involvement">'
+                                        +  '<option class="j-interest j-interest3">see what opportunities exist in the community</option>'
+                                        +  '<option class="j-interest j-interest8">start a project</option>'
+                                        +  '<option class="j-interest j-interest4">share my vision and get people involved</option>'
+                                        +  '<option class="j-interest j-interest7">make a difference - opportunities for leadership</option>'
+                                        +'</optgroup>'
+                                        +'<optgroup label="learn">'
+                                        +  '<option class="j-interest j-interest5">learn through networking - opportunities to meet like minded people</option>'
+                                        +  '<option class="j-interest j-interest6">learn raise my profile</option>'
+                                        +'<optgroup label="reinvigorate">'
+                                        +  '<option class="j-interest j-interest6">get out of a rut - opportunities to expand your horizons</option>'
+                                        +'</optgroup>');
+                                }else{ //needs help
+                                    qInterest.set('innerHTML',
+                                        '<optgroup label="learn">'
+                                       +  '<option class="j-interest j-interest5">learn through networking - opportunities to meet like minded people</option>'
+                                       +  '<option class="j-interest j-interest6">learn raise my profile</option>'
+                                       +'</optgroup>'
+                                       +'<optgroup label="reinvigorate">'
+                                       +  '<option class="j-interest j-interest6">get out of a rut - opportunities to expand your horizons</option>'
+                                       +'</optgroup>');
+                                }
+                            }else{ //My group
+                                if(qOffer.get('selectedIndex')===0){ //would like
+                                    qInterest.set('innerHTML',
+                                        '<optgroup label="collaborate">'
+                                        +  '<option class="j-interest j-interest1">Meet and visit with other groups i.e. famils</option>'
+                                        +  '<option class="j-interest j-interest2">Find ways to help each other</option>'
+                                        +  '<option class="j-interest j-interest2">Memorandum of Understandings</option>'
+                                        +'</optgroup>');
+                                }else{
+                                    qInterest.set('innerHTML',
+                                        '<optgroup label="recruit members">'
+                                        +  '<option class="j-interest j-interest1">Finding the right people for your group</option>'
+                                        +  '<option class="j-interest j-interest2">Advertising</option>'
+                                        +  '<option class="j-interest j-interest2">Open activities</option>'
+                                        +'</optgroup>'
+                                        +'<optgroup label="find helpers">'
+                                        +  '<option class="j-interest j-interest3">see what opportunities exist in the community</option>'
+                                        +  '<option class="j-interest j-interest8">start a project</option>'
+                                        +  '<option class="j-interest j-interest4">share my vision and get people involved</option>'
+                                        +  '<option class="j-interest j-interest7">make a difference - opportunities for leadership</option>'
+                                        +'</optgroup>'
+                                        +'<optgroup label="train">'
+                                        +  '<option class="j-interest j-interest5">learn through networking - opportunities to meet like minded people</option>'
+                                        +  '<option class="j-interest j-interest6">find someone to help teach a skill i.e. secretary, treasurer</option>'
+                                        +'</optgroup>');
+                                }
+                            }
+                            qInterest.simulate('change');
+                        }else if(this.hasClass('j-interest')){
+                            <?php require 'reasons.js'; ?>
+                            h.tvp.abt.one('.j-abt-content').set('innerHTML',html);
+                        }
+                    },'.j-purpose');
+                //
+                    h.tvp.abt.one('.j-abt-content').delegate('click',function(){
+                        if(this.hasClass('j-page-grp')){J.my.tabView.selectChild(1);}
+                        if(this.hasClass('j-page-prj')){J.my.tabView.selectChild(2);}
+                        if(this.hasClass('j-btn-involved')){alert('How to get involved through group questions, coming...');}
+                        
+                    },'.j-topic');
+
+                pod={
+                    display:{
+                        usr:function(){
+                            if(my.podUsr==undefined){pod.load.usr();return false;}
+                            my.podUsr.display({visible:true});
+                        }
+                    },
+                    load:{
+                        usr:function(){
+                            Y.use('j-pod-usr',function(Y){
+                                my.podUsr=new Y.J.pod.usr({visible:false});
+                                Y.J.whenAvailable.inDOM(my,'podUsr.display',pod.display.usr);
+                                Y.on(my.podUsr.customEvent.save,pod.result.usr);
+                                Y.on('j:logout',function(){delete my.podUsr;});
+                            });
+                        }
+                    },
+                    result:{
+                        usr:function(rs){
+                            alert('user changed');
+                        }
+                    }
+                };
+                //attach usr pod to logged on user
+                    Y.one('.j-logon').delegate('click',pod.display.usr,'.j-member')
+                
+                //initialize
+                    h.tvp.abt.one('.j-i').simulate('change');
+
             }
         );
     }

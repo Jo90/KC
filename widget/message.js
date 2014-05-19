@@ -1,8 +1,5 @@
-/** /widget/message.js
- *
- *  Kauri Coast Promotion Society
- *
- */
+//widget/message.js
+
 YUI().add('j-widget-message',function(Y){
 
     var Message=function(config){
@@ -14,31 +11,31 @@ YUI().add('j-widget-message',function(Y){
     Message.ATTRS={
         message:{
             setter:function(msg){
-                var ol=this.get('ol')
+                var pl=this.get('pl')
                 ;
-                ol.set('centered',true);
-                ol.set('visible',msg!=='');
-                ol.bodyNode.setContent(msg);
+                pl.set('centered',true);
+                pl.set('visible',msg!=='');
+                pl.bodyNode.setContent(msg);
             }
            ,value:'loading'
-        }
-       ,ol:{
-            value:new Y.Overlay({
-                bodyContent:'loading....'
-               ,visible:false
-               ,zIndex :999999
+        },
+        pl:{
+            value:new Y.Panel({
+                bodyContent:'loading....',
+                visible:false,
+                zIndex :999999
             }).render()
         }
     };
 
     Y.extend(Message,Y.Widget,{
         initializer:function(config){
-            this.get('ol').get('contentBox').addClass('j-message');
+            this.get('pl').get('contentBox').addClass('j-message');
         }
     });
 
-    Y.namespace('KC.widget').Message=Message;
+    Y.namespace('J.widget').Message=Message;
 
-    Y.KC.widget.busy=new Y.KC.widget.Message();
+    Y.J.widget.busy=new Y.J.widget.Message();
 
-},"1.0",{ requires:['overlay','widget']});
+},"1.0",{ requires:['panel','widget']});

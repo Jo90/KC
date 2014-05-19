@@ -10,7 +10,7 @@ YUI.add('j-widget-calendar',function(Y){
     Y.one('body').addClass('yui3-skin-sam');
     Y.one('body').append('<div id="j-calendar-container"><div id="j-calendar"></div></div>');
 
-    Y.namespace('KC.widget').calendar=new Y.Calendar({
+    Y.namespace('J.widget').calendar=new Y.Calendar({
         contentBox:'#j-calendar'
        ,date:new Date()
        ,showNextMonth:true
@@ -18,24 +18,24 @@ YUI.add('j-widget-calendar',function(Y){
        ,width:'350px'
        ,visible:false
     }).render();
-    Y.KC.widget.calendar.KC={
+    Y.J.widget.calendar.J={
         callingNode:null
        ,settingFocus:false
     };
 
-    Y.KC.widget.calendar.after('selectionChange',function(e){
+    Y.J.widget.calendar.after('selectionChange',function(e){
         var date_format=DEFAULT_DATE_FORMAT
-           ,callingNode=Y.KC.widget.calendar.KC.callingNode
+           ,callingNode=Y.J.widget.calendar.J.callingNode
            ,cfg=callingNode.getData('calendar') //use configuration if defined
         ;
         //sentry
             if(e.newSelection.length===0 || //deselect also triggers selectionChange
-                Y.KC.widget.calendar.KC.settingFocus){return;}
+                Y.J.widget.calendar.J.settingFocus){return;}
         //check configuration
             if(cfg && cfg.date_format){
                 date_format=cfg.date_format;
             }
-        Y.KC.widget.calendar.hide();
+        Y.J.widget.calendar.hide();
         callingNode.set('value',(new Date(e.newSelection[0])).toString(date_format));
     });
 
@@ -45,26 +45,26 @@ YUI.add('j-widget-calendar',function(Y){
                 ?new Date().set({hour:0,minute:0,second:0,millisecond:0})
                 :new Date(thisValue)
            ,nodeMonth=new Date(nodeDate).set({day:1,hour:0})
-           ,cal=Y.KC.widget.calendar
+           ,cal=Y.J.widget.calendar
            ,calMonth=new Date(cal.get('date')).set({hour:0})
            ,compareCalAndNodeMonth=Date.compare(calMonth,nodeMonth)
         ;
-        cal.KC.callingNode=this;
-        cal.KC.settingFocus=true;
+        cal.J.callingNode=this;
+        cal.J.settingFocus=true;
         cal.show();
         cal.get('boundingBox').setXY([this.getX()+2,this.getY()+26]);
         cal.deselectDates(); //causes selectionChange to fire
         //if different month
             if(compareCalAndNodeMonth!==0){ //equal returns 0
-                Y.KC.widget.calendar.set('date',nodeMonth);
+                Y.J.widget.calendar.set('date',nodeMonth);
             }
         cal.selectDates(nodeDate); //causes selectionChange to fire
-        cal.KC.settingFocus=false;
+        cal.J.settingFocus=false;
     },'.j-date');
 
     //hide
         Y.one('body').delegate('focus',function(e){
-            Y.KC.widget.calendar.hide();
+            Y.J.widget.calendar.hide();
         },':not(.j-date)');
         //stop calendar events from bubbling outside container
         Y.one('#j-calendar-container').on('click',function(e){
@@ -72,7 +72,7 @@ YUI.add('j-widget-calendar',function(Y){
         });
         Y.one('body').on('click',function(e){
             if(!e.target.hasClass('j-date')){
-                Y.KC.widget.calendar.hide();
+                Y.J.widget.calendar.hide();
             }
         });
 

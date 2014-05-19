@@ -5,13 +5,13 @@
  */
 YUI.add('j-widget-themeSelector',function(Y){
 
-    Y.namespace('KC.widget').themeSelector=function(o){
+    Y.namespace('J.widget').themeSelector=function(o){
         var nn=Y.Node.create('<select></select>')
            ,body=Y.one('body')
         ;
         o.node.append(nn);
 
-        Y.each(KC.data.theme,function(theme){
+        Y.each(J.data.theme,function(theme){
             nn.append(
                 '<option value="'+theme.id+'" title="'+theme.note+'"'+(body.hasClass(theme.css)?' selected="selected"':'')+'">'
                +  theme.name

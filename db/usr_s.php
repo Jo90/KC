@@ -17,7 +17,10 @@ foreach ($post as $i) {
 
     $r->usr = Db_Usr::getUsr($i);
 
-    $r->usrAddress = Db_Usr::getUsrAddress($i);
+//    $r->usrAddress = Db_Usr::getUsrAddress($i);
+
+
+
 /*
     if (isset($r->usrAddress->data) && (count(get_object_vars($r->usrAddress->data)) > 0)) {
         foreach ($r->usrAddress->data as $d) {$c->addressIds[] = $d->address;}

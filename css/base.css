@@ -17,7 +17,7 @@ ul {padding:0;margin:0;}
   -webkit-box-shadow:none !important;
   border:none !important;
 }
-.j-btn.j-close {float:right;}
+.j-close {float:right;}
 
 .j-btn em {
   background-image:url(/css/img/btn-sprite.png);

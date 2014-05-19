@@ -1,19 +1,11 @@
 <?php //inc/config.php
-/** 
- * __autoload
- * shared functions
- * environment
- */
 
- namespace j;
+namespace j;
 
 if (!isset($_SESSION)) {session_start();}
-//php session timeout 30 mins
+//php session timeout 30 mins <<FINISH, not used as yet
 ini_set('session.gc_maxlifetime',30*60);
 
-/**
- * named constants
- */
 define('J_COMPANY'            , 'Kauri Coast Promotion Society');
 define('J_SLOGON'             , 'Leaders in Communication and Collaboration');
 define('J_TITLE'              , 'Kauri Coast Community Information Hub - Who, What & When');

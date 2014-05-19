@@ -19,4 +19,6 @@ body {background-color:#669CE8;}
 .j-topics > div > ul > li {font-size:1.2em;color:#880;text-align:center;}
 .j-topics > div > ul > li:hover {font-size:1.2em;color:#660;text-decoration:underline;}
 
+.j-purpose {font-size:1.2em;color:#800;}
+
 .j-btn-involved {clear:both;display:block;margin:0 auto;font-size:2em;}

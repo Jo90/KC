@@ -219,4 +219,4 @@ YUI.add('j-mod-logon',function(Y){
 
     };
 
-},'1.0 Oct 2010',{requires:['base','dd-constrain','io','node','overlay']});
+},'1.1 May 2014',{requires:['base','io','node']});

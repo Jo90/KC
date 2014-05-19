@@ -53,16 +53,15 @@ YUI.add('j-pod-grp',function(Y){
 
         this.display=function(p){
             d.pod=Y.merge(d.pod,p);
-            Y.J.widget.dialogMask.mask(h.ol.get('zIndex'));
-            h.ol.show();
+            h.pl.show();
             J.db.grp.fetch();
         };
 
         this.get=function(what){
-            if(what==='zIndex'){return h.ol.get('zIndex');}
+            if(what==='zIndex'){return h.pl.get('zIndex');}
         };
         this.set=function(what,value){
-            if(what==='zIndex'){h.ol.set('zIndex',value);}
+            if(what==='zIndex'){h.pl.set('zIndex',value);}
             if(what==='cfg'   ){cfg=Y.merge(cfg,value);}
         };
 
@@ -168,7 +167,6 @@ return; //>>>>FINISH
 
         listeners=function(){
             h.addGrp.on('click',io.insert.grp);
-            h.close.on('click',trigger.close);
             h.bd.delegate('change',function(){
                 this.ancestor('.j-record-grp').all('>div').setStyle('display',this.get('checked')?'none':'');
             },'.j-record-grp > legend .j-remove');
@@ -388,25 +386,24 @@ return; //>>>>FINISH
 
         render={
             base:function(){
-                h.ol=new Y.Overlay({
+                h.pl=new Y.Panel({
                     headerContent:
                         '<span title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;JPS">'+self.info.title+'</span> '
-                       +Y.J.html('btn',{action:'add',label:'add new group',title:'add information category'})
-                       +Y.J.html('btn',{action:'close',title:'close pod'})
-                   ,bodyContent:''
-                   ,footerContent:Y.J.html('btn',{action:'save',title:'save' ,label:'save'})
-                   ,visible:cfg.visible
-                   ,width  :cfg.width
-                   ,xy     :cfg.xy
-                   ,zIndex :cfg.zIndex
+                       +Y.J.html('btn',{action:'add',label:'add new group',title:'add information category'}),
+                    bodyContent:'',
+                    footerContent:Y.J.html('btn',{action:'save',title:'save' ,label:'save'}),
+                    modal  :true,
+                    visible:cfg.visible,
+                    width  :cfg.width,
+                    xy     :cfg.xy,
+                    zIndex :cfg.zIndex
                 }).plug(Y.Plugin.Resize).render();
                 //shortcuts
-                    h.hd     =h.ol.headerNode;
-                    h.bd     =h.ol.bodyNode;
-                    h.ft     =h.ol.footerNode;
-                    h.bb     =h.ol.get('boundingBox');
+                    h.hd     =h.pl.headerNode;
+                    h.bd     =h.pl.bodyNode;
+                    h.ft     =h.pl.footerNode;
+                    h.bb     =h.pl.get('boundingBox');
                     h.addGrp =h.hd.one('.j-add');
-                    h.close  =h.hd.one('.j-close');
             }
            ,grp:function(){
                 var nn=Y.Node.create(
@@ -513,11 +510,7 @@ return; //>>>>FINISH
         };
 
         trigger={
-            close:function(){
-                h.ol.hide();
-                Y.J.widget.dialogMask.hide();
-            }
-           ,grpInfoRecordFocus:function(e){
+            grpInfoRecordFocus:function(e){
                 var recNode=this.ancestor('.j-record')
                    ,contentNode=recNode.getData('relatedNode')
                 ;
@@ -525,8 +518,8 @@ return; //>>>>FINISH
                 recNode.addClass('j-record-focus');
                 contentNode.get('parentNode').all('>fieldset').setStyle('display','none');
                 contentNode.setStyle('display','');
-            }
-           ,grpInfoSelectOption:function(e,idx){
+            },
+            grpInfoSelectOption:function(e,idx){
                 var idx=this.get('selectedIndex')
                    ,panel      =this.ancestor('.yui3-tab-panel')
                    ,list       =panel.one('.j-grpInfo-list')

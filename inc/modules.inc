@@ -26,7 +26,7 @@ modules:{
             'j-yui3-sugar',
             'moment',
             'node-event-simulate',
-            'overlay',
+            'panel',
             'recordset',
             'resize-plugin',
             'selector-css3',
@@ -52,10 +52,6 @@ modules:{
         fullpath:'/css/widget/dialogMask.css',
         type:'css'
     },
-    'j-css-mod-about':{
-        fullpath:'/css/mod/about.css',
-        type:'css'
-    },
     'j-css-mod-act':{
         fullpath:'/css/mod/act.css',
         type:'css'
@@ -76,6 +72,10 @@ modules:{
         fullpath:'/css/pod/report.css',
         type:'css'
     },
+    'j-css-pod-usr':{
+        fullpath:'/css/pod/usr.css',
+        type:'css'
+    },
     'j-css-mod-logon':{
         fullpath:'/css/mod/logon.css',
         type:'css'
@@ -90,10 +90,6 @@ modules:{
     /**
      * modules
      */
-    'j-mod-about':{
-        fullpath:'/mod/about.js',
-        requires:['j-lib','j-css-mod-about']
-    },
     'j-mod-act':{
         fullpath:'/mod/act.js',
         requires:['j-lib','j-css-mod-act']
@@ -117,7 +113,7 @@ modules:{
         requires:['tabview']
     },
     /**
-     * pods (independant overlays)
+     * pods
      */
     'j-pod-editor':{
         fullpath:'/pod/editor.js',
@@ -134,6 +130,10 @@ modules:{
     'j-pod-report':{
         fullpath:'/pod/report.js',
         requires:['j-lib','j-css-pod-report']
+    },
+    'j-pod-usr':{
+        fullpath:'/pod/usr.js',
+        requires:['j-lib','j-css-pod-usr']
     },
     /**
      * utilities

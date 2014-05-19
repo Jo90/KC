@@ -1,0 +1,11 @@
+/** //css/pod/usr.css
+ *
+ *  Kauri Coast Promotion Society
+ */
+
+.j-pod-usr .j-data-title {width:3em;}
+.j-pod-usr .j-data-firstName {width:8em;}
+.j-pod-usr .j-data-lastName {width:8em;}
+.j-pod-usr .j-data-knownAs {width:6em;}
+
+.j-pod-usr .j-save {float:right;font-size:1.2em;}

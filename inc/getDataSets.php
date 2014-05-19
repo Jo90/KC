@@ -1,7 +1,5 @@
-<?php
-/** //inc/getDataSets.php?d[]=dataSet1&[]=dataSet2&...
- *
- */
+<?php //inc/getDataSets.php?d[]=dataSet1&[]=dataSet2&...
+
 namespace j;
 
 require 'dataSets.php';
