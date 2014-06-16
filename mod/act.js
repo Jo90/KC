@@ -2,7 +2,7 @@
  *
  */
 YUI.add('j-mod-act',function(Y){
-
+    'use strict';
     Y.namespace('J.mod').act=function(cfg){
 
         if(typeof cfg==='undefined' ||

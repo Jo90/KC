@@ -1,83 +1,82 @@
-/** //pod/grp.js
- *
- */
-YUI.add('j-pod-grp',function(Y){
+//pod/grp.js
 
+YUI.add('j-pod-grp',function(Y){
+    'use strict';
     Y.namespace('J.pod').grp=function(cfg){
 
-        if(typeof cfg==='undefined'
-        ){cfg={};}
-
         cfg=Y.merge({
-            title      :'team'
-           ,visible    :false
-           ,width      :1000
-           ,xy         :[10,20]
-           ,zIndex     :999
+            title      :'team',
+            visible    :false,
+            width      :1000,
+            xy         :[10,20],
+            zIndex     :99
         },cfg);
 
         this.info={
-            id         :'grpEdit'
-           ,title      :cfg.title
-           ,description:'edit team/group details'
-           ,version    :'v1.0 August 2012'
+            id         :'grpEdit',
+            title      :cfg.title,
+            description:'edit team/group details',
+            version    :'v1.1 May 2014'
         };
 
-        var self=this
-           ,d={
-                TG_COLLECTION_TEAM_SOCIAL  :1
-               ,TG_COLLECTION_TEAM_BUSINESS:2
-               ,data:{
+        var self=this,
+            d={
+                TG_COLLECTION_TEAM_SOCIAL  :1,
+                TG_COLLECTION_TEAM_BUSINESS:2,
+                data:{
                     grpInfo:[]
-                }
-               ,list:{
+                },
+                list:{
                     grpInfoCategories:['Vision','Purpose','Strategy','Scope','Location','Mission','Meetings','History','Plan']
+                },
+                pod:{},
+                tag:{
+                    business:[],
+                    social:[]
                 }
-               ,pod:{}
-               ,tag:{
-                    business:[]
-                   ,social:[]
-                }
-            }
-           ,h={}
+            },
+            h={},
             //functions
-           ,initialise
-           ,io={}
-           ,listeners
-           ,pod={}
-           ,populate={}
-           ,render={}
-           ,sync={}
-           ,trigger={}
+            initialise,
+            io={},
+            listeners,
+            pod={},
+            populate={},
+            render={},
+            sync={}
         ;
 
         this.display=function(p){
-            d.pod=Y.merge(d.pod,p);
-            h.pl.show();
-            J.db.grp.fetch();
+            cfg=Y.merge(cfg,p);
+            self.pl.show();
+            io.fetch.grp();
         };
 
         this.get=function(what){
-            if(what==='zIndex'){return h.pl.get('zIndex');}
         };
         this.set=function(what,value){
-            if(what==='zIndex'){h.pl.set('zIndex',value);}
-            if(what==='cfg'   ){cfg=Y.merge(cfg,value);}
         };
 
         this.my={}; //children
 
-        /**
-         * private
-         */
-
         initialise=function(){
             h.bb.addClass('j-pod-'+self.info.id);
-            new Y.DD.Drag({node:h.bb,handles:[h.hd,h.ft]});
             sync.all();
         };
 
         io={
+            fetch:{
+                grp:function(){
+                    Y.io('/db/grp_s.php',{
+                        method:'POST',
+                        on:{complete:function(id,o){Y.fire('db-grp:available',Y.JSON.parse(o.responseText)[0].result);}},
+                        data:Y.JSON.stringify([{criteria:{
+                            dbTable:cfg.dbTable,
+                            pk     :cfg.pk
+                        }}])
+                    });
+                }
+            },
             insert:{
                 grp:function(){
                     var newGroupName=prompt('New group name'),
@@ -94,8 +93,8 @@ YUI.add('j-pod-grp',function(Y){
                     }];
                     J.db.grp('i',post);
                 }
-            }
-           ,update:{
+            },
+            update:{
                 grp:function(){
                     var post=[]
                     ;
@@ -104,25 +103,25 @@ YUI.add('j-pod-grp',function(Y){
                            ,grpHandle=grpNode.getData('handle')
                            ,grp={
                                 data:{
-                                    name         :grpNode.one('.j-data-name'         ).get('value')
-                                   ,contactDetail:grpNode.one('.j-data-contactDetail').get('value')
-                                }
-                               ,remove:grpNode.one('.j-remove').get('checked')
-                               ,children:{
-                                    grpInfo:[]
-                                   ,tgLink:[{data:{
-                                        dbTable   :J.data.dbTable.grp.id
-                                       ,collection:d.TG_COLLECTION_TEAM_SOCIAL
-                                       ,tagIds    :grpHandle.socialTags.get('selected')
+                                    name         :grpNode.one('.j-data-name'         ).get('value'),
+                                    contactDetail:grpNode.one('.j-data-contactDetail').get('value')
+                                },
+                                remove:grpNode.one('.j-remove').get('checked'),
+                                children:{
+                                    grpInfo:[],
+                                    tgLink:[{data:{
+                                        dbTable   :J.data.dbTable.grp.id,
+                                        collection:d.TG_COLLECTION_TEAM_SOCIAL,
+                                        tagIds    :grpHandle.socialTags.get('selected')
                                     }},{data:{
-                                        dbTable   :J.data.dbTable.grp.id
-                                       ,collection:d.TG_COLLECTION_TEAM_BUSINESS
-                                       ,tagIds    :grpHandle.businessTags.get('selected')
+                                        dbTable   :J.data.dbTable.grp.id,
+                                        collection:d.TG_COLLECTION_TEAM_BUSINESS,
+                                        tagIds    :grpHandle.businessTags.get('selected')
                                     }}]
                                 }
                             }
                         ;
-                        if(typeof grpData!=='undefined'){grp.data.id=grpData.id}
+                        if(grpData!==undefined){grp.data.id=grpData.id;}
                         //group info
                             grpHandle.tvGrp.all('.j-grpInfo-list > .j-record').each(function(grpInfoListNode,idx){
                                 var originalData      =grpInfoListNode.getData('data')
@@ -137,7 +136,7 @@ YUI.add('j-pod-grp',function(Y){
                                        ,remove:grpInfoContentNode.one('.j-remove').get('checked')
                                     }
                                 ;
-                                if(typeof originalData!=='undefined'){post.data.id=originalData.id;}
+                                if(originalData!==undefined){post.data.id=originalData.id;}
                                 grp.children.grpInfo.push(post);
                             });
                         post.push({criteria:{grp:[grp]}});
@@ -145,20 +144,20 @@ YUI.add('j-pod-grp',function(Y){
                     J.db.grp('u',post);
                 }
                ,grpUsr:function(e){
-return; //>>>>FINISH
+debugger; //>>>>FINISH
                     var rec=h.grid.grpUsrDataTable.getRecord(e.currentTarget.get('id')).toJSON()
                     ;
                     Y.io('/db/grpUsr/u.php',{
-                        method:'POST'
-                       ,on:{complete:J.db.grp}
-                       ,data:Y.JSON.stringify([{data:{
-                            grp         :rec.grp
-                           ,usr         :rec.usr
-                           ,member      :Math.round((new Date()).getTime()/1000)
-                           ,admin       :null
-                           ,joinRequest :rec.joinRequest
-                           ,joinReason  :rec.joinReason
-                           ,id          :rec.id
+                        method:'POST',
+                        on:{complete:J.db.grp},
+                        data:Y.JSON.stringify([{data:{
+                            grp         :rec.grp,
+                            usr         :rec.usr,
+                            member      :Math.round((new Date()).getTime()/1000),
+                            admin       :null,
+                            joinRequest :rec.joinRequest,
+                            joinReason  :rec.joinReason,
+                            id          :rec.id
                        }}])
                     });
                 }
@@ -184,13 +183,13 @@ return; //>>>>FINISH
                     h.podInvoke=this;
                     if(!self.my.podEditor){pod.load.editor();return false;}
                     self.my.podEditor.display(e);
-                }
-               ,grpNew:function(e){
+                },
+                grpNew:function(e){
                     h.podInvoke=this;
                     if(!self.my.podGrpNew){pod.load.grpNew();return false;}
                     self.my.podGrpNew.display(e);
-                }
-               ,info:function(e){
+                },
+                info:function(e){
                     h.podInvoke=this;
                     if(!self.my.podInfo){pod.load.info();return false;}
                     if(this.hasClass('j-no-info')){
@@ -203,8 +202,8 @@ return; //>>>>FINISH
                             this.ancestor('.j-record-grp').getData('handle').grpInfoDataTable.getRecord(e.currentTarget.get('id')).toJSON()
                         );
                     }
-                }
-               ,report:function(e){
+                },
+                report:function(e){
                     var body='test FINISH'
                     ;
                     //sentry
@@ -221,8 +220,8 @@ return; //>>>>FINISH
                        ,title  :'test'
                     });
                 }
-            }
-           ,load:{
+            },
+            load:{
                 editor:function(){
                     Y.use('j-pod-editor',function(Y){
                         self.my.podEditor=new Y.J.pod.editor({});
@@ -232,8 +231,8 @@ return; //>>>>FINISH
                         });
                         Y.on(self.my.podEditor.customEvent.save,function(rs){h.podInvoke.setContent(rs);});
                     });
-                }
-               ,grpNew:function(){
+                },
+                grpNew:function(){
                     Y.use('j-pod-grpNew',function(Y){
                         self.my.podGrpNew=new Y.J.pod.info({});
                         Y.J.whenAvailable.inDOM(self,'my.podGrpNew',function(){
@@ -242,8 +241,8 @@ return; //>>>>FINISH
                         });
                         Y.on(self.my.podGrpNew.customEvent.save,function(rs){h.podInvoke.setContent(rs);});
                     });
-                }
-               ,info:function(){
+                },
+                info:function(){
                     Y.use('j-pod-info',function(Y){
                         self.my.podInfo=new Y.J.pod.info({});
                         Y.J.whenAvailable.inDOM(self,'my.podInfo',function(){
@@ -256,8 +255,8 @@ return; //>>>>FINISH
                         });
                         Y.on(self.my.podInfo.customEvent.save,function(rs){h.podInvoke.setContent(rs);});
                     });
-                }
-               ,report:function(){
+                },
+                report:function(){
                     Y.use('j-pod-report',function(Y){
                         self.my.podReport=new Y.J.pod.report({'zIndex':99999});
                         Y.J.whenAvailable.inDOM(self,'my.podReport',function(){h.podInvoke.simulate('click');});
@@ -268,19 +267,18 @@ return; //>>>>FINISH
 
         populate={
             grp:function(rs){
-                var btnRemove
-                   ,grpInfoCategories=[]
-                   ,grpInfoExistingCategories=[]
-                   ,recs={
-                        grpInfo:[]
-                       ,grpUsr :[]
-                    }
-                   ,handle={}
-                   ,list={}
-                   ,nn={}
-                   ,optGroup
-                   ,tv={}
-                   ,grpInfoNav,grpInfoList
+                var grpInfoCategories=[],
+                    grpInfoExistingCategories=[],
+                    recs={
+                        grpInfo:[],
+                        grpUsr :[]
+                    },
+                    handle={},
+                    list={},
+                    nn={},
+                    optGroup,
+                    tv={},
+                    grpInfoNav,grpInfoList
                 ;
                 J.rs=Y.merge(J.rs,rs[0].result);
                 h.bd.setContent('');
@@ -352,12 +350,12 @@ return; //>>>>FINISH
                         //grid
                             handle.grpUsrDataTable=new Y.DataTable({
                                 columns:[
-                                    {key:'firstName'                     ,sortable:true}
-                                   ,{key:'lastName'                      ,sortable:true}
-                                   ,{key:'knownAs'                       ,sortable:true}
-                                   ,{key:'adminDate'   ,label:'admin'    ,sortable:true ,formatter:function(x){return x.value===1?'admin':'';}}
-                                   ,{key:'memberOption',label:'member'   ,sortable:true ,allowHTML:true}
-                                   ,{                   label:'interests'}
+                                    {key:'firstName'                     ,sortable:true},
+                                    {key:'lastName'                      ,sortable:true},
+                                    {key:'knownAs'                       ,sortable:true},
+                                    {key:'adminDate'   ,label:'admin'    ,sortable:true ,formatter:function(x){return x.value===1?'admin':'';}},
+                                    {key:'memberOption',label:'member'   ,sortable:true ,allowHTML:true},
+                                    {                   label:'interests'}
                                 ]
                             ,data:recs.grpUsr
                             }).render(tv.grpUsr);
@@ -386,7 +384,7 @@ return; //>>>>FINISH
 
         render={
             base:function(){
-                h.pl=new Y.Panel({
+                self.pl=new Y.Panel({
                     headerContent:
                         '<span title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;JPS">'+self.info.title+'</span> '
                        +Y.J.html('btn',{action:'add',label:'add new group',title:'add information category'}),
@@ -397,15 +395,18 @@ return; //>>>>FINISH
                     width  :cfg.width,
                     xy     :cfg.xy,
                     zIndex :cfg.zIndex
-                }).plug(Y.Plugin.Resize).render();
+                })
+                .plug(Y.Plugin.Drag,{handles:['.yui3-widget-hd']})
+                .plug(Y.Plugin.Resize)
+                .render();
                 //shortcuts
-                    h.hd     =h.pl.headerNode;
-                    h.bd     =h.pl.bodyNode;
-                    h.ft     =h.pl.footerNode;
-                    h.bb     =h.pl.get('boundingBox');
+                    h.hd     =self.pl.headerNode;
+                    h.bd     =self.pl.bodyNode;
+                    h.ft     =self.pl.footerNode;
+                    h.bb     =self.pl.get('boundingBox');
                     h.addGrp =h.hd.one('.j-add');
-            }
-           ,grp:function(){
+            },
+            grp:function(){
                 var nn=Y.Node.create(
                     '<fieldset class="j-record j-record-grp">'
                    +  '<legend>'
@@ -432,8 +433,8 @@ return; //>>>>FINISH
                     ]
                 }).render(nn));
                 return nn;
-            }
-           ,grpUsr:function(p){
+            },
+            grpUsr:function(p){
                 var nn=Y.Node.create(
                         '<li class="record record-grpUsr">'
                        +  '<input type="hidden" class="data data-id" />'
@@ -453,8 +454,8 @@ return; //>>>>FINISH
         sync={
             all:function(){
                 sync.tags();
-            }
-           ,grp:{
+            },
+            grp:{
                 insert:function(rs){
 
 
@@ -463,11 +464,11 @@ return; //>>>>FINISH
 
 
                 }
-            }
-           ,info:function(nn,tv,grp,handle){
+            },
+            info:function(nn,tv,grp,handle){
                 var data=[]
                 ;
-                if(typeof J.rs.grpInfo.data==='undefined' || J.rs.grpInfo.data.length===0){
+                if(J.rs.grpInfo.data===undefined || J.rs.grpInfo.data.length===0){
                     nn.info=Y.Node.create(Y.J.html('btn',{action:'add',label:'add information category',classes:'j-no-info'}));
                     tv.info.append(nn.info);
                     nn.info.on('click',pod.display.info);
@@ -488,8 +489,8 @@ return; //>>>>FINISH
                         //listeners
                             handle.grpInfoDataTable.get('contentBox').delegate('click',pod.display.info,'tr');
                 }
-            }
-           ,tags:function(){
+            },
+            tags:function(){
                 d.list.socialAll=[];
                 d.list.businessAll=[];
                 Y.each(J.data.tgCollectionTag,function(tgCollectionTag){
@@ -509,46 +510,6 @@ return; //>>>>FINISH
             }
         };
 
-        trigger={
-            grpInfoRecordFocus:function(e){
-                var recNode=this.ancestor('.j-record')
-                   ,contentNode=recNode.getData('relatedNode')
-                ;
-                recNode.get('parentNode').all('.j-record-focus').removeClass('j-record-focus');
-                recNode.addClass('j-record-focus');
-                contentNode.get('parentNode').all('>fieldset').setStyle('display','none');
-                contentNode.setStyle('display','');
-            },
-            grpInfoSelectOption:function(e,idx){
-                var idx=this.get('selectedIndex')
-                   ,panel      =this.ancestor('.yui3-tab-panel')
-                   ,list       =panel.one('.j-grpInfo-list')
-                   ,content    =panel.one('.j-grpInfo-content')
-                   ,grpNode    =this.ancestor('.j-record-grp')
-                   ,grpData    =grpNode.getData('data')
-                   ,grpHandle  =grpNode.getData('handle')
-                   ,newCategory=''
-                   ,nn
-                   ,post
-                ;
-                if(idx===0){return;}
-                if(idx===1){
-                    newCategory=prompt('Enter your category');
-                    if(newCategory===null){return;}
-                }
-                if(idx>1){newCategory=this.get('value');}
-                //remove from select options if exists
-                    if(Y.Array.indexOf(d.list.grpInfoCategories,newCategory)!==-1){
-                        this.all('option').item(idx).remove();
-                    }
-                this.set('selectedIndex',0);
-                nn=render.grpInfo({node:panel});
-                nn.list.one('.j-data-category').set('value',newCategory);
-                nn.content.one('legend em').setContent(newCategory);
-                nn.list.one('input').simulate('click');
-            }
-        };
-
         /**
          *  load & initialise
          */
@@ -562,4 +523,4 @@ return; //>>>>FINISH
         });
     };
 
-},'1.0 August 2012',{requires:['base','io','node']});
+},'1.1 May 2014',{requires:['base','io','node']});

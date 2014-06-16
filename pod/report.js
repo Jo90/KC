@@ -41,17 +41,17 @@ YUI.add('j-pod-report',function(Y){
             var frameDoc=h.dframe.contentDocument||h.dframe.contentWindow.document;
             d.pod=Y.merge(d.pod,p);
             if(typeof p.title!=='undefined'){h.title.setContent(p.title);}
-            h.ol.show();
+            h.pl.show();
             frameDoc.open();
             frameDoc.write(p.html);
             frameDoc.close();
         };
 
         this.get=function(what){
-            if(what==='zIndex'){return h.ol.get('zIndex');}
+            if(what==='zIndex'){return h.pl.get('zIndex');}
         };
         this.set=function(what,value){
-            if(what==='zIndex'){h.ol.set('zIndex',value);}
+            if(what==='zIndex'){h.pl.set('zIndex',value);}
             if(what==='cfg'){cfg=Y.merge(cfg,value);}
         };
 
@@ -93,7 +93,7 @@ YUI.add('j-pod-report',function(Y){
 
         render={
             base:function(){
-                h.ol=new Y.Overlay({
+                h.pl=new Y.Panel({
                     headerContent:
                         '<strong title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;JPS"><em>'+self.info.title+'</em></strong> '
                        //>>>>FINISH
@@ -101,20 +101,21 @@ YUI.add('j-pod-report',function(Y){
                        +'<button class="j-email">Email</button>'
                        +'<button class="j-print">Print</button>',
                     bodyContent:'',
-                    align   :{points:[Y.WidgetPositionAlign.TC,Y.WidgetPositionAlign.TC]},
-                    width   :cfg.width,
-                    zIndex  :cfg.zIndex
+                    align :{points:[Y.WidgetPositionAlign.TC,Y.WidgetPositionAlign.TC]},
+                    modal :true,
+                    width :cfg.width,
+                    zIndex:cfg.zIndex
                 }).render();
                 //resize
-                    h.ol.plug(Y.Plugin.Resize);
-                    h.ol.resize.on('resize:end',function(e){
+                    h.pl.plug(Y.Plugin.Resize);
+                    h.pl.resize.on('resize:end',function(e){
                         h.dframe.width =h.bd.getStyle('width');
                         h.dframe.height=h.bd.getStyle('height');
                     });
                 //shortcuts
-                    h.hd    =h.ol.headerNode;
-                    h.bd    =h.ol.bodyNode;
-                    h.bb    =h.ol.get('boundingBox');
+                    h.hd    =h.pl.headerNode;
+                    h.bd    =h.pl.bodyNode;
+                    h.bb    =h.pl.get('boundingBox');
                     h.title =h.hd.one('em');
                     h.email =h.hd.one('.j-email');
                     h.print =h.hd.one('.j-print');

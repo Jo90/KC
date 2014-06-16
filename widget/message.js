@@ -1,7 +1,7 @@
 //widget/message.js
 
 YUI().add('j-widget-message',function(Y){
-
+    'use strict';
     var Message=function(config){
         Message.superclass.constructor.apply(this,arguments);
     };
@@ -11,16 +11,16 @@ YUI().add('j-widget-message',function(Y){
     Message.ATTRS={
         message:{
             setter:function(msg){
-                var pl=this.get('pl')
+                var ol=this.get('ol')
                 ;
-                pl.set('centered',true);
-                pl.set('visible',msg!=='');
-                pl.bodyNode.setContent(msg);
-            }
-           ,value:'loading'
+                ol.set('centered',true);
+                ol.set('visible',msg!=='');
+                ol.bodyNode.setContent(msg);
+            },
+            value:'loading'
         },
-        pl:{
-            value:new Y.Panel({
+        ol:{
+            value:new Y.Overlay({
                 bodyContent:'loading....',
                 visible:false,
                 zIndex :999999
@@ -30,7 +30,7 @@ YUI().add('j-widget-message',function(Y){
 
     Y.extend(Message,Y.Widget,{
         initializer:function(config){
-            this.get('pl').get('contentBox').addClass('j-message');
+            this.get('ol').get('contentBox').addClass('j-message');
         }
     });
 
@@ -38,4 +38,4 @@ YUI().add('j-widget-message',function(Y){
 
     Y.J.widget.busy=new Y.J.widget.Message();
 
-},"1.0",{ requires:['panel','widget']});
+},"1.0",{ requires:['overlay','widget']});

@@ -1,79 +1,147 @@
-/** /widget/calendar.js
- *
- *  Kauri Coast Promotion Society
- *
- */
+//widget/calendar.js
+
 YUI.add('j-widget-calendar',function(Y){
+    'use strict';
 
-    var DEFAULT_DATE_FORMAT='d MMM yyyy';
+    var pl=new Y.Panel({
+            headerContent:
+                '<button class="j-calendar-today" title="return to or set as today">today</button>'
+               +'<button class="j-calendar-clear" title="clear date field">clear</button>'
+               +'<select class="j-widget-calendar-hour">'
+               +  '<option value="0">midnight</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option selected="selected">9</option><option>10</option><option>11</option>'
+               +'</select>'
+               +':<select class="j-widget-calendar-minute">'
+               +  '<option>00</option><option>05</option><option>10</option><option>15</option><option>20</option><option>25</option><option>30</option><option>35</option><option>40</option><option>45</option><option>50</option><option>55</option>'
+               +'</select>'
+               +'<select class="j-widget-calendar-ampm">'
+               +  '<option selected="selected">am</option>'
+               +  '<option>pm</option>'
+               +'</select>',
+            bodyContent:'',
+            visible :false,
+            zIndex  :999999
+        }).plug(Y.Plugin.Drag,{handles:['.yui3-widget-hd']}).render(),
+        
+        cal=new Y.Calendar({
+            contentBox:'#j-calendar',
+            date:new Date(),
+            showNextMonth:true,
+            showPrevMonth:true
+        }).render(pl.bodyNode),
 
-    Y.one('body').addClass('yui3-skin-sam');
-    Y.one('body').append('<div id="j-calendar-container"><div id="j-calendar"></div></div>');
+        callingNode,
+        fmt='DDMMMYY h:mma',
+        f={
+            hr :pl.headerNode.one('.j-widget-calendar-hour'),
+            min:pl.headerNode.one('.j-widget-calendar-minute'),
+            am :pl.headerNode.one('.j-widget-calendar-ampm'),
+            hr0:pl.headerNode.one('.j-widget-calendar-hour').one('option')
+        },
+        fmtTime=function(){
+            var hr=f.hr.get('value')
+            ;
+            return (hr==='0'?'12':hr)+':'+f.min.get('value')+f.am.get('value');
+        },
+        setCallingNode=function(value){
+            if(typeof value.type!=='undefined'){value='';}
+            callingNode.set('value',value);
+            callingNode.simulate('change');
+        },
+        setFirstHourAsNoonOrMidnight=function(){
+            f.hr0.set('innerHTML',f.am.get('value')==='am'?'midnight':'noon');
+        }
+    ;
 
-    Y.namespace('J.widget').calendar=new Y.Calendar({
-        contentBox:'#j-calendar'
-       ,date:new Date()
-       ,showNextMonth:true
-       ,showPrevMonth:true
-       ,width:'350px'
-       ,visible:false
-    }).render();
-    Y.J.widget.calendar.J={
-        callingNode:null
-       ,settingFocus:false
-    };
-
-    Y.J.widget.calendar.after('selectionChange',function(e){
-        var date_format=DEFAULT_DATE_FORMAT
-           ,callingNode=Y.J.widget.calendar.J.callingNode
-           ,cfg=callingNode.getData('calendar') //use configuration if defined
+    Y.one('.j-calendar-today').on('click',function(){
+        //if not today set calendar to today, if today set calling node
+        if(moment(cal.get('selectedDates')[0]).format('DDMMYY')===moment(new Date()).format('DDMMYY')){
+            cal.fire('dateClick');
+        }else{
+            cal.set('date',new Date());
+            cal.deselectDates();
+            cal.selectDates(new Date());
+        }
+    });
+    Y.one('.j-calendar-clear').on('click',setCallingNode);
+    cal.on('dateClick',function(e){
+        var hr=parseInt(f.hr.get('value'),10)
         ;
-        //sentry
-            if(e.newSelection.length===0 || //deselect also triggers selectionChange
-                Y.J.widget.calendar.J.settingFocus){return;}
-        //check configuration
-            if(cfg && cfg.date_format){
-                date_format=cfg.date_format;
-            }
-        Y.J.widget.calendar.hide();
-        callingNode.set('value',(new Date(e.newSelection[0])).toString(date_format));
+        //e.date is noon
+        setCallingNode(
+            moment(e.date)
+                .hour(f.am.get('value')==='am'?hr:hr+12)
+                .minute(parseInt(f.min.get('value'),10))
+                .format(fmt)
+        );
     });
 
-    Y.one('body').delegate('focus',function(){
-        var thisValue=this.get('value')
-           ,nodeDate=thisValue===''
-                ?new Date().set({hour:0,minute:0,second:0,millisecond:0})
-                :new Date(thisValue)
-           ,nodeMonth=new Date(nodeDate).set({day:1,hour:0})
-           ,cal=Y.J.widget.calendar
-           ,calMonth=new Date(cal.get('date')).set({hour:0})
-           ,compareCalAndNodeMonth=Date.compare(calMonth,nodeMonth)
+    pl.headerNode.delegate('change',function(e){
+        var callingNodeValue=callingNode.get('value'),
+            nodeDate=moment(callingNodeValue,fmt),
+            hr=parseInt(f.hr.get('value'),10)
         ;
-        cal.J.callingNode=this;
-        cal.J.settingFocus=true;
-        cal.show();
-        cal.get('boundingBox').setXY([this.getX()+2,this.getY()+26]);
-        cal.deselectDates(); //causes selectionChange to fire
+        setFirstHourAsNoonOrMidnight();
+        if(callingNodeValue!==''&&nodeDate.isValid()){
+            setCallingNode(
+                nodeDate
+                    .hour(f.am.get('value')==='am'?hr:hr+12)
+                    .minute(parseInt(f.min.get('value'),10))
+                    .format(fmt)
+            );
+        }
+    },'select');
+
+    Y.one('body').delegate('focus',function(){
+        var focusValue=this.get('value'),
+            nodeDate,
+            nodeDateHr,
+            nodeDateMin,
+            soon=moment().add('hour',1).startOf('hour'),
+            soonHr=parseInt(soon.format('H'),10),
+            soonAm=soonHr<12?'am':'pm'
+        ;
+        fmt=this.getAttribute('data-dateFormat')||fmt;
+
+        pl.show();
+
+        if(focusValue===''){
+            nodeDate=new Date();
+        }else if(moment(focusValue).isValid()){
+            nodeDate=moment(focusValue).toDate();
+        }else if(moment(focusValue,fmt).isValid()){
+            nodeDate=moment(focusValue,fmt).toDate();
+        }else{
+            //default time
+                Y.J.matchSelect(f.hr,soonHr);
+                Y.J.matchSelect(f.am,soonAm);
+            return;
+        }
+
+        callingNode=this;
+
+        pl.get('boundingBox').setXY([this.getX()+2,this.getY()+26]);
+        cal.deselectDates();
         //if different month
-            if(compareCalAndNodeMonth!==0){ //equal returns 0
-                Y.J.widget.calendar.set('date',nodeMonth);
+            if(moment(nodeDate).format('MMYY')!==moment(cal.get('date')).format('MMYY')){
+                cal.set('date',nodeDate);
             }
-        cal.selectDates(nodeDate); //causes selectionChange to fire
-        cal.J.settingFocus=false;
+        //set time
+            nodeDateHr =parseInt(moment(nodeDate).format('H'),10);
+            nodeDateMin=Math.round(parseInt(moment(nodeDate).format('mm'),10)/5)*5;
+            Y.J.matchSelect(f.am,nodeDateHr<12?'am':'pm');
+            if(nodeDateHr===0||nodeDateHr===12){
+                setFirstHourAsNoonOrMidnight();
+                f.hr.set('selectedIndex',0);
+            }else{
+                Y.J.matchSelect(f.hr,nodeDateHr<12?nodeDateHr:nodeDateHr-12);
+            }
+            Y.J.matchSelect(f.min,nodeDateMin);
+
+        cal.selectDates(nodeDate);
     },'.j-date');
 
-    //hide
-        Y.one('body').delegate('focus',function(e){
-            Y.J.widget.calendar.hide();
-        },':not(.j-date)');
-        //stop calendar events from bubbling outside container
-        Y.one('#j-calendar-container').on('click',function(e){
-            e.stopPropagation();
-        });
-        Y.one('body').on('click',function(e){
-            if(!e.target.hasClass('j-date')){
-                Y.J.widget.calendar.hide();
-            }
-        });
+    pl.get('boundingBox').on('clickoutside',function(e){
+        if(e.target!==callingNode){pl.hide();}
+    });
 
-},'August 2011',{requires:['base','calendar','node']});
+},'October 2013',{requires:['base','calendar','event-outside','node']});

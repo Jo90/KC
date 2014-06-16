@@ -48,10 +48,6 @@ modules:{
         fullpath:'/css/widget/calendar.css', 
         type:'css'
     },
-    'j-css-dialogMask':{
-        fullpath:'/css/widget/dialogMask.css',
-        type:'css'
-    },
     'j-css-mod-act':{
         fullpath:'/css/mod/act.css',
         type:'css'
@@ -153,7 +149,6 @@ modules:{
         requires:[
             'j-lib',
             'j-widget-calendar',
-            'j-widget-dialogMask',
             'j-widget-list',
             'j-widget-message'
         ]
@@ -161,10 +156,6 @@ modules:{
     'j-widget-calendar':{
          fullpath:'/widget/calendar.js',
          requires:['calendar','j-lib','j-css-calendar']
-    },
-    'j-widget-dialogMask':{
-         fullpath:'/widget/dialogMask.js',
-         requires:['base','node','j-css-dialogMask']
     },
     'j-widget-list':{
         fullpath:'/widget/list.js',

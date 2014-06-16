@@ -50,11 +50,6 @@ YUI({<?php require 'modules.inc'; ?>}).use(
     'moment',
     function(Y){
 
-        //3.16 bug work around see https://github.com/yui/yui3/issues/1784
-        Y.DD.Drag.prototype._handleMouseDownEvent = function(ev) {
-            this.fire('drag:mouseDown',{ev:ev});
-        };
-
         Y.on('error',function(type,msg){
             //>>>>DO popup
             alert(type+': '+msg+'!');
@@ -85,8 +80,17 @@ YUI({<?php require 'modules.inc'; ?>}).use(
                     J.my.tabView=new Y.TabView({
                         children:[
                             {label:'home',content:
-                                '<select class="j-purpose j-i" title="select either yourself or your organisation"><option title="myself">I</option><option title="a team or organisation I belong to">My group</option></select>'
-                               +'<select class="j-purpose j-offer" title="whether you or your organisation can help or needs help with something"><option title="would benefit from">would like</option><option title="require help/support for">need help</option></select> to '
+                                '<select class="j-purpose j-i" title="select either yourself or your organisation">'
+                               +  '<option title="myself">I</option>'
+                               +  '<option title="a team or organisation I belong to">My group</option>'
+                               +  '<option title="the community I belong to">My community</option>'
+                               +  '<option title="my work and business">My business</option>'
+                               +'</select>'
+                               +'<select class="j-purpose j-offer" title="whether you or your organisation can help or needs help with something">'
+                               +  '<option title="I and/or my organisation can benefit by">can benefit from</option>'
+                               +  '<option title="I and/or my organisation would like to offer">would like to</option>'
+                               +  '<option title="I and/or my organisation require help/support to">need help to</option>'
+                               +'</select>'
                                +'<select class="j-purpose j-interest" title="possible opportunities/benefits from becoming involved"></select>'
                                +'<div class="j-abt-content"></div>'
                                +'<small><small><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Community & Volunteer Information Hub</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">KCPS</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small></small>'
@@ -191,7 +195,7 @@ YUI({<?php require 'modules.inc'; ?>}).use(
                             qInterest=h.tvp.abt.one('.j-interest')
                         ;
                         if(this.hasClass('j-i')){
-                            qOffer.get('options').item(1).set('text','need'+(idx===1?'s':'')+' help');
+                            qOffer.get('options').item(2).set('text','need'+(idx===1?'s':'')+' help to');
                             qOffer.simulate('change');
                         }else if(this.hasClass('j-offer')){
 

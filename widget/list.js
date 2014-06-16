@@ -1,8 +1,5 @@
-/** /widget/list.js
- *
- *  Kauri Coast Promotion Society
- *
- */
+//widget/list.js
+
 YUI().add('j-widget-list',function(Y){
 
     var List=function(config){

@@ -10,7 +10,7 @@
 <style>
     #results input{width:800px;}
 </style>
-<script src="/assets/js/combine.js.php?assets/js/core.js&pod/userLogin/sha1.js&assets/js/pod.js&assets/widget/dialogMask.js&assets/widget/iconChoice.js&pod/address/address.js&&pod/contactFind/contactFind.js&pod/library/library.js&pod/propertyAddress/propertyAddress.js&pod/propertyComponents/propertyComponents.js&pod/propertyRental/propertyRental.js&pod/propertyState/propertyState.js&pod/userLogin/userLogin.js&file=../temp/combineRentalFull.js" type="text/javascript"></script>
+<script src="/assets/js/combine.js.php?assets/js/core.js&pod/userLogin/sha1.js&assets/js/pod.js&assets/widget/iconChoice.js&pod/address/address.js&&pod/contactFind/contactFind.js&pod/library/library.js&pod/propertyAddress/propertyAddress.js&pod/propertyComponents/propertyComponents.js&pod/propertyRental/propertyRental.js&pod/propertyState/propertyState.js&pod/userLogin/userLogin.js&file=../temp/combineRentalFull.js" type="text/javascript"></script>
 </head>
 <body>
 <h1>Javascript combined libraries generated</h1>

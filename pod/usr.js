@@ -1,7 +1,7 @@
 //pod/usr.js
 
 YUI.add('j-pod-usr',function(Y){
-
+    'use strict';
     Y.namespace('J.pod').usr=function(cfg){
 
         cfg=Y.merge({
@@ -86,7 +86,6 @@ YUI.add('j-pod-usr',function(Y){
             },
             update:{
                 usr:function(){
-
                     var usrId=J.user.usr.id,
                         usr={
                             data:{
@@ -96,7 +95,7 @@ YUI.add('j-pod-usr',function(Y){
                                 lastName     :h.pl.bodyNode.one('.j-data-lastName' ).get('value'),
                                 knownAs      :h.pl.bodyNode.one('.j-data-knownAs'  ).get('value')
                             },
-                            remove:h.removeMe.get('checked'),
+                            remove:false,//>>>>>>FINISH h.removeMe.get('checked'),
                             children:{
                                 usrInfo:[],
                                 tagLink:[{data:{
@@ -119,11 +118,6 @@ YUI.add('j-pod-usr',function(Y){
         };
 
         listeners=function(){
-            //me
-/*
-                h.removeMe.on('click',function(){if(this.get('checked')){this.set('checked',confirm('Checking this box will remove you when saved'));}});
-                h.saveMyDetails.on('click',io.update.usr);
-*/
             //custom
                 Y.on('db-usr:available',populate.usr);
                 Y.on('j:logout',function(){
@@ -134,8 +128,25 @@ YUI.add('j-pod-usr',function(Y){
 
         pod={
             display:{
+                grp:function(p){
+                    if(!self.my.podGrp){pod.load.grp(p);return false;}
+                    self.my.podGrp.display(p);
+                }
             },
             load:{
+                grp:function(p){
+                    Y.use('j-pod-grp',function(Y){
+                        self.my.podGrp=new Y.J.pod.grp(p);
+                        Y.J.whenAvailable.inDOM(self,'my.podGrp',function(){
+                            pod.display.grp(p);
+                            self.my.podGrp.pl.on('visibleChange',function(e){
+                                if(!e.newVal){ //hidden
+                                    
+                                }
+                            });
+                        });
+                    });
+                }
             },
             result:{
             }
@@ -173,19 +184,14 @@ YUI.add('j-pod-usr',function(Y){
                     modal  :true,
                     width  :cfg.width,
                     xy     :cfg.xy,
-                    zIndex:9999
+                    zIndex:9
                 })
                 .plug(Y.Plugin.Drag,{handles:['.yui3-widget-hd']})
+                .plug(Y.Plugin.Resize)
                 .render();
 
                 h.tv=new Y.TabView({
                     children:[
-                        {label:'private groups',content:
-                            'all non organisational groups i.e. family, work, friends, etc...'
-                        },
-                        {label:'groups/teams',content:'popup as shared with organisations'},
-                        {label:'contact details',content:'popup as shared with organisations'},
-                        {label:'address details',content:'popup as shared with organisations'},
                         {label:'actions',content:
                             '<ul>'
                            +    '<li>change password</li>'
@@ -194,7 +200,14 @@ YUI.add('j-pod-usr',function(Y){
                            +    '<li>suspend account - ask for reason</li>'
                            +'</ul>'
                            +'<p>Notes: Must terminate each group membership before suspending account.  Display "terminate my account" button only when no memberships exist, however, have this explaination by disabled button.</p>'
-                        }
+                        },
+                        {label:'private groups',content:
+                            'all non organisational groups i.e. family, work, friends, etc..<br />'
+                           +'<button class="yui3-button">edit private groups</button>'
+                        },
+                        {label:'groups/teams',content:'popup as shared with organisations'},
+                        {label:'contact details',content:'popup as shared with organisations'},
+                        {label:'address details',content:'popup as shared with organisations'}
                     ]
                 }).render(h.pl.bodyNode.one('.j-related-data'));
                 //tabview listeners
@@ -202,12 +215,22 @@ YUI.add('j-pod-usr',function(Y){
                 h.tv.after('selectionChange',function(e){
                     var idx=h.tv.indexOf(this.get('selection'))
                     ;
-                    debugger;
                     if(idx===0){
+                        
+                    }
+                    if(idx===1){
+                        pod.display.grp({
+                            private:true,
+                            dbTable:'usr',
+                            pk     :J.user.usr.id,
+                            title  :'finish this'
+                        });
+                    }
+                    if(idx===2){
                         if(self.my.grp==undefined){
                             Y.use('j-pod-grp',function(Y){
                                 self.my.grp=new Y.J.pod.grp({
-                                    private:true,
+                                    private:false,
                                     dbTable:'usr',
                                     pk     :J.user.usr.id,
                                     title  :'finish this'
@@ -215,7 +238,10 @@ YUI.add('j-pod-usr',function(Y){
                             });
                         }
                     }
-                    if(idx===1){
+                    if(idx===3){
+
+                    }
+                    if(idx===4){
 
                     }
                 });

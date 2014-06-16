@@ -49,7 +49,6 @@ YUI.add('j-pod-editor',function(Y){
         };
 
         this.display=function(e){
-            Y.J.widget.dialogMask.mask(h.pl.get('zIndex'));
             h.pl.show();
             h.editor.setData(e.currentTarget.get('innerHTML'));
         };
@@ -84,11 +83,11 @@ YUI.add('j-pod-editor',function(Y){
                     zIndex  :cfg.zIndex
                 }).render(cfg.node);
                 //shortcuts
-                h.hd      =h.pl.headerNode;
-                h.bd      =h.pl.bodyNode;
-                h.ft      =h.pl.footerNode;
-                h.bb      =h.pl.get('boundingBox');
-                h.save    =h.ft.one('.j-save');
+                h.hd  =h.pl.headerNode;
+                h.bd  =h.pl.bodyNode;
+                h.ft  =h.pl.footerNode;
+                h.bb  =h.pl.get('boundingBox');
+                h.save=h.ft.one('.j-save');
             }
         };
 
