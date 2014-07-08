@@ -22,7 +22,6 @@ modules:{
             'j-db',
             'j-pod-editor',
             'j-utl-date',
-            'j-widget',
             'j-yui3-sugar',
             'moment',
             'node-event-simulate',
@@ -155,7 +154,7 @@ modules:{
     },
     'j-widget-calendar':{
          fullpath:'/widget/calendar.js',
-         requires:['calendar','j-lib','j-css-calendar']
+         requires:['calendar','moment','j-lib','j-css-calendar']
     },
     'j-widget-list':{
         fullpath:'/widget/list.js',

@@ -37,13 +37,8 @@ YUI.add('j-widget-calendar',function(Y){
             am :pl.headerNode.one('.j-widget-calendar-ampm'),
             hr0:pl.headerNode.one('.j-widget-calendar-hour').one('option')
         },
-        fmtTime=function(){
-            var hr=f.hr.get('value')
-            ;
-            return (hr==='0'?'12':hr)+':'+f.min.get('value')+f.am.get('value');
-        },
         setCallingNode=function(value){
-            if(typeof value.type!=='undefined'){value='';}
+            if(value.type!==undefined){value='';}
             callingNode.set('value',value);
             callingNode.simulate('change');
         },

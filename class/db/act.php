@@ -20,9 +20,8 @@ class Db_Act extends Db {
             $cnd  = 'id in (' . implode(',', $c->actIds) . ')';
         }
 
-        if (isset($c->rowLimit)) {
-            $limit = ' limit ' . $c->rowLimit;
-        }
+        if (isset($c->limit))   {$limit = ' limit ' . $c->limit;}
+        if (isset($c->orderBy)) {$orderBy = 'order by ' . $mysqli->real_escape_string($c->orderBy);}
 
         if (!isset($c->orderBy)) {$c->orderBy = '';}
         $cnd .= $mysqli->real_escape_string($criteria->orderBy);
@@ -30,7 +29,7 @@ class Db_Act extends Db {
         if ($stmt = $mysqli->prepare(
             "select *
                from `act` $cnd
-              where $cnd $limit $orderBy"
+              where $cnd $orderBy $limit"
         )) {
             $r->success = $stmt->execute();
             $r->rows = $mysqli->affected_rows;

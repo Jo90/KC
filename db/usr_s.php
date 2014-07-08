@@ -8,29 +8,43 @@ foreach ($post as $i) {
 
     if (!isset($i) &&
         !isset($i->criteria) &&
-        !isset($i->criteria->usrIds)
+        !isset($i->criteria->usrIds) &&
+        !isset($i->criteria->dbTable) &&
+        !isset($i->criteria->pk)
     ) {continue;}
 
     //shortcuts
         $r = Core::initResult($i);
         $c = $i->criteria;
 
-    $r->usr = Db_Usr::getUsr($i);
-
-//    $r->usrAddress = Db_Usr::getUsrAddress($i);
-
-
-
-/*
-    if (isset($r->usrAddress->data) && (count(get_object_vars($r->usrAddress->data)) > 0)) {
-        foreach ($r->usrAddress->data as $d) {$c->addressIds[] = $d->address;}
-        $r->address = Db_Get::address($i->usr);
+    $r->usr         = Db_Usr::getUsr($i);
+    $r->address     = Db_Core::getAddress((object) array('criteria' => (object) array('dbTable' => 'usr', 'pk' => $i->criteria->usrIds[0])));
+    //usr address
+    if (isset($r->address->data) && (count(get_object_vars($r->address->data)) > 0)) {
         $c->locationIds = array();
         foreach ($r->address->data as $d) {$c->locationIds[] = $d->location;}
-        $r->location = Db_Get::location($i->usr);
+        $r->location = Db_Core::getLocation($i);
     }
 
-    $r->usrInfo = Db_Usr::getUsrInfo($i->usr);
+    $r->info    = Db_Core::getInfo((object) array('criteria' => (object) array('dbTable' => 'usr', 'pk' => $c->usrIds[0])));
+    $r->usrTags = Db_Core::getTag((object)  array('criteria' => (object) array('dbTable' => 'usr', 'pk' => $c->usrIds[0])));
+
+    $r->member = Db_Usr::getMember((object)  array('criteria' => (object) array('dbTable' => 'usr', 'pk' => $c->usrIds[0])));
+    //member grp
+    if (isset($r->member->data) && (count(get_object_vars($r->member->data)) > 0)) {
+        $c->grpIds = array();
+        $c->memberIds = array();
+        foreach ($r->member->data as $d) {
+            $c->grpIds[] = $d->grp;
+            $c->memberIds[] = $d->id;
+        }
+        $r->grp  = Db_Core::getGrp($i);
+        $r->role = Db_Usr::getRole($i);
+    }
+    //grp tags
+    $r->grpTags = Db_Core::getTag((object)  array('criteria' => (object) array('dbTable' => 'grp', 'pk' => $c->grpIds)));
+    
+/*
 
     $r->usrGrpRole = Db_Usr::getUsrGrpRole($i->usr); //get specified users groups
     if (isset($r->usrGrp->data) && (count(get_object_vars($r->usrGrp->data)) > 0)) {

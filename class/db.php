@@ -7,12 +7,12 @@ class Db extends Core {
     /**
      *  Generic insert,remove,update
      */
-    public static function set($tab,&$i) {
+    public static function set($table, &$i) {
         global $mysqli;
-        Db::remove($tab, $i);
-        if (isset($i->record)) {
-            foreach ($i->record as $rec) {
-                Db::update($tab,$rec) or Db::insert($tab,$rec);
+        Db::remove($table, $i);
+        if (isset($i->records)) {
+            foreach ($i->records as $rec) {
+                Db::update($table, $rec) or Db::insert($table, $rec);
             }
         }
     }
@@ -32,8 +32,6 @@ class Db extends Core {
         $results    = array();
 
         if (!($i->insert = isset($i->data))) {return false;}
-
-        $r = initResult($i);
 
         $stmt = $mysqli->prepare("show columns from `$table`") or die("Problem finding columns in `$table`");
         $stmt->execute();
@@ -74,11 +72,11 @@ class Db extends Core {
                 \$stmt->bind_param('$fieldTypes',
                     $fieldBind
                 );
-                \$r->successInsert = \$stmt->execute();
-                \$r->rows = \$mysqli->affected_rows;
-                \$r->successInsert
+                \$i->insertSuccess = \$stmt->execute();
+                \$i->insertRows = \$mysqli->affected_rows;
+                \$i->insertSuccess
                     ?\$i->data->id    = \$stmt->insert_id
-                    :\$r->errorInsert = \$mysqli->error;
+                    :\$r->insertError = \$mysqli->error;
                 \$stmt->close();
             }"
         );
@@ -114,10 +112,8 @@ class Db extends Core {
         $parameters = array();
         $results    = array();
 
-        if (!isset($i->data, $i->data->id) || $i->data->id == '' || $i->data->id == null) {$i->update = false; return false;}
+        if (!isset($i->data, $i->data->id)) {$i->update = false; return false;}
         $i->update = true;
-
-        $r = initResult($i);
 
         $stmt = $mysqli->prepare("show columns from `$table`") or die("Problem finding columns in `$table`");
         $stmt->execute();
@@ -155,9 +151,9 @@ class Db extends Core {
                     . implode(',', $fieldBind)
                     . ',$i->data->id
                 );
-                $r->successUpdate = $stmt->execute();
-                $r->rows = $mysqli->affected_rows;
-                $r->successUpdate OR $r->errorUpdate = $mysqli->error;
+                $i->updateSuccess = $stmt->execute();
+                $i->updateRows = $mysqli->affected_rows;
+                $i->updateSuccess OR $i->updateError = $mysqli->error;
                 $stmt->close();
             }'
         );

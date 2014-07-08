@@ -47,6 +47,7 @@ echo 'J.user.SALT="' , $_SESSION[J_SALT] , '";' , PHP_EOL;
 YUI({<?php require 'modules.inc'; ?>}).use(
     'j-mod-logon',
     'j-pod-usr',
+    'j-widget',
     'moment',
     function(Y){
 
@@ -58,8 +59,7 @@ YUI({<?php require 'modules.inc'; ?>}).use(
         Y.J.dataSet.fetch(
             [
                 ['grp','id'],
-                ['tag','id'],
-                ['tagLink','id']
+                ['tag','id']
             ],
             function(){
                 var d={},h={},my={},
@@ -80,11 +80,11 @@ YUI({<?php require 'modules.inc'; ?>}).use(
                     J.my.tabView=new Y.TabView({
                         children:[
                             {label:'home',content:
-                                '<select class="j-purpose j-i" title="select either yourself or your organisation">'
+                                '<select class="j-purpose j-myFocus" title="select your area of focus">'
                                +  '<option title="myself">I</option>'
                                +  '<option title="a team or organisation I belong to">My group</option>'
                                +  '<option title="the community I belong to">My community</option>'
-                               +  '<option title="my work and business">My business</option>'
+                               +  '<option title="my work and/or business">My business</option>'
                                +'</select>'
                                +'<select class="j-purpose j-offer" title="whether you or your organisation can help or needs help with something">'
                                +  '<option title="I and/or my organisation can benefit by">can benefit from</option>'
@@ -188,72 +188,79 @@ YUI({<?php require 'modules.inc'; ?>}).use(
 
                 //home page
                     h.tvp.abt.delegate('change',function(){
-                        var html='',
-                            idx=this.get('selectedIndex'),
-                            qI       =h.tvp.abt.one('.j-i'),
+                        var myFocus  =this.get('selectedIndex'),
+                            qI       =h.tvp.abt.one('.j-myFocus'),
                             qOffer   =h.tvp.abt.one('.j-offer'),
-                            qInterest=h.tvp.abt.one('.j-interest')
+                            qInterest=h.tvp.abt.one('.j-interest'),
+                            fOpts=function(){
+                                var html='',
+                                    fGrp=function(a){
+                                        var opts={
+                                                1 :'understand what this site is about',
+                                                2 :'understand how volunteering can help me',
+                                                3 :'see what opportunities exist in the community',
+                                                4 :'start a project',
+                                                5 :'share my vision and get people involved',
+                                                6 :'make a difference - opportunities for leadership',
+                                                7 :'learn through networking - opportunities to meet like minded people',
+                                                8 :'learn raise my profile',
+                                                9 :'get out of a rut - opportunities to expand your horizons',
+                                                10:'Meet and visit with other groups i.e. famils',
+                                                11:'Find ways to help each other',
+                                                12:'Memorandum of Understandings',
+                                                13:'Finding the right people for your group',
+                                                14:'Advertising',
+                                                15:'Open activities',
+                                                16:'see what opportunities exist in the community',
+                                                17:'start a project',
+                                                18:'share my vision and get people involved',
+                                                19:'make a difference - opportunities for leadership',
+                                                20:'find someone to help teach a skill i.e. secretary, treasurer'
+                                            },
+                                            html=''
+                                        ;
+                                        for(var i=1;i<a.length;i++){html+='<option class="j-interest j-interest'+a[i]+'">'+opts[a[i]]+'</option>';}
+                                        return '<optgroup label="'+a[0]+'">'+html+'</optgroup>';
+                                    }
+                                ;
+                                for(var g=0;g<arguments.length;g++){html+=fGrp(arguments[g]);};
+                                qInterest.set('innerHTML',html);
+                            }
                         ;
-                        if(this.hasClass('j-i')){
-                            qOffer.get('options').item(2).set('text','need'+(idx===1?'s':'')+' help to');
+                        if(this.hasClass('j-myFocus')){
+                            qOffer.get('options').item(2).set('text','need'+(myFocus===0?'':'s')+' help to');
                             qOffer.simulate('change');
                         }else if(this.hasClass('j-offer')){
-
-                            if(qI.get('selectedIndex')===0){ //I
-                                if(qOffer.get('selectedIndex')===0){ //would like
-                                    qInterest.set('innerHTML',
-                                        '<optgroup label="understand">'
-                                        +  '<option class="j-interest j-interest1">understand what this site is about</option>'
-                                        +  '<option class="j-interest j-interest2">understand how volunteering can help me</option>'
-                                        +'</optgroup>'
-                                        +'<optgroup label="help and involvement">'
-                                        +  '<option class="j-interest j-interest3">see what opportunities exist in the community</option>'
-                                        +  '<option class="j-interest j-interest8">start a project</option>'
-                                        +  '<option class="j-interest j-interest4">share my vision and get people involved</option>'
-                                        +  '<option class="j-interest j-interest7">make a difference - opportunities for leadership</option>'
-                                        +'</optgroup>'
-                                        +'<optgroup label="learn">'
-                                        +  '<option class="j-interest j-interest5">learn through networking - opportunities to meet like minded people</option>'
-                                        +  '<option class="j-interest j-interest6">learn raise my profile</option>'
-                                        +'<optgroup label="reinvigorate">'
-                                        +  '<option class="j-interest j-interest6">get out of a rut - opportunities to expand your horizons</option>'
-                                        +'</optgroup>');
-                                }else{ //needs help
-                                    qInterest.set('innerHTML',
-                                        '<optgroup label="learn">'
-                                       +  '<option class="j-interest j-interest5">learn through networking - opportunities to meet like minded people</option>'
-                                       +  '<option class="j-interest j-interest6">learn raise my profile</option>'
-                                       +'</optgroup>'
-                                       +'<optgroup label="reinvigorate">'
-                                       +  '<option class="j-interest j-interest6">get out of a rut - opportunities to expand your horizons</option>'
-                                       +'</optgroup>');
-                                }
-                            }else{ //My group
-                                if(qOffer.get('selectedIndex')===0){ //would like
-                                    qInterest.set('innerHTML',
-                                        '<optgroup label="collaborate">'
-                                        +  '<option class="j-interest j-interest1">Meet and visit with other groups i.e. famils</option>'
-                                        +  '<option class="j-interest j-interest2">Find ways to help each other</option>'
-                                        +  '<option class="j-interest j-interest2">Memorandum of Understandings</option>'
-                                        +'</optgroup>');
-                                }else{
-                                    qInterest.set('innerHTML',
-                                        '<optgroup label="recruit members">'
-                                        +  '<option class="j-interest j-interest1">Finding the right people for your group</option>'
-                                        +  '<option class="j-interest j-interest2">Advertising</option>'
-                                        +  '<option class="j-interest j-interest2">Open activities</option>'
-                                        +'</optgroup>'
-                                        +'<optgroup label="find helpers">'
-                                        +  '<option class="j-interest j-interest3">see what opportunities exist in the community</option>'
-                                        +  '<option class="j-interest j-interest8">start a project</option>'
-                                        +  '<option class="j-interest j-interest4">share my vision and get people involved</option>'
-                                        +  '<option class="j-interest j-interest7">make a difference - opportunities for leadership</option>'
-                                        +'</optgroup>'
-                                        +'<optgroup label="train">'
-                                        +  '<option class="j-interest j-interest5">learn through networking - opportunities to meet like minded people</option>'
-                                        +  '<option class="j-interest j-interest6">find someone to help teach a skill i.e. secretary, treasurer</option>'
-                                        +'</optgroup>');
-                                }
+                            //level 1: I, my group, my community, my business
+                            //level 2: benefit, like, needs
+                            switch(qI.get('selectedIndex')){
+                                case 0: //I
+                                    switch(qOffer.get('selectedIndex')){
+                                        case 0:fOpts(['understand',1,2],['help and involvement',3,4,5,6],['learn',7,8],['reinvigorate',9]);break;
+                                        case 1:fOpts(['understand',1,2],['learn',7,8],['reinvigorate',9]);break;
+                                        case 2:fOpts(['learn',7,8],['reinvigorate',9]);break;
+                                    }
+                                    break;
+                                case 1: //My group
+                                    switch(qOffer.get('selectedIndex')){
+                                        case 0:fOpts(['collaborate',10,11,12]);break;
+                                        case 1:fOpts(['recruit',13,14,15],['???',16,17,18,19]);break;
+                                        case 2:fOpts(['train',6,20]);break;
+                                    }
+                                    break;
+                                case 2: //My community
+                                    switch(qOffer.get('selectedIndex')){
+                                        case 0:fOpts(['collaborate',10,11,12]);break;
+                                        case 1:fOpts(['recruit',13,14,15],['???',16,17,18,19]);break;
+                                        case 2:fOpts(['train',6,20]);break;
+                                    }
+                                    break;
+                                case 3: //My business
+                                    switch(qOffer.get('selectedIndex')){
+                                        case 0:fOpts(['collaborate',10,11,12]);break;
+                                        default:fOpts(['recruit',13,14,15],['???',16,17,18,19]);
+                                    }
+                                    break;
                             }
                             qInterest.simulate('change');
                         }else if(this.hasClass('j-interest')){
@@ -261,7 +268,7 @@ YUI({<?php require 'modules.inc'; ?>}).use(
                             h.tvp.abt.one('.j-abt-content').set('innerHTML',html);
                         }
                     },'.j-purpose');
-                //
+
                     h.tvp.abt.one('.j-abt-content').delegate('click',function(){
                         if(this.hasClass('j-page-grp')){J.my.tabView.selectChild(1);}
                         if(this.hasClass('j-page-prj')){J.my.tabView.selectChild(2);}
@@ -296,7 +303,7 @@ YUI({<?php require 'modules.inc'; ?>}).use(
                     Y.one('.j-logon').delegate('click',pod.display.usr,'.j-member')
                 
                 //initialize
-                    h.tvp.abt.one('.j-i').simulate('change');
+                    h.tvp.abt.one('.j-myFocus').simulate('change');
 
             }
         );

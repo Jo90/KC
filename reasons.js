@@ -1,4 +1,4 @@
-switch(idx){
+switch(myFocus){
     case 1:
         html='<p>Benefits of volunteering</p>'
             +'<ul>'

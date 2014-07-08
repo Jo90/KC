@@ -47,14 +47,6 @@ function dataSets($arr, $echo=false) {
         $rs->tag = fetch_info($stmt);
         $stmt->close();
     }
-    /**
-     *  tagLink
-     */
-    if (in_array('tagLink',$arr) && $stmt = $mysqli->prepare("select * from `tagLink`")) {
-        $stmt->execute();
-        $rs->tagLink = fetch_info($stmt);
-        $stmt->close();
-    }
 
     if ($echo) {
         echo PHP_EOL , '//core info'

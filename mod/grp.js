@@ -4,42 +4,34 @@ YUI.add('j-mod-grp',function(Y){
     "use strict";
     Y.namespace('J.mod').grp=function(cfg){
 
-        if(typeof cfg==='undefined' ||
-           typeof cfg.node==='undefined'
-        ){alert('mod-grp insuffient parameters');return;}
-
         cfg=Y.merge({
             title:'groups/teams'
         },cfg);
 
         this.info={
-            id         :'grp'
-           ,title      :cfg.title
-           ,description:'group/team system'
-           ,file       :'/mod/grp.js'
-           ,version    :'v1.0 January 2014'
+            id         :'grp',
+            title      :cfg.title,
+            description:'group/team system',
+            file       :'/mod/grp.js',
+            version    :'v1.0 January 2014'
         };
 
-        var self=this
-           ,d={
-                TG_COLLECTION_GRP_SOCIAL:1
-               ,TG_COLLECTION_GRP_BUSINESS:2
-               ,TG_COLLECTION_TABLE_GRP_SOCIAL:1
-               ,TG_COLLECTION_TABLE_GRP_BUSINESS:2
-               ,list:{}
-            }
-           ,h={
-                grid:{}
-               ,list:{}
-            }
+        var self=this,
+            d={
+                list:{}
+            },
+            h={
+                grid:{},
+                list:{}
+            },
             //functions
-           ,initialise={}
-           ,io={}
-           ,listeners
-           ,pod={}
-           ,populate={}
-           ,render={}
-           ,trigger={}
+            initialise={},
+            io={},
+            listeners,
+            pod={},
+            populate={},
+            render={},
+            trigger={}
         ;
 
         this.get=function(what){
@@ -58,42 +50,32 @@ YUI.add('j-mod-grp',function(Y){
             cfg.node.addClass('j-mod-'+self.info.id);
             h.filtersbb.setStyle('display','none');
             //tags
-                d.list.social  =[];
-                d.list.business=[];
-                Y.each(J.data.tgCollectionTag,function(tgCollectionTag){
-                    if(tgCollectionTag.collection===d.TG_COLLECTION_GRP_SOCIAL){
-                        d.list.social.push({
-                            name:J.data.tgTag[tgCollectionTag.tag].name
-                           ,id  :tgCollectionTag.tag
-                        });
-                    }
-                    if(tgCollectionTag.collection===d.TG_COLLECTION_GRP_BUSINESS){
-                        d.list.business.push({
-                            name:J.data.tgTag[tgCollectionTag.tag].name
-                           ,id  :tgCollectionTag.tag
-                        });
-                    }
-                });
-/*
                 h.list.social=new Y.J.widget.List({
-                    elements:d.list.social
-                   ,selected:[]
-                   ,selectorPrompt:'+social tag'
+                    elements:[
+                        {id:'social'   :name:'Social'},
+                        {id:'youth'    :name:'Youth'},
+                        {id:'support'  :name:'Support'},
+                        {id:'community':name:'Community'}
+                    ],
+                    selected:['social'],
+                    selectorPrompt:'+social tag'
                 }).render(h.tagsSocial);
                 h.list.business=new Y.J.widget.List({
-                    elements:d.list.business
-                   ,selected:[]
-                   ,selectorPrompt:'+business tag'
+                    elements:[
+                        {id:'business' :name:'Business'},
+                        {id:'gov'      :name:'Local government'},
+                        {id:'forum'    :name:'Business forum'
+                    ],
+                    selectorPrompt:'+business tag'
                 }).render(h.tagsBusiness);
-*/
         };
 
         io={
             set:{
                 grpUsr:function(e){
-                    var post={}
-                       ,grp
-                       ,reason
+                    var post={},
+                        grp,
+                        reason
                     ;
                     //sentry
                         if(!this.hasClass('j-memberRequest-membership') && !this.hasClass('j-memberRequest-cancel')){return;}
@@ -102,24 +84,24 @@ YUI.add('j-mod-grp',function(Y){
                         reason=prompt('please supply a message for the "'+grp.name+'" administration team');
                         if(reason===null){return;}
                         post={data:{
-                            grp       :grp.id
-                           ,joinReason:reason
-                           ,usr       :J.user.usr.id
+                            grp       :grp.id,
+                            joinReason:reason,
+                            usr       :J.user.usr.id
                         }}
                     }else
                     if(this.hasClass('j-memberRequest-cancel')){
                         post={data:{id:grp.grpUsr},remove:true};
                     }
                     Y.io('/db/usrGrpRole_u.php',{
-                        method:'POST'
-                       ,on:{complete:function(id,o){
+                        method:'POST',
+                        on:{complete:function(id,o){
 
 
                             //FINISH
 
                            
-                        }}
-                       ,data:Y.JSON.stringify([post])
+                        }},
+                        data:Y.JSON.stringify([post])
                     });
                 }
             }
@@ -156,12 +138,12 @@ YUI.add('j-mod-grp',function(Y){
                     self.my.podGrp.display({grpIds:[parseInt(this.get('value'),10)]});
                 }
                ,report:function(e){
-                    var grp
-                       ,body=''
-                       ,head=''
-                       ,tags=[]
-                       ,users=[]
-                       ,x
+                    var grp,
+                        body='',
+                        head='',
+                        tags=[],
+                        users=[],
+                        x
                     ;
                     //sentry
                         if(e.target.get('tagName')==='BUTTON'){return;}
@@ -204,10 +186,10 @@ YUI.add('j-mod-grp',function(Y){
                                 }
                             });
                     self.my.podReport.display({
-                        html   :'<html><head><title>'+grp.name+'</title></head><body>'+body+'</body></html>'
-                       ,subject:'report'
-                       ,sendTo :'joe@dargaville.net'
-                       ,title  :grp.name
+                        html   :'<html><head><title>'+grp.name+'</title></head><body>'+body+'</body></html>',
+                        subject:'report',
+                        sendTo :'joe@dargaville.net',
+                        title  :grp.name
                     });
                 }
             }
@@ -251,12 +233,12 @@ YUI.add('j-mod-grp',function(Y){
                 //format data
                     Y.each(J.rs.grp.data,function(grp){
                         var tags={
-                                social     :[]
-                               ,socialIds  :[]
-                               ,socialOk   :true
-                               ,business   :[]
-                               ,businessIds:[]
-                               ,businessOk :true
+                                social     :[],
+                                socialIds  :[],
+                                socialOk   :true,
+                                business   :[],
+                                businessIds:[],
+                                businessOk :true
                             }
                         ;
                         //default
@@ -272,37 +254,12 @@ YUI.add('j-mod-grp',function(Y){
                                 if(groupName.indexOf(grpNameFilter)===-1){return;}
                             }
                         //tags
-/*
-                            Y.each(J.rs.grpTags.data,function(tagLink){
-                                if(tagLink.pk!==grp.id){return;}
-                                if(tagLink.collectionTable===d.TG_COLLECTION_TABLE_GRP_SOCIAL){
-                                    tags.social   .push(J.data.tgTag[tagLink.tag].name);
-                                    tags.socialIds.push(tagLink.tag);
-                                }
-                                if(tagLink.collectionTable===d.TG_COLLECTION_TABLE_GRP_BUSINESS){
-                                    tags.business   .push(J.data.tgTag[tagLink.tag].name);
-                                    tags.businessIds.push(tagLink.tag);
-                                }
-                            });
-                            grp.social  =tags.social.join();
-                            grp.business=tags.business.join();
-                            //filter
-                                tags.socialOk  =true;
-                                tags.businessOk=true;
-                                if(tagFilter.social.length>0){
-                                    tags.socialOk=Y.Array.find(tags.socialIds,function(tag){
-                                        return Y.Array.indexOf(tagFilter.social,tag)!==-1;
-                                    })!==null;
-                                }
-                                if(tagFilter.business.length>0){
-                                    tags.businessOk=Y.Array.find(tags.businessIds,function(tag){
-                                        return Y.Array.indexOf(tagFilter.business,tag)!==-1;
-                                    })!==null;
-                                }
-                                if((tagFilter.social.length>0 && !tags.socialOk) ||
-                                   (tagFilter.business.length>0 && !tags.businessOk)
-                                ){return;}
-*/
+
+
+
+
+
+
                         //member
                             if(J.user.usr!==undefined){
                                 //default
@@ -338,18 +295,17 @@ YUI.add('j-mod-grp',function(Y){
                 if(h.grpDataTable){h.grpDataTable.set('data',records);}
                 else{
                     h.grpDataTable=new Y.DataTable({
-                        caption:'Kauri Coast Groups/Teams'
-                       ,columns:[
-                            {key:'name'                         ,sortable:true}
-                           ,{key:'memberCol',label:'member'     ,sortable:true ,allowHTML:true,formatter:function(o){return '<input type="hidden" class="data data-id" value="'+o.data.id+'"/>'+o.value;}}
-                           ,{key:'sinceCol' ,label:'since'      ,sortable:true}
-                           ,{key:'social'   ,label:'social tags'}
-                           ,{key:'business' ,label:'business tags'}
-                           ,{                label:'projects'}
-                           ,{                label:'meetings'}
-                           ,{                label:'events'}
-                        ]
-                       ,data:records
+                        columns:[
+                            {key:'name'                         ,sortable:true},
+                            {key:'memberCol',label:'member'     ,sortable:true ,allowHTML:true,formatter:function(o){return '<input type="hidden" class="data data-id" value="'+o.data.id+'"/>'+o.value;}},
+                            {key:'sinceCol' ,label:'since'      ,sortable:true},
+                            {key:'social'   ,label:'social tags'},
+                            {key:'business' ,label:'business tags'},
+                            {                label:'projects'},
+                            {                label:'meetings'},
+                            {                label:'events'}
+                        ],
+                        data:records
                     }).render(h.grid);
                     //listeners
                         h.grpDataTable.get('contentBox').delegate('click',pod.display.report,'tr');

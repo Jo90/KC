@@ -11,7 +11,7 @@ namespace j;
 <meta name="keywords" content="Kauri Coast Promotion Society Inc. - Information Hub" />
 <meta name="author" content="Joe, et al" />
 
-<link rel="stylesheet" href=http://yui.yahooapis.com/3.17.1/build/cssnormalize/cssnormalize-min.css>
+<link rel="stylesheet" href=http://yui.yahooapis.com/3.17.2/build/cssnormalize/cssnormalize-min.css>
 <link rel="icon" type="image/jpeg" href="favicon.jpeg">
 <link rel="stylesheet" type="text/css" href="css/combine.css.php?j_css">
 <style type="text/css">
@@ -25,7 +25,7 @@ body > em {display:block;color:#800;font-size:1.4em;margin:0.4em 1em;}
 <!-- Google API >>>>>>> WE NEED A GOOGLE API KEY <<<<<<< -->
 <!-- src="https://www.google.com/jsapi?key=INSERT-YOUR-KEY" -->
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-<script src=http://yui.yahooapis.com/combo?3.17.1/build/yui/yui-min.js></script>
+<script src=http://yui.yahooapis.com/combo?3.17.2/build/yui/yui-min.js></script>
 <?php
 //maps disabled for some reason?
 //<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDQPldnwWeQCpumTWlmDc4CVYhMbgdW1ng&sensor=true"></script>

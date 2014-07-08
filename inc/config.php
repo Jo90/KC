@@ -8,7 +8,7 @@ ini_set('session.gc_maxlifetime',30*60);
 
 define('J_COMPANY'            , 'Kauri Coast Promotion Society');
 define('J_SLOGON'             , 'Leaders in Communication and Collaboration');
-define('J_TITLE'              , 'Kauri Coast Community Information Hub - Who, What & When');
+define('J_TITLE'              , 'Kauri Coast - Your Community Information Hub');
 define('J_ADMIN_EMAIL'        , 'joe@dargaville.net');
 define('J_ADMIN_ADMINISTRATOR', 'Joseph Douglas');
 define('J_QUERY_LIMIT_OFFSET' , 0);
