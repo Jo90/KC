@@ -19,7 +19,6 @@ modules:{
             'dd',
             'dd-plugin',
             'event-outside',
-            'j-db',
             'j-pod-editor',
             'j-utl-date',
             'j-yui3-sugar',
@@ -44,7 +43,7 @@ modules:{
      * css
      */
     'j-css-calendar':{
-        fullpath:'/css/widget/calendar.css', 
+        fullpath:'/css/widget/calendar.css',
         type:'css'
     },
     'j-css-mod-act':{
@@ -76,13 +75,6 @@ modules:{
         type:'css'
     },
     /**
-     * data
-     */
-    'j-db':{
-        fullpath:'/lib/db.js',
-        requires:['j-lib']
-    },
-    /**
      * modules
      */
     'j-mod-act':{
@@ -91,7 +83,7 @@ modules:{
     },
     'j-mod-grp':{
         fullpath:'/mod/grp.js',
-        requires:['j-lib','j-css-mod-grp','j-db']
+        requires:['j-lib','j-css-mod-grp']
     },
     'j-mod-logon':{
         fullpath:'/mod/logon.php',
@@ -116,7 +108,7 @@ modules:{
     },
     'j-pod-grp':{
         fullpath:'/pod/grp.js',
-        requires:['j-lib','j-css-pod-grp','j-db-grp']
+        requires:['j-lib','j-css-pod-grp']
     },
     'j-pod-info':{
         fullpath:'/pod/info.js',

@@ -21,7 +21,7 @@ YUI.add('j-widget-calendar',function(Y){
             visible :false,
             zIndex  :999999
         }).plug(Y.Plugin.Drag,{handles:['.yui3-widget-hd']}).render(),
-        
+
         cal=new Y.Calendar({
             contentBox:'#j-calendar',
             date:new Date(),

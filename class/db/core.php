@@ -87,6 +87,8 @@ class Db_Core extends Db {
         if (isset($c->grpIds) && is_array($c->grpIds) && count($c->grpIds) > 0) {
             $ids = implode(',', $c->grpIds);
             $cnd = "`id` in ($ids)";
+        } else if (isset($c->restrict)) {
+            $cnd = '`restrict` = ' . $mysqli->real_escape_string($c->restrict);
         }
         if (isset($c->limit))   {$limit = ' limit ' . $mysqli->real_escape_string($c->limit);}
         if (isset($c->orderBy)) {$orderBy = 'order by ' . $mysqli->real_escape_string($c->orderBy);}

@@ -6,16 +6,8 @@ $post = json_decode(file_get_contents('php://input'));
 
 foreach ($post as $i) {
 
-    if (!isset($i) &&
-        !isset($i->criteria) &&
-        !isset($i->criteria->usrIds) &&
-        !isset($i->criteria->dbTable) &&
-        !isset($i->criteria->pk)
-    ) {continue;}
-
-    //shortcuts
-        $r = Core::initResult($i);
-        $c = $i->criteria;
+    $r = Core::initResult($i);
+    $c = $i->criteria;
 
     $r->usr         = Db_Usr::getUsr($i);
     $r->address     = Db_Core::getAddress((object) array('criteria' => (object) array('dbTable' => 'usr', 'pk' => $i->criteria->usrIds[0])));

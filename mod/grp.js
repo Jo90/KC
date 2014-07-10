@@ -17,21 +17,15 @@ YUI.add('j-mod-grp',function(Y){
         };
 
         var self=this,
-            d={
-                list:{}
-            },
-            h={
-                grid:{},
-                list:{}
-            },
+            d={list:{}},
+            h={grid:{},list:{}},
             //functions
             initialise={},
             io={},
             listeners,
             pod={},
-            populate={},
-            render={},
-            trigger={}
+            refresh={},
+            render={}
         ;
 
         this.get=function(what){
@@ -42,89 +36,77 @@ YUI.add('j-mod-grp',function(Y){
 
         this.my={}; //children
 
-        /**
-         * private
-         */
-
         initialise=function(){
             cfg.node.addClass('j-mod-'+self.info.id);
-            h.filtersbb.setStyle('display','none');
-            //tags
-                h.list.social=new Y.J.widget.List({
-                    elements:[
-                        {id:'social'   :name:'Social'},
-                        {id:'youth'    :name:'Youth'},
-                        {id:'support'  :name:'Support'},
-                        {id:'community':name:'Community'}
-                    ],
-                    selected:['social'],
-                    selectorPrompt:'+social tag'
-                }).render(h.tagsSocial);
-                h.list.business=new Y.J.widget.List({
-                    elements:[
-                        {id:'business' :name:'Business'},
-                        {id:'gov'      :name:'Local government'},
-                        {id:'forum'    :name:'Business forum'
-                    ],
-                    selectorPrompt:'+business tag'
-                }).render(h.tagsBusiness);
+            h.filters.setStyle('display','none');
+            //show/hide if logged in
+            h.dtcb.all('tr *:nth-child(2)').setStyle('display','none');
+            cfg.node.one('>.j-notLoggedOn').setStyle('display',J.user.usr!==undefined?'none':'');
         };
 
         io={
-            set:{
-                grpUsr:function(e){
-                    var post={},
-                        grp,
-                        reason
-                    ;
-                    //sentry
-                        if(!this.hasClass('j-memberRequest-membership') && !this.hasClass('j-memberRequest-cancel')){return;}
-                    grp=h.grpDataTable.getRecord(e.currentTarget.get('id')).toJSON();
-                    if(this.hasClass('j-memberRequest-membership')){
-                        reason=prompt('please supply a message for the "'+grp.name+'" administration team');
-                        if(reason===null){return;}
-                        post={data:{
-                            grp       :grp.id,
-                            joinReason:reason,
-                            usr       :J.user.usr.id
-                        }}
-                    }else
-                    if(this.hasClass('j-memberRequest-cancel')){
-                        post={data:{id:grp.grpUsr},remove:true};
-                    }
-                    Y.io('/db/usrGrpRole_u.php',{
+            fetch:{
+                grp:function(){
+                    Y.io('/db/grp_s.php',{
                         method:'POST',
-                        on:{complete:function(id,o){
-
-
-                            //FINISH
-
-                           
-                        }},
-                        data:Y.JSON.stringify([post])
+                        on:{complete:refresh.grp},
+                        data:Y.JSON.stringify([{criteria:{restrict:0}}])
+                    });
+                },
+                member:function(){
+                    Y.io('/db/member_s.php',{
+                        method:'POST',
+                        on:{complete:refresh.member},
+                        data:Y.JSON.stringify([{criteria:{
+                            dbTable:'usr',
+                            pk     :J.user.usr.id
+                        }}])
                     });
                 }
+            },
+        /*
+                    else if(this.hasClass('j-memberRequest-cancel')){
+                        post={data:{id:grp.grpUsr},remove:true};
+                    }
+*/
+
+            requestMembership:function(e){
+                var grp=h.dt.getRecord(e.currentTarget.get('id')).toJSON(),
+                    reason=prompt('please supply a message for the "'+grp.name+'" administration team')
+                ;
+                if(reason===null){return;}
+                Y.io('/db/usrGrpRole_u.php',{
+                    method:'POST',
+                    on:{complete:function(id,o){
+
+                            //FINISH
+                           
+                    }},
+                    data:Y.JSON.stringify([{data:{
+                        grp       :grp.id,
+                        joinReason:reason,
+                        usr       :J.user.usr.id
+                    }}])
+                });
             }
         };
 
         listeners=function(){
-            h.caseSensitive.on('click',populate.grp);
-            h.grpName.on('keyup',populate.grp);
-            h.filtersBtn.on('click',function(){
-                if(h.filtersbb.getStyle('display')==='none'){
-                    h.filtersbb.setStyle('display','');
-                    this.setContent('hide advanced search');
-                }else{
-                    h.filtersbb.setStyle('display','none');
-                    this.setContent('show advanced search');
-                }
-            })
-//            h.list.social  .on('selectedChange',populate.grp)
-//            h.list.business.on('selectedChange',populate.grp)
+            h.grpName.on('keyup',refresh.grp);
+            cfg.node.one('> button').on('click',function(){
+                var filter=h.filters.getStyle('display')==='none';
+                h.filters.setStyle('display',filter?'':'none');
+                this.setContent((filter?'hide':'show')+' advanced search');
+            });
+            h.list.social  .on('selectedChange',refresh.grp);
+            h.list.business.on('selectedChange',refresh.grp);
+            //data table
+                h.dtcb.delegate('click',pod.display.report,'tr');
+                h.dtcb.delegate('click',io.requestMembership,'.yui3-datatable-col-member .j-member-request');
+                h.dtcb.delegate('click',pod.display.grp,'button.j-user-admin');
             //custom
-                Y.on('j:logout'  ,trigger.loggedOut);
-                Y.on('j:logon'   ,Y.J.db.grp.data);
-                Y.on('j-db-grp:s',populate.grp);
+                Y.on('j:logout',refresh.member);
+                Y.on('j:logon' ,io.fetch.member);
         };
 
         pod={
@@ -136,11 +118,10 @@ YUI.add('j-mod-grp',function(Y){
                         return false;
                     }
                     self.my.podGrp.display({grpIds:[parseInt(this.get('value'),10)]});
-                }
-               ,report:function(e){
+                },
+                report:function(e){
                     var grp,
                         body='',
-                        head='',
                         tags=[],
                         users=[],
                         x
@@ -152,7 +133,7 @@ YUI.add('j-mod-grp',function(Y){
                         pod.load.report({});
                         return false;
                     }
-                    grp=h.grpDataTable.getRecord(e.currentTarget.get('id')).toJSON();
+                    grp=h.dt.getRecord(e.currentTarget.get('id')).toJSON();
                     //html
                         body+='<em style="font-size:1.6em;font-weight:bold;color:#800">'+grp.name+'</em>';
                         body+='<img style="position:fixed;z-index:-1;bottom:0;left:0;" src="/css/img/kauriTreeTiny.png" />';
@@ -192,15 +173,15 @@ YUI.add('j-mod-grp',function(Y){
                         title  :grp.name
                     });
                 }
-            }
-           ,load:{
+            },
+            load:{
                 grp:function(){
                     Y.use('j-pod-grp',function(Y){
                         self.my.podGrp=new Y.J.pod.grp();
                         Y.J.whenAvailable.inDOM(self,'my.podGrp',function(){h.podInvoke.simulate('click');});
                     });
-                }
-               ,report:function(){
+                },
+                report:function(){
                     Y.use('j-pod-report',function(Y){
                         self.my.podReport=new Y.J.pod.report({'zIndex':9999});
                         //listeners
@@ -210,62 +191,72 @@ YUI.add('j-mod-grp',function(Y){
             }
         };
 
-        populate={
-            grp:function(rs){
-                J.rs=Y.merge(J.rs,rs);
-                var records=[]
-                   ,grpName=h.grpName.get('value')
-                   ,filterChecked=h.caseSensitive.get('checked')
-                   ,grpNameFilter
-                   ,groupName
-/*
-                   ,tagFilter={
-                       social  :h.list.social  .get('selected')
-                      ,business:h.list.business.get('selected')
-                    }
-*/
+        refresh={
+            grp:function(){ //public view
+                var groups=[],
+                    filterName=h.grpName.get('value').toLowerCase()
                 ;
-                if(grpName!==''){
-                    grpNameFilter=filterChecked
-                        ?grpName
-                        :grpName.toLowerCase();
+                //invoked from fetch.grp(id,o), ignore if invoked by filter changes
+                if(arguments.length===2){
+                    d.rsGrp=Y.JSON.parse(arguments[1].responseText)[0].result;
                 }
-                //format data
-                    Y.each(J.rs.grp.data,function(grp){
-                        var tags={
-                                social     :[],
-                                socialIds  :[],
-                                socialOk   :true,
-                                business   :[],
-                                businessIds:[],
-                                businessOk :true
-                            }
-                        ;
-                        //default
-                            grp.memberCol='';
-                            grp.sinceCol ='';
-                            grp.usr      =null;
-                            grp.grpUsr   =null;
-                        //grp name filter
-                            if(grpName!==''){
-                                groupName=filterChecked
-                                    ?grp.name
-                                    :grp.name.toLowerCase();
-                                if(groupName.indexOf(grpNameFilter)===-1){return;}
-                            }
-                        //tags
+                Y.each(d.rsGrp.grp.data,function(grp){
+                    var tags=[]
+                    ;
+                    //filter
+                        if(filterName!==''&&grp.name.toLowerCase().indexOf(filterName)===-1){return;}
+                    //tags
+                        Y.each(d.rsGrp.tag.data,function(tag){
+                            if(tag.dbTable==='grp'&&tag.pk===grp.id){tags.push(tag.name);}
+                        });
+                        grp.tags=tags.length>0?tags.join(','):'';
+                    groups.push(grp);
+                });
+                h.dt.set('data',groups);
+                h.dt.sort('name');
+                //logged in
+                    if(J.user.usr!==undefined){
+                        d.rsMember===undefined
+                            ?io.fetch.member()
+                            :refresh.member();
+                    }
+            },
+            member:function(){
+                //invoked from fetch.member(id,o), logout, and refresh.grp()
+                if(arguments.length===2){
+                    d.rsMember=Y.JSON.parse(arguments[1].responseText)[0].result;
+                }
+                //show/hide if logged in
+                    h.dtcb.all('tr *:nth-child(2)').setStyle('display',J.user.usr===undefined?'none':'');
+                    cfg.node.one('>.j-notLoggedOn').setStyle('display',J.user.usr===undefined?'':'none');
 
-
-
-
-
-
-                        //member
-                            if(J.user.usr!==undefined){
-                                //default
-                                    grp.memberCol='<button class="j-memberRequest-membership" value="'+grp.id+'">request</button>';
-                                    grp.usr=J.user.usr;
-                                if(typeof J.rs.grpUsr!=='undefined'){
+                h.dt.get('data').each(function(grp,i){
+                    var grpId  =grp.get('id'),
+                        row    =h.dt.getRow(i),
+                        nMember=row.one('.yui3-datatable-col-member'),
+                        roles  =[],
+                        now    =moment().unix()
+                    ;
+                    //member
+                        Y.each(d.rsMember.member.data,function(member){
+                            if(member.grp!==grpId){return;}
+                            Y.each(d.rsMember.role.data,function(role){
+                                if(role.member===member.id&&role.starts<now&&(role.ends===null||role.ends>now)){
+                                    roles.push('<button class="j-member-role" title="since '+moment(role.starts*1000).format('dddd, MMMM Do YYYY, h:mm a')+'">'+role.name+'</button>');
+                                }
+                            });
+                        });
+                        if(roles.length>0){
+                            nMember.set('innerHTML',roles.join(','));
+                        }else{
+                            nMember.set('innerHTML','<button class="j-member-request">request</button>');
+                        }
+                    
+                    
+                    
+                });
+/*
+                                if(rs.grpUsr!==undefined){
                                     Y.each(J.rs.grpUsr.data,function(grpUsr){
                                         var pendingMembers=0
                                         ;
@@ -289,78 +280,64 @@ YUI.add('j-mod-grp',function(Y){
                                         }
                                     });
                                 }
-                            }
-                        records.push(grp);
-                    });
-                if(h.grpDataTable){h.grpDataTable.set('data',records);}
-                else{
-                    h.grpDataTable=new Y.DataTable({
-                        columns:[
-                            {key:'name'                         ,sortable:true},
-                            {key:'memberCol',label:'member'     ,sortable:true ,allowHTML:true,formatter:function(o){return '<input type="hidden" class="data data-id" value="'+o.data.id+'"/>'+o.value;}},
-                            {key:'sinceCol' ,label:'since'      ,sortable:true},
-                            {key:'social'   ,label:'social tags'},
-                            {key:'business' ,label:'business tags'},
-                            {                label:'projects'},
-                            {                label:'meetings'},
-                            {                label:'events'}
-                        ],
-                        data:records
-                    }).render(h.grid);
-                    //listeners
-                        h.grpDataTable.get('contentBox').delegate('click',pod.display.report,'tr');
-                        h.grpDataTable.get('contentBox').delegate('click',io.set.grpUsr,'button');
-                        h.grpDataTable.get('contentBox').delegate('click',pod.display.grp,'button.j-user-admin');
-                }
-                h.grpDataTable.sort('name');
+*/
             }
         };
 
         render={
             base:function(){
                 cfg.node.setContent(
-                    'name filter ('
-                   +'<label><input type="checkbox" />case sensitive</label>'
-                   +') <input class="j-data j-data-grpName" type="text" placeholder="team/group" title="team/group name filter" />'
+                    '<span class="j-notLoggedOn"><strong>You must logon to manage your group memberships.</strong><br/><small>(click on &quot;Visitor&quot; in top right corner to create an account.)</small><br/></span>'
+                   +'name filter <input class="j-data j-data-grpName" type="text" placeholder="team/group" title="team/group name filter" />'
                    +'<button>show advanced search</button>'
                    +'<div class="j-display-filters">'
-                   +  ' filters (include any):<br/>'
-                   +  '<div class="j-tags-social"></div>'
-                   +  '<div class="j-tags-business"></div>'
+                   +  ' filters (include any): Finish!!!!!! also include any/only conditon (to be completed)<br/>'
+                   +  '<div class="j-tags"></div>'
                    +'</div>'
-                   +'<div class="j-grid"></div>'
                 );
+                h.dt=new Y.DataTable({
+                    columns:[
+                        {key:'name'  ,sortable:true},
+                        {key:'member',label:'membership'},
+                        {key:'tags'  ,label:'purpose'   },
+                        {             label:'projects'  },
+                        {             label:'meetings'  },
+                        {             label:'events'    }
+                    ]
+                }).render(cfg.node);
                 //shortcuts
-                    h.grpName      =cfg.node.one('.j-data-grpName');
-                    h.caseSensitive=cfg.node.one('> label > input');
-                    h.filtersBtn   =cfg.node.one('> button');
-                    h.filtersbb    =cfg.node.one('> .j-display-filters');
-                    h.tagsSocial   =h.filtersbb.one('.j-tags-social');
-                    h.tagsBusiness =h.filtersbb.one('.j-tags-business');
-                    h.grid         =cfg.node.one('.j-grid');
+                    h.grpName=cfg.node.one('.j-data-grpName');
+                    h.filters=cfg.node.one('> .j-display-filters');
+                    h.tags   =h.filters.one('.j-tags');
+                    h.dtcb   =h.dt.get('contentBox');
+                //tags
+                    h.list.social=new Y.J.widget.List({
+                        elements:[
+                            {id:'social'   ,name:'Social'},
+                            {id:'youth'    ,name:'Youth'},
+                            {id:'support'  ,name:'Support'},
+                            {id:'community',name:'Community'}
+                        ],
+                        selected:['social'],
+                        selectorPrompt:'+social tag'
+                    }).render(h.tags);
+                    h.list.business=new Y.J.widget.List({
+                        elements:[
+                            {id:'business' ,name:'Business'},
+                            {id:'gov'      ,name:'Local government'},
+                            {id:'forum'    ,name:'Business forum'}
+                        ],
+                        selectorPrompt:'+business tag'
+                    }).render(h.tags);
             }
         };
 
-        trigger={
-            loggedOut:function(){
-                //clear result set
-                if(typeof J.rs.grpUsr!=='undefined'){delete J.rs.grpUsr;}
-                Y.J.db.grp.clear();
-            }
-        };
-        /**
-         *  load & initialise
-         */
-        Y.J.dataSet.fetch([
-        ],function(){
+        render.base();
+        initialise();
+        listeners();
 
-            render.base();
-            initialise();
-            listeners();
+        io.fetch.grp();
 
-            Y.J.db.grp.fetch();
-
-        });
     };
 
 },'1.0 June 2012',{requires:['base','io','node']});

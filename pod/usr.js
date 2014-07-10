@@ -243,7 +243,7 @@ YUI.add('j-pod-usr',function(Y){
                 //user tags
                     Y.each(rs.usrTags.data,function(tag){
                         if(usrTags[tag.category]===undefined){usrTags[tag.category]=[];}
-                        usrTags[tag.category].push(tag.tag);
+                        usrTags[tag.category].push(tag.name);
                     });
                     Y.each(usrTags,function(tagGroup,tagCategory){
                         var grpCategory='usr'+tagCategory.charAt(0).toUpperCase()+tagCategory.slice(1)+'Tags'
@@ -255,10 +255,9 @@ YUI.add('j-pod-usr',function(Y){
                         nn=render.address();
                         h.pn.addr.append(nn);
                         nn.setData('data',address);
-                        nn.one('.j-data-purpose').set('value',address.purpose);
-                        nn.one('.j-data-detail' ).set('value',address.detail);
-                        //location
-                        nn.one('.j-data-location').set('value',address.location);
+                        nn.one('.j-data-purpose'     ).set('value',address.purpose);
+                        nn.one('.j-data-detail'      ).set('value',address.detail);
+                        nn.one('.j-data-location'    ).set('value',address.location);
                         nn.one('.j-data-locationName').set('value',rs.location.data[address.location].name);
                     });
                 //groups
@@ -331,13 +330,21 @@ YUI.add('j-pod-usr',function(Y){
                 h.tv=new Y.TabView({
                     children:[
                         {label:'info'+Y.J.html('btn',{action:'add',title:'add record',classes:'j-add-info'}),content:''},
-                        {label:'profile',
+                        {label:'likes',
                          content:'<div class="j-tags j-tags-skills"></div>'
                                 +'<div class="j-tags j-tags-profile"></div>'
                                 +'<div class="j-tags j-tags-interests"></div>'
                         },
                         {label:'address'+Y.J.html('btn',{action:'add',title:'add record',classes:'j-add-address'}),content:''},
                         {label:'groups' ,content:''},
+                        {label:'public' ,content:
+                            '<strong>Your public profile.</strong> '
+                           +'<em>Enter only those details you are happy for anyone to view. If you are a contact for your group then public contact information would help when people have enquiries.</em><br/>'
+                           +'<textarea class="j-data-publicProfile" title="your public profile" placeholder="public profile"></textarea><br/>'
+                           +'<strong>Your community profile.</strong> '
+                           +'<em>Enter those details you are happy for other members of groups you belong to, to view. This is particularly helpful when you request membership in any other group.</em><br/>'
+                           +'<textarea class="j-data-groupProfile" title="your group profile" placeholder="group profile"></textarea>'
+                       },
                         {label:'actions',content:
                             '<h2>work in progress</h2>'
                            +'<ul>'
@@ -353,13 +360,15 @@ YUI.add('j-pod-usr',function(Y){
                 //shortcuts
                     h.pn={
                         info:h.tv.item(0).get('panelNode'),
-                        prof:h.tv.item(1).get('panelNode'),
+                        like:h.tv.item(1).get('panelNode'),
                         addr:h.tv.item(2).get('panelNode'),
-                        grp :h.tv.item(3).get('panelNode')
+                        grp :h.tv.item(3).get('panelNode'),
+                        pub :h.tv.item(4).get('panelNode'),
+                        act :h.tv.item(5).get('panelNode')
                     }
                 //identify
                     h.pn.info.addClass('j-dataSet j-dataSet-info').setAttribute('data-dataset','info');
-                    h.pn.prof.addClass('j-dataSet j-dataSet-prof').setAttribute('data-dataset','tag');
+                    h.pn.like.addClass('j-dataSet j-dataSet-prof').setAttribute('data-dataset','tag');
                     h.pn.addr.addClass('j-dataSet j-dataSet-addr').setAttribute('data-dataset','address');
                     h.pn.grp .addClass('j-dataSet j-dataSet-grp' ).setAttribute('data-dataset','grp');
 
@@ -371,14 +380,14 @@ YUI.add('j-pod-usr',function(Y){
                               {id:'marketing'    ,name:'marketing'},
                               {id:'IT'           ,name:'IT/computer'}],
                     selectorPrompt:'+skills'
-                }).render(h.pn.prof.one('.j-tags-skills'));
+                }).render(h.pn.like.one('.j-tags-skills'));
                 h.list.usrProfileTags=new Y.J.widget.List({
                     elements:[{id:'mentor'   ,name:'mentor'},
                               {id:'young'    ,name:'young at heart'},
                               {id:'volunteer',name:'volunteering'},
                               {id:'helper'   ,name:'helper'}],
                     selectorPrompt:'+profile'
-                }).render(h.pn.prof.one('.j-tags-profile'));
+                }).render(h.pn.like.one('.j-tags-profile'));
                 h.list.usrInterestTags=new Y.J.widget.List({
                     title   :'My interests',
                     elements:[{id:'adventure' ,name:'adventure'},
@@ -391,7 +400,7 @@ YUI.add('j-pod-usr',function(Y){
                               {id:'speaking'  ,name:'public speaking'},
                               {id:'sports'    ,name:'sports'}],
                     selectorPrompt:'+interests'
-                }).render(h.pn.prof.one('.j-tags-interests'));
+                }).render(h.pn.like.one('.j-tags-interests'));
 
             },
             address:function(){

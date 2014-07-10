@@ -49,7 +49,10 @@ class Db_Usr extends Db {
         if (isset($c->roleIds) && is_array($c->roleIds) && count($c->roleIds) > 0) {
             $cnd  = 'id in (' . implode(',', $c->roleIds) . ')';
         } else if (isset($c->member)) {
-            $cnd  = "`member` = $c->member";
+            $cnd  = "`member` " .
+                (is_array($c->member)
+                 ?'in (' . implode(',', $c->member) . ')'
+                 :"= $c->member");
         }
 
         if (isset($c->limit))   {$limit = ' limit ' . $c->limit;}
