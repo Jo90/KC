@@ -5,3 +5,4 @@
 .j-mod-grp,
 .j-mod-grp .yui3-tab-panel {overflow:auto;width:100% !important; /* ensure containment */ }
 
+.j-mod-grp .j-add-grp {float:right;}

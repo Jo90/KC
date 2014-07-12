@@ -39,7 +39,7 @@ body > em {display:block;color:#800;font-size:1.4em;margin:0.4em 1em;}
         <span class="j-themes"></span>
         <span class="j-clock"></span>
     </section>
-    <em><?php echo J_TITLE; ?></em>
+    <em>Kauri Coast - My Community Hub</em>
     <article>
         <div class="j-tabs"></div>
     </article>

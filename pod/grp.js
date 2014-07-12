@@ -60,7 +60,7 @@ YUI.add('j-pod-grp',function(Y){
         this.my={}; //children
 
         initialise=function(){
-            h.bb.addClass('j-pod-'+self.info.id);
+            self.pl.get('boundingBox').addClass('j-pod-'+self.info.id);
             sync.all();
         };
 
@@ -75,23 +75,6 @@ YUI.add('j-pod-grp',function(Y){
                             pk     :cfg.pk
                         }}])
                     });
-                }
-            },
-            insert:{
-                grp:function(){
-                    var newGroupName=prompt('New group name'),
-                        post
-                    ;
-                    if(newGroupName===null||newGroupName===''){return;}
-                    post=[{
-                        action:'admin',
-                        data:{
-                            name         :newGroupName,
-                            contactDetail:h.bd.one('>.j-record-grp .j-data-contactDetail').get('value'),
-                            usr          :J.user.usr.id
-                        }
-                    }];
-                    J.db.grp('i',post);
                 }
             },
             update:{
@@ -165,7 +148,6 @@ debugger; //>>>>FINISH
         };
 
         listeners=function(){
-            h.addGrp.on('click',io.insert.grp);
             h.bd.delegate('change',function(){
                 this.ancestor('.j-record-grp').all('>div').setStyle('display',this.get('checked')?'none':'');
             },'.j-record-grp > legend .j-remove');
@@ -301,13 +283,11 @@ debugger; //>>>>FINISH
 
                     //enable/disable if member/admin
                         nn.grp.all('.j-enable').set('disabled',true);
-                        h.addGrp.hide();
                         Y.each(J.rs.grpUsr.data,function(grpUsr){
                             if(grpUsr.usr!==J.user.usr.id){return;}
                             nn.grp.all('.j-enable-member').set('disabled',false);
                             if(grpUsr.admin!==null){
                                 nn.grp.all('.j-enable-admin').set('disabled',false);
-                                h.addGrp.show();
                             }
                         });
                     //group
@@ -385,9 +365,7 @@ debugger; //>>>>FINISH
         render={
             base:function(){
                 self.pl=new Y.Panel({
-                    headerContent:
-                        '<span title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;JPS">'+self.info.title+'</span> '
-                       +Y.J.html('btn',{action:'add',label:'add new group',title:'add information category'}),
+                    headerContent:'<span title="pod:'+self.info.id+' '+self.info.version+' '+self.info.description+' &copy;JPS">'+self.info.title+'</span> ',
                     bodyContent:'',
                     footerContent:Y.J.html('btn',{action:'save',title:'save' ,label:'save'}),
                     modal  :true,
@@ -400,11 +378,9 @@ debugger; //>>>>FINISH
                 .plug(Y.Plugin.Resize)
                 .render();
                 //shortcuts
-                    h.hd     =self.pl.headerNode;
-                    h.bd     =self.pl.bodyNode;
-                    h.ft     =self.pl.footerNode;
-                    h.bb     =self.pl.get('boundingBox');
-                    h.addGrp =h.hd.one('.j-add');
+                    h.hd=self.pl.headerNode;
+                    h.bd=self.pl.bodyNode;
+                    h.ft=self.pl.footerNode;
             },
             grp:function(){
                 var nn=Y.Node.create(

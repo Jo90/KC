@@ -8,7 +8,6 @@ ini_set('session.gc_maxlifetime',30*60);
 
 define('J_COMPANY'            , 'Kauri Coast Promotion Society');
 define('J_SLOGON'             , 'Leaders in Communication and Collaboration');
-define('J_TITLE'              , 'Kauri Coast - Your Community Information Hub');
 define('J_ADMIN_EMAIL'        , 'joe@dargaville.net');
 define('J_ADMIN_ADMINISTRATOR', 'Joseph Douglas');
 define('J_QUERY_LIMIT_OFFSET' , 0);
@@ -25,10 +24,10 @@ define('J_LOGON', 'logon'); //refer userLogon
 define('ROOT', realpath(dirname(__FILE__) . '/..'));
 
 //production
-ini_set('display_errors','Off');
-define('J_FILESERVER','kcih');
-define('J_SERVER','kcih');
-define('J_PRODUCTION','YES');
+ini_set('display_errors', 'Off');
+define('J_FILESERVER'   , 'kcih');
+define('J_SERVER'       , 'kcih');
+define('J_PRODUCTION'   , 'YES');
 
 if ($_SERVER['SERVER_ADMIN'] == 'joe@dargaville.net') {
     $mysqli = new \mysqli('localhost', 'root', 'joe123', 'kcih');

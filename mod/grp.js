@@ -42,6 +42,7 @@ YUI.add('j-mod-grp',function(Y){
             //show/hide if logged in
             h.dtcb.all('tr *:nth-child(2)').setStyle('display','none');
             cfg.node.one('>.j-notLoggedOn').setStyle('display',J.user.usr!==undefined?'none':'');
+            cfg.node.one('>.j-add-grp'    ).setStyle('display',J.user.usr===undefined?'none':'');
         };
 
         io={
@@ -64,29 +65,98 @@ YUI.add('j-mod-grp',function(Y){
                     });
                 }
             },
-        /*
-                    else if(this.hasClass('j-memberRequest-cancel')){
-                        post={data:{id:grp.grpUsr},remove:true};
-                    }
-*/
-
-            requestMembership:function(e){
-                var grp=h.dt.getRecord(e.currentTarget.get('id')).toJSON(),
+            insert:{
+                grp:function(){
+                    var grpName=prompt('group name')
+                    ;
+                    if(grpName===null){return;}
+                    if(grpName===''){alert('must supply a group name');return;}
+                    Y.io('/db/grp_i.php',{
+                        method:'POST',
+                        on:{complete:function(){
+                            if(d.rsMember!==undefined){delete d.rsMember;} //force member reselect
+                            io.fetch.grp();
+                        }},
+                        data:Y.JSON.stringify([{
+                            grp:{
+                                records:[{
+                                    data:{
+                                        name:grpName
+                                    },
+                                    children:{
+                                        member:{
+                                            records:[{
+                                                data:{
+                                                    dbTable:'usr',
+                                                    pk     :J.user.usr.id,
+                                                },
+                                                children:{
+                                                    role:{
+                                                        records:[{
+                                                            data:{
+                                                                name  :'Admin',
+                                                                starts:moment().unix()-1,
+                                                                reason:'Created group'
+                                                            }
+                                                        }]
+                                                    }
+                                                }
+                                            }]
+                                        }
+                                    }
+                                }]
+                            }
+                        }])
+                    });
+                }
+            },
+            requestMembership:function(){
+                var grp=h.dt.getRecord(this).toJSON(),
                     reason=prompt('please supply a message for the "'+grp.name+'" administration team')
                 ;
                 if(reason===null){return;}
-                Y.io('/db/usrGrpRole_u.php',{
+                Y.io('/db/memberRole_i.php',{
                     method:'POST',
-                    on:{complete:function(id,o){
-
-                            //FINISH
-                           
-                    }},
-                    data:Y.JSON.stringify([{data:{
-                        grp       :grp.id,
-                        joinReason:reason,
-                        usr       :J.user.usr.id
-                    }}])
+                    on:{complete:io.fetch.member},
+                    data:Y.JSON.stringify([{
+                        member:{
+                            records:[{
+                                data:{
+                                    grp    :grp.id,
+                                    dbTable:'usr',
+                                    pk     :J.user.usr.id
+                                },
+                                children:{
+                                    role:{
+                                        records:[
+                                            {data:{
+                                                name  :'Pending',
+                                                starts:moment().unix()-1,
+                                                reason:reason
+                                            }}
+                                        ]
+                                    }
+                                }
+                            }]
+                        }
+                    }])
+                });
+            },
+            roleCancel:function(){
+                var grp   =h.dt.getRecord(this).toJSON(),
+                    role  =this.getData('data'),
+                    reason=prompt('please let us know why you are cancelling your role "'+role.name+'"',role.reason)
+                ;
+                if(reason===null){return;}
+                role.ends=moment().unix()-1;
+                Y.io('/db/role_u.php',{
+                    method:'POST',
+                    on:{complete:io.fetch.member},
+                    data:Y.JSON.stringify([{
+                        role:{
+                            records:[{data:role}]
+                        }
+                    }])
                 });
             }
         };
@@ -98,12 +168,15 @@ YUI.add('j-mod-grp',function(Y){
                 h.filters.setStyle('display',filter?'':'none');
                 this.setContent((filter?'hide':'show')+' advanced search');
             });
+            cfg.node.one('>.j-add-grp').on('click',io.insert.grp);
             h.list.social  .on('selectedChange',refresh.grp);
             h.list.business.on('selectedChange',refresh.grp);
             //data table
-                h.dtcb.delegate('click',pod.display.report,'tr');
+                h.dt.after('sort',refresh.member);
+                h.dtcb.delegate('click',pod.display.grp     ,'tbody .yui3-datatable-col-name');
                 h.dtcb.delegate('click',io.requestMembership,'.yui3-datatable-col-member .j-member-request');
-                h.dtcb.delegate('click',pod.display.grp,'button.j-user-admin');
+                h.dtcb.delegate('click',io.roleCancel       ,'.yui3-datatable-col-member .j-member-role');
+                h.dtcb.delegate('click',pod.display.grp     ,'button.j-user-admin');
             //custom
                 Y.on('j:logout',refresh.member);
                 Y.on('j:logon' ,io.fetch.member);
@@ -226,61 +299,34 @@ YUI.add('j-mod-grp',function(Y){
                 if(arguments.length===2){
                     d.rsMember=Y.JSON.parse(arguments[1].responseText)[0].result;
                 }
+                if(d.rsMember===undefined){return;}
                 //show/hide if logged in
                     h.dtcb.all('tr *:nth-child(2)').setStyle('display',J.user.usr===undefined?'none':'');
                     cfg.node.one('>.j-notLoggedOn').setStyle('display',J.user.usr===undefined?'':'none');
-
+                    cfg.node.one('>.j-add-grp'    ).setStyle('display',J.user.usr===undefined?'none':'');
                 h.dt.get('data').each(function(grp,i){
                     var grpId  =grp.get('id'),
-                        row    =h.dt.getRow(i),
-                        nMember=row.one('.yui3-datatable-col-member'),
-                        roles  =[],
-                        now    =moment().unix()
+                        memberCol=h.dt.getRow(i).one('.yui3-datatable-col-member')
                     ;
+                    memberCol.set('innerHTML','');
                     //member
                         Y.each(d.rsMember.member.data,function(member){
                             if(member.grp!==grpId){return;}
                             Y.each(d.rsMember.role.data,function(role){
+                                var nn,
+                                    now=moment().unix()
+                                ;
                                 if(role.member===member.id&&role.starts<now&&(role.ends===null||role.ends>now)){
-                                    roles.push('<button class="j-member-role" title="since '+moment(role.starts*1000).format('dddd, MMMM Do YYYY, h:mm a')+'">'+role.name+'</button>');
+                                    nn=Y.Node.create('<button class="j-member-role" title="since '+moment(role.starts*1000).format('dddd, MMMM Do YYYY, h:mm a')+', '+role.reason+'">'+role.name+'</button>');
+                                    memberCol.append(nn);
+                                    nn.setData('data',role);
                                 }
                             });
                         });
-                        if(roles.length>0){
-                            nMember.set('innerHTML',roles.join(','));
-                        }else{
-                            nMember.set('innerHTML','<button class="j-member-request">request</button>');
+                        if(memberCol.get('innerHTML')===''){
+                            memberCol.set('innerHTML','<button class="j-member-request">request</button>');
                         }
-                    
-                    
-                    
                 });
-/*
-                                if(rs.grpUsr!==undefined){
-                                    Y.each(J.rs.grpUsr.data,function(grpUsr){
-                                        var pendingMembers=0
-                                        ;
-                                        //sentry
-                                            if(grpUsr.grp!==grp.id || grpUsr.usr!==J.user.usr.id){return;}
-                                        //admin/member/pending
-                                        if(grpUsr.admin!==null){
-                                            //pending members
-                                                Y.each(J.rs.grpUsr.data,function(pendingGrpUsr){
-                                                    if(pendingGrpUsr.grp===grp.id && pendingGrpUsr.member===null && pendingGrpUsr.joinRequest!==null){pendingMembers++;}
-                                                });
-                                            grp.memberCol='<button class="j-user-admin" value="'+grp.id+'">admin'+(pendingMembers===0?'':' [Pending('+pendingMembers+')]')+'</button>';
-                                            grp.sinceCol=Y.DataType.Date.format(new Date(grpUsr.admin*1000),{format:'%d %b %G'});
-                                        }else if(grpUsr.member!==null){
-                                            grp.memberCol='<button class="j-user-member" value="'+grp.id+'">member</button>';
-                                            grp.sinceCol=Y.DataType.Date.format(new Date(grpUsr.member*1000),{format:'%d %b %G'});
-                                        }else if(grpUsr.joinRequest!==null){
-                                            grp.memberCol='<button class="j-memberRequest-cancel" value="'+grpUsr.id+'">pending - cancel</button><br/>'+grpUsr.joinReason;
-                                            grp.sinceCol=Y.DataType.Date.format(new Date(grpUsr.joinRequest*1000),{format:'%d %b %G'});
-                                            grp.grpUsr=grpUsr.id;
-                                        }
-                                    });
-                                }
-*/
             }
         };
 
@@ -290,6 +336,7 @@ YUI.add('j-mod-grp',function(Y){
                     '<span class="j-notLoggedOn"><strong>You must logon to manage your group memberships.</strong><br/><small>(click on &quot;Visitor&quot; in top right corner to create an account.)</small><br/></span>'
                    +'name filter <input class="j-data j-data-grpName" type="text" placeholder="team/group" title="team/group name filter" />'
                    +'<button>show advanced search</button>'
+                   +Y.J.html('btn',{action:'add',label:'new group',title:'add new group',classes:'j-add-grp'})
                    +'<div class="j-display-filters">'
                    +  ' filters (include any): Finish!!!!!! also include any/only conditon (to be completed)<br/>'
                    +  '<div class="j-tags"></div>'
@@ -297,7 +344,7 @@ YUI.add('j-mod-grp',function(Y){
                 );
                 h.dt=new Y.DataTable({
                     columns:[
-                        {key:'name'  ,sortable:true},
+                        {key:'name'  ,label:'group, select for more...',sortable:true},
                         {key:'member',label:'membership'},
                         {key:'tags'  ,label:'purpose'   },
                         {             label:'projects'  },
