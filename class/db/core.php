@@ -120,9 +120,15 @@ class Db_Core extends Db {
 
         if (isset($c->infoIds) && is_array($c->infoIds) && count($c->infoIds) > 0) {
             $cnd  = '`id` in (' . implode(',', $c->infoIds) . ')';
-        } else if (isset($c->dbTable, $c->pk)) {
-            $cnd  = "`dbTable` = '$c->dbTable' and `pk` = $c->pk";
+        } else
+        if (isset($c->dbTable, $c->pk)) {
+            $cnd  = "`dbTable` = '$c->dbTable' and `pk` " .
+                (is_array($c->pk)
+                 ?'in (' . implode(',', $c->pk) . ')'
+                 :"= $c->pk");
         }
+
+        
         if (isset($c->limit))   {$limit = ' limit ' . $mysqli->real_escape_string($c->limit);}
         if (isset($c->orderBy)) {$orderBy = 'order by ' . $mysqli->real_escape_string($c->orderBy);}
 

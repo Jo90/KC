@@ -230,9 +230,10 @@ YUI.add('j-pod-usr',function(Y){
                 h.pn.addr.set('innerHTML','');
                 h.pn.grp.set('innerHTML' ,'<p>To request membership go to the group module</p>');
 
-                //info order by seq
-                    Y.each(rs.info.data,function(info){sortInfo.push(info);});
-                    sortInfo.sort(function(a,b){return a.seq-b.seq;});
+                //info
+                    //sort seq
+                        Y.each(rs.info.data,function(info){sortInfo.push(info);});
+                        sortInfo.sort(function(a,b){return a.seq-b.seq;});
                     Y.each(sortInfo,function(info){
                         nn=render.info();
                         h.pn.info.append(nn);

@@ -3,10 +3,8 @@
  *  Kauri Coast Promotion Society
  */
 
-.j-pod-grp .j-close {float:right;}
+.j-pod-grp .j-save {float:right;}
 
-.j-pod-grp .j-data-name {width:35em;font-weight:bold;}
-.j-pod-grp .j-data-contactDetail {width:50em;}
+.j-pod-grp .j-data-name {width:30em;}
+.j-pod-grp .j-data-detail {width:40em;}
 
-/*not working*/
-.j-pod-grp .yui3-datatable-col-detail {max-height:50px;overflow:auto;}

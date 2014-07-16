@@ -28,12 +28,6 @@ YUI.add('j-mod-grp',function(Y){
             render={}
         ;
 
-        this.get=function(what){
-        };
-        this.set=function(what,value){
-            if(what==='cfg'){cfg=Y.merge(cfg,value);}
-        };
-
         this.my={}; //children
 
         initialise=function(){
@@ -88,7 +82,7 @@ YUI.add('j-mod-grp',function(Y){
                                             records:[{
                                                 data:{
                                                     dbTable:'usr',
-                                                    pk     :J.user.usr.id,
+                                                    pk     :J.user.usr.id
                                                 },
                                                 children:{
                                                     role:{
@@ -112,9 +106,11 @@ YUI.add('j-mod-grp',function(Y){
             },
             requestMembership:function(){
                 var grp=h.dt.getRecord(this).toJSON(),
-                    reason=prompt('please supply a message for the "'+grp.name+'" administration team')
+                    reason=''
                 ;
-                if(reason===null){return;}
+                if(grp.joinMessage!==''){
+                    if((reason=prompt(grp.name+' '+grp.joinMessage))===null){return;}
+                }
                 Y.io('/db/memberRole_i.php',{
                     method:'POST',
                     on:{complete:io.fetch.member},
@@ -130,7 +126,7 @@ YUI.add('j-mod-grp',function(Y){
                                     role:{
                                         records:[
                                             {data:{
-                                                name  :'Pending',
+                                                name  :grp.joinRole,
                                                 starts:moment().unix()-1,
                                                 reason:reason
                                             }}
@@ -143,8 +139,7 @@ YUI.add('j-mod-grp',function(Y){
                 });
             },
             roleCancel:function(){
-                var grp   =h.dt.getRecord(this).toJSON(),
-                    role  =this.getData('data'),
+                var role  =this.getData('data'),
                     reason=prompt('please let us know why you are cancelling your role "'+role.name+'"',role.reason)
                 ;
                 if(reason===null){return;}
@@ -176,8 +171,8 @@ YUI.add('j-mod-grp',function(Y){
                 h.dtcb.delegate('click',pod.display.grp     ,'tbody .yui3-datatable-col-name');
                 h.dtcb.delegate('click',io.requestMembership,'.yui3-datatable-col-member .j-member-request');
                 h.dtcb.delegate('click',io.roleCancel       ,'.yui3-datatable-col-member .j-member-role');
-                h.dtcb.delegate('click',pod.display.grp     ,'button.j-user-admin');
             //custom
+                Y.on('j:grp:removed',io.fetch.grp);
                 Y.on('j:logout',refresh.member);
                 Y.on('j:logon' ,io.fetch.member);
         };
@@ -185,12 +180,14 @@ YUI.add('j-mod-grp',function(Y){
         pod={
             display:{
                 grp:function(e){
+                    var grp=h.dt.getRecord(this).toJSON()
+                    ;
                     h.podInvoke=e.currentTarget;
                     if(!self.my.podGrp){
                         pod.load.grp();
                         return false;
                     }
-                    self.my.podGrp.display({grpIds:[parseInt(this.get('value'),10)]});
+                    self.my.podGrp.display({grpIds:[grp.id]});
                 },
                 report:function(e){
                     var grp,
@@ -199,6 +196,11 @@ YUI.add('j-mod-grp',function(Y){
                         users=[],
                         x
                     ;
+
+
+//FINISH sort out
+
+                    
                     //sentry
                         if(e.target.get('tagName')==='BUTTON'){return;}
                     h.podInvoke=e.currentTarget;
@@ -283,6 +285,7 @@ YUI.add('j-mod-grp',function(Y){
                             if(tag.dbTable==='grp'&&tag.pk===grp.id){tags.push(tag.name);}
                         });
                         grp.tags=tags.length>0?tags.join(','):'';
+                        grp.name='<span title="click to find out more">'+grp.name+'</span>';
                     groups.push(grp);
                 });
                 h.dt.set('data',groups);
@@ -305,13 +308,12 @@ YUI.add('j-mod-grp',function(Y){
                     cfg.node.one('>.j-notLoggedOn').setStyle('display',J.user.usr===undefined?'':'none');
                     cfg.node.one('>.j-add-grp'    ).setStyle('display',J.user.usr===undefined?'none':'');
                 h.dt.get('data').each(function(grp,i){
-                    var grpId  =grp.get('id'),
-                        memberCol=h.dt.getRow(i).one('.yui3-datatable-col-member')
+                    var memberCol=h.dt.getRow(i).one('.yui3-datatable-col-member')
                     ;
                     memberCol.set('innerHTML','');
                     //member
                         Y.each(d.rsMember.member.data,function(member){
-                            if(member.grp!==grpId){return;}
+                            if(member.grp!==grp.get('id')){return;}
                             Y.each(d.rsMember.role.data,function(role){
                                 var nn,
                                     now=moment().unix()
@@ -319,12 +321,17 @@ YUI.add('j-mod-grp',function(Y){
                                 if(role.member===member.id&&role.starts<now&&(role.ends===null||role.ends>now)){
                                     nn=Y.Node.create('<button class="j-member-role" title="since '+moment(role.starts*1000).format('dddd, MMMM Do YYYY, h:mm a')+', '+role.reason+'">'+role.name+'</button>');
                                     memberCol.append(nn);
+                                    nn.set('disabled',role.name!=='Pending');
                                     nn.setData('data',role);
                                 }
                             });
                         });
                         if(memberCol.get('innerHTML')===''){
-                            memberCol.set('innerHTML','<button class="j-member-request">request</button>');
+                            memberCol.set('innerHTML','<button class="j-member-request" '+(
+                                grp.get('joinRole')==='Member'
+                                    ?'title="join group">Join</button>'
+                                    :'title="request group membership">Request</button>'
+                            ));
                         }
                 });
             }
@@ -344,7 +351,7 @@ YUI.add('j-mod-grp',function(Y){
                 );
                 h.dt=new Y.DataTable({
                     columns:[
-                        {key:'name'  ,label:'group, select for more...',sortable:true},
+                        {key:'name'  ,label:'group, select for more...',allowHTML:true,sortable:true},
                         {key:'member',label:'membership'},
                         {key:'tags'  ,label:'purpose'   },
                         {             label:'projects'  },

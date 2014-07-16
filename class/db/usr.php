@@ -16,6 +16,8 @@ class Db_Usr extends Db {
 
         if (isset($c->memberIds) && is_array($c->memberIds) && count($c->memberIds) > 0) {
             $cnd  = 'id in (' . implode(',', $c->memberIds) . ')';
+        } else if (isset($c->grpIds)) {
+            $cnd  = '`grp` in (' . implode(',', $c->grpIds) . ')';
         } else if (isset($c->dbTable, $c->pk)) {
             $cnd  = "`dbTable` = '$c->dbTable' and `pk` = $c->pk";
         }

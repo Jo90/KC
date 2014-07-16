@@ -1,8 +1,4 @@
-/** 
- *  /css/mod/grp.css
- */
-
-.j-mod-grp,
-.j-mod-grp .yui3-tab-panel {overflow:auto;width:100% !important; /* ensure containment */ }
+/* //css/mod/grp.css */
 
 .j-mod-grp .j-add-grp {float:right;}
+.j-mod-grp .yui3-datatable-col-name {cursor:pointer;}
